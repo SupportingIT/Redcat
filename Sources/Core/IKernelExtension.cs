@@ -2,7 +2,7 @@
 {
     public interface IKernelExtension
     {
-        void Attach(Kernel kernel);
-        void Detach(Kernel kernel);
+        void Attach(IKernel kernel);
+        void Detach(IKernel kernel);
     }
 }

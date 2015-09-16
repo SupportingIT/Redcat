@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace Redcat.Core
 {
-    public class CommandProcessor
+    public class CommandProcessor : IRunable, IDisposable
     {
-        private Kernel kernel = new Kernel();
+        private IKernel kernel;
         private ICollection<IKernelExtension> extensions = new List<IKernelExtension>();
 
         public void AddExtension(IKernelExtension extension)
@@ -29,7 +29,7 @@ namespace Redcat.Core
         {
             var services = Services<T>();
             if (noServicesAction != null && services.Count() == 0) noServicesAction();
-            foreach (var service in Services<T>()) action(service);
+            foreach (var service in services) action(service);
         }
 
         public void Execute<T>(T command)
@@ -39,7 +39,20 @@ namespace Redcat.Core
 
         public void Run()
         {
+            kernel = CreateKernel();
             foreach (var extension in extensions) extension.Attach(kernel);
+            if (kernel is IRunable) ((IRunable)kernel).Run();
+        }
+
+        protected virtual IKernel CreateKernel()
+        {
+            return new Kernel();
+        }
+
+        public void Dispose()
+        {
+            foreach (var extension in extensions) extension.Detach(kernel);
+            if (kernel is IDisposable) ((IDisposable)kernel).Dispose();
         }
     }
 }

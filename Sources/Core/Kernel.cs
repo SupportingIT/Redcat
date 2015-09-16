@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Redcat.Core
 {
-    public class Kernel
+    public class Kernel : IKernel
     {
         private List<IServiceProvider> providers = new List<IServiceProvider>();
         private EventHandlerCollection handlers = new EventHandlerCollection();
