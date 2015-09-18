@@ -6,6 +6,7 @@ namespace Redcat.Core
     {
         public void Connect(ConnectionSettings settings)
         {
+            if (settings == null) throw new ArgumentNullException("settings");
             throw new NotImplementedException();
         }
 

@@ -47,6 +47,8 @@
     <Compile Include="Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceProviderBase.cs" />
+    <Compile Include="Services\ChannelManager.cs" />
+    <Compile Include="Services\IChannelFactory.cs" />
     <Compile Include="Services\IChannelManager.cs" />
     <Compile Include="Services\ICommandHandler.cs" />
     <Compile Include="Services\IMessageChannel.cs" />

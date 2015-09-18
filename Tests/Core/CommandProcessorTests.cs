@@ -9,6 +9,31 @@ namespace Redcat.Core.Tests
     public class CommandProcessorTests
     {
         [Test]
+        public void Run_Attaches_All_Extensions()
+        {
+            CommandProcessor processor = new CommandProcessor();
+            var extensions = A.CollectionOfFake<IKernelExtension>(4);
+            processor.AddExtensions(extensions);
+
+            processor.Run();
+
+            foreach (var extension in extensions) A.CallTo(() => extension.Attach(A<IKernel>._)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Run_Attaches_Extensions_Only_Once()
+        {
+            CommandProcessor processor = new CommandProcessor();
+            var extension = A.Fake<IKernelExtension>();
+            processor.AddExtension(extension);
+
+            processor.Run();
+            processor.Run();
+
+            A.CallTo(() => extension.Attach(A<IKernel>._)).MustHaveHappened(Repeated.Exactly.Once);
+        }
+
+        [Test]
         public void Execute_Calls_Correct_CommandHandler()
         {
             CommandProcessor processor = new CommandProcessor();

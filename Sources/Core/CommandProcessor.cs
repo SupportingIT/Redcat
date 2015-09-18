@@ -9,10 +9,17 @@ namespace Redcat.Core
     {
         private IKernel kernel;
         private ICollection<IKernelExtension> extensions = new List<IKernelExtension>();
+        private bool initialized = false;
 
         public void AddExtension(IKernelExtension extension)
         {
+            if (extension == null) throw new ArgumentNullException("extension");
             extensions.Add(extension);
+        }
+
+        public void AddExtensions(IEnumerable<IKernelExtension> extensions)
+        {
+            foreach (var extension in extensions) AddExtension(extension);
         }
 
         protected T Service<T>() where T : class
@@ -39,10 +46,25 @@ namespace Redcat.Core
 
         public void Run()
         {
+            if (initialized) return;
+            OnBeforeInit();
+            OnInit();
+            OnAfterInit();
+            initialized = true;
+        }
+
+        protected virtual void OnBeforeInit()
+        { }
+
+        protected virtual void OnInit()
+        {
             kernel = CreateKernel();
             foreach (var extension in extensions) extension.Attach(kernel);
             if (kernel is IRunable) ((IRunable)kernel).Run();
         }
+
+        protected virtual void OnAfterInit()
+        { }
 
         protected virtual IKernel CreateKernel()
         {
