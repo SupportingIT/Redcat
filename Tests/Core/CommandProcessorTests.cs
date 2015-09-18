@@ -65,7 +65,7 @@ namespace Redcat.Core.Tests
             IServiceProvider provider = A.Fake<IServiceProvider>();
             A.CallTo(() => provider.GetService(typeof(ICommandHandler<T>))).Returns(handler);
             IKernelExtension extension = A.Fake<IKernelExtension>();
-            A.CallTo(() => extension.Attach(A<Kernel>._)).Invokes(c => ((Kernel)c.Arguments[0]).AddServiceProvider(provider));
+            A.CallTo(() => extension.Attach(A<Kernel>._)).Invokes(c => ((Kernel)c.Arguments[0]).Providers.Add(provider));
             return extension;
         }
     }

@@ -15,7 +15,7 @@ namespace Redcat.Core.Tests
             string service = "my-service";
             IServiceProvider provider = A.Fake<IServiceProvider>();
             A.CallTo(() => provider.GetService(typeof(string))).Returns(service);
-            kernel.AddServiceProvider(provider);
+            kernel.Providers.Add(provider);
 
             string actualService = kernel.GetService<string>();
 
@@ -27,7 +27,7 @@ namespace Redcat.Core.Tests
         {
             Kernel kernel = new Kernel();
             IServiceProvider provider = A.Fake<IServiceProvider>();
-            kernel.AddServiceProvider(provider);
+            kernel.Providers.Add(provider);
 
             Uri actualService = kernel.GetService<Uri>();
 
@@ -42,7 +42,7 @@ namespace Redcat.Core.Tests
             A.CallTo(() => providers[1].GetService(typeof(string))).Returns(null);
             A.CallTo(() => providers[2].GetService(typeof(string))).Returns("service2");
             Kernel kernel = new Kernel();
-            foreach (var provider in providers) kernel.AddServiceProvider(provider);
+            foreach (var provider in providers) kernel.Providers.Add(provider);
 
             var actualServices = kernel.GetServices<string>().ToArray();
 

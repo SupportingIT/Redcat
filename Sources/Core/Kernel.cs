@@ -9,9 +9,9 @@ namespace Redcat.Core
         private List<IServiceProvider> providers = new List<IServiceProvider>();
         private EventHandlerCollection handlers = new EventHandlerCollection();
 
-        public void AddServiceProvider(IServiceProvider provider)
+        public ICollection<IServiceProvider> Providers
         {
-            providers.Add(provider);
+            get { return providers; }
         }
 
         public T GetService<T>() where T : class

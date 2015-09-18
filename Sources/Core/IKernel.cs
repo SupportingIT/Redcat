@@ -5,7 +5,7 @@ namespace Redcat.Core
 {
     public interface IKernel
     {
-        void AddServiceProvider(IServiceProvider provider);
+        ICollection<IServiceProvider> Providers { get; }
         T GetService<T>() where T : class;
         IEnumerable<T> GetServices<T>() where T : class;
         void AddEventHandler<T>(string eventId, Action<T> handler) where T : EventArgs;

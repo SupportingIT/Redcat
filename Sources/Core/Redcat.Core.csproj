@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="CommandProcessor.cs" />
     <Compile Include="Communicator.cs" />
+    <Compile Include="CommunicatorServiceProvider.cs" />
     <Compile Include="ConnectionSettings.cs" />
     <Compile Include="IKernel.cs" />
     <Compile Include="IKernelExtension.cs" />

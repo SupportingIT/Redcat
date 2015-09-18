@@ -96,7 +96,7 @@ namespace Redcat.Core.Tests.Services
                 return provider;
             });
             IKernel kernel = new Kernel();
-            foreach (var provider in providers) kernel.AddServiceProvider(provider);
+            foreach (var provider in providers) kernel.Providers.Add(provider);
             return kernel;
         }
 

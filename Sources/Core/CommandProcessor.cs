@@ -11,6 +11,16 @@ namespace Redcat.Core
         private ICollection<IKernelExtension> extensions = new List<IKernelExtension>();
         private bool initialized = false;
 
+        protected IKernel Kernel
+        {
+            get { return kernel; }
+        }
+
+        protected bool IsRunning
+        {
+            get { return initialized; }
+        }
+
         public void AddExtension(IKernelExtension extension)
         {
             if (extension == null) throw new ArgumentNullException("extension");
@@ -47,6 +57,7 @@ namespace Redcat.Core
         public void Run()
         {
             if (initialized) return;
+            kernel = CreateKernel();
             OnBeforeInit();
             OnInit();
             OnAfterInit();
@@ -57,8 +68,7 @@ namespace Redcat.Core
         { }
 
         protected virtual void OnInit()
-        {
-            kernel = CreateKernel();
+        {            
             foreach (var extension in extensions) extension.Attach(kernel);
             if (kernel is IRunable) ((IRunable)kernel).Run();
         }

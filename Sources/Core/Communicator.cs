@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Redcat.Core.Services;
+using System;
 
 namespace Redcat.Core
 {
@@ -7,12 +8,19 @@ namespace Redcat.Core
         public void Connect(ConnectionSettings settings)
         {
             if (settings == null) throw new ArgumentNullException("settings");
-            throw new NotImplementedException();
+            if (!IsRunning) throw new InvalidOperationException();
+            Service<IChannelManager>().OpenChannel(settings);
         }
 
         public void Disconnect()
         {
             throw new NotImplementedException();
+        }
+
+        protected override void OnBeforeInit()
+        {
+            base.OnBeforeInit();
+            Kernel.Providers.Add(new CommunicatorServiceProvider(Kernel));
         }
 
         public void Send(Message message)
