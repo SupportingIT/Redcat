@@ -7,9 +7,19 @@ namespace Redcat.Core
         private ConnectionSettings settings;
         private ChannelState state;
 
+        protected MessageChannelBase(ConnectionSettings settings)
+        {
+            this.settings = settings;
+        }
+
         protected MessageChannelBase()
         {
             state = ChannelState.Close;
+        }
+
+        protected ConnectionSettings Settings
+        {
+            get { return settings; }
         }
 
         public ChannelState State
