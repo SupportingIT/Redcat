@@ -55,6 +55,8 @@
     <Compile Include="Xml\StreamHeader.cs" />
     <Compile Include="XmppProtocolExtension.cs" />
     <Compile Include="XmppServiceProvider.cs" />
+    <Compile Include="XmppStreamReader.cs" />
+    <Compile Include="XmppStreamWriter.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
