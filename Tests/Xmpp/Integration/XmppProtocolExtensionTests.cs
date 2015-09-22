@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Redcat.Core;
 using Redcat.Core.Net;
+using System.Configuration;
 using System.Net.Sockets;
 
 namespace Redcat.Xmpp.Tests.Integration
@@ -30,7 +31,10 @@ namespace Redcat.Xmpp.Tests.Integration
 
         private ConnectionSettings CreateSettings()
         {
-            var settings = new ConnectionSettings { Host = "jabber.ru", Domain = "jabber.ru", Port = 5222 };
+            var settings = new ConnectionSettings();
+            settings.Domain = ConfigurationManager.AppSettings["Domain"];
+            settings.Host = ConfigurationManager.AppSettings["Host"];
+            settings.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
             settings.Set("ChannelTypeId", "xmpp");
             return settings;
         }

@@ -2,6 +2,7 @@
 using Redcat.Xmpp.Xml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 
@@ -10,10 +11,10 @@ namespace Redcat.Xmpp
     public class XmppStreamReader
     {
         private ICollection<IElementParser> parsers;
-        private System.IO.Stream stream;
+        private Stream stream;
         private XmlReader xmlReader;
 
-        public XmppStreamReader(System.IO.Stream stream)
+        public XmppStreamReader(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException("stream");
             this.stream = stream;
@@ -26,7 +27,7 @@ namespace Redcat.Xmpp
             get { return parsers; }
         }
 
-        public System.IO.Stream Stream
+        public Stream Stream
         {
             get { return stream; }
         }
@@ -51,14 +52,19 @@ namespace Redcat.Xmpp
                     parser.StartNode(xmlReader.Name);
                     ParseAttributes(parser);                    
                 }
-                if (xmlReader.NodeType == XmlNodeType.EndElement) parser.EndNode();
+                if (xmlReader.Name == "stream:stream") break;
+                if (xmlReader.NodeType == XmlNodeType.EndElement)
+                {
+                    parser.EndNode();
+                    break;
+                }
             }
         }
 
         private IElementParser GetInitializedParser()
         {
             var parser = parsers.FirstOrDefault(p => p.CanParse(xmlReader.Name));
-            if (parser == null) throw new InvalidOperationException();
+            if (parser == null) throw new InvalidOperationException("No parsers for element " + xmlReader.Name);
             parser.NewElement(xmlReader.Name);
             return parser;
         }
@@ -72,6 +78,13 @@ namespace Redcat.Xmpp
                 while (xmlReader.MoveToNextAttribute());
                 xmlReader.MoveToElement();
             }
+        }
+
+        public static XmppStreamReader CreateReader(Stream stream)
+        {
+            XmppStreamReader reader = new XmppStreamReader(stream);
+            reader.Parsers.Add(new StreamHeaderParser());
+            return reader;
         }
     }
 }

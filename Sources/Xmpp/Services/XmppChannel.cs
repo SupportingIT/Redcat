@@ -1,6 +1,7 @@
 ﻿using System;
 using Redcat.Core;
 using Redcat.Core.Net;
+using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp.Services
 {
@@ -12,6 +13,17 @@ namespace Redcat.Xmpp.Services
         protected override void OnOpening()
         {
             base.OnOpening();
+
+            SocketStream stream = new SocketStream(Socket);
+            XmppStreamWriter writer = new XmppStreamWriter(stream);
+            
+            writer.Write("<?xml version='1.0' ?>");
+            writer.Write("<stream:stream to='redcat' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0' />");
+
+            XmppStreamReader reader = XmppStreamReader.CreateReader(stream);
+            StreamHeader header = reader.Read() as StreamHeader;
+
+            Element features = reader.Read();
         }
 
         public override Message Receive()
