@@ -1,41 +1,52 @@
-﻿using Redcat.Xmpp.Xml;
+﻿using System;
+using Redcat.Xmpp.Xml;
 using System.IO;
 using System.Text;
-using System.Xml;
 
 namespace Redcat.Xmpp
 {
     public class XmppStreamWriter
     {
-        private static Encoding encoding = Encoding.UTF8;
-        private Stream stream;
-        private XmlWriter xmlWriter;
+        private static Encoding defaultEncoding = Encoding.UTF8;
+        private TextWriter writer;
 
         public XmppStreamWriter(Stream stream)
         {
-            this.stream = stream;
-            XmlWriterSettings settings = new XmlWriterSettings
+            if (stream == null) throw new ArgumentNullException("stream");
+            writer = new StreamWriter(stream, defaultEncoding);
+        }
+
+        public XmppStreamWriter(TextWriter writer)
+        {
+            if (writer == null) throw new ArgumentNullException("writer");
+            this.writer = writer;
+        }
+
+        public void Write(XmlElement element)
+        {
+            writer.Write('<');
+            writer.Write(element.Name);
+
+            foreach (var attribute in element.Attributes)
             {
-                OmitXmlDeclaration = true
-            };
-            xmlWriter = XmlWriter.Create(stream, settings);
-        }
+                writer.Write(" ");
+                writer.Write(attribute.Name);
+                writer.Write("='");
+                writer.Write(attribute.Value);
+                writer.Write("'");
+            }
 
-        public void Write(Element element)
-        {
-            element.Write(xmlWriter);
-            xmlWriter.Flush();
-        }
+            if (element.Value == null)
+            {
+                writer.Write(" />");
+                return;
+            }
 
-        public void Write(string data)
-        {
-            byte[] binaryData = encoding.GetBytes(data);
-            Write(binaryData);
-        }
-
-        public void Write(byte[] buffer)
-        {
-            stream.Write(buffer, 0, buffer.Length);
+            writer.Write(">");
+            writer.Write(element.Value);
+            writer.Write("</");
+            writer.Write(element.Name);
+            writer.Write(">");
         }
     }
 }

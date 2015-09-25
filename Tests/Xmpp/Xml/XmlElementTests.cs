@@ -43,7 +43,7 @@ namespace Redcat.Xmpp.Tests.Xml
         }
 
         [Test]
-        public void Attributes_()
+        public void Attributes_Returns_Elements_Attribute_Collection()
         {
             var expectedAttributes = Enumerable.Range(0, 3).Select(i => new XmlAttribute("attr" + i, i));
             XmlElement element = new XmlElement(name);
