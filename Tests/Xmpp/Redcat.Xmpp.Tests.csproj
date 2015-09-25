@@ -66,6 +66,7 @@
     <Compile Include="Xml\ElementImpl.cs" />
     <Compile Include="Xml\ElementTestBase.cs" />
     <Compile Include="Xml\ElementTests.cs" />
+    <Compile Include="Xml\XmlElementTests.cs" />
     <Compile Include="Xml\XmlUtils.cs" />
     <Compile Include="XmppStreamReaderTests.cs" />
     <Compile Include="XmppStreamWriterTests.cs" />
