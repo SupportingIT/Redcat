@@ -158,6 +158,7 @@ namespace Redcat.Xmpp.Xml
     {
         private string name;
         private IDictionary<string, object> attributes;
+        private ICollection<XmlElement> childs;
 
         public XmlElement(string name, string xmlns = null)
         {
@@ -187,6 +188,26 @@ namespace Redcat.Xmpp.Xml
         }
 
         public object Value { get; set; }
+
+        public ICollection<XmlElement> Childs
+        {
+            get { return childs ?? (childs = CreateChildsCollection()); }
+        }
+
+        public bool HasChilds
+        {
+            get { return childs != null && childs.Count > 0; }
+        }
+
+        public bool HasContent
+        {
+            get { return HasChilds || Value != null; }
+        }
+
+        private ICollection<XmlElement> CreateChildsCollection()
+        {
+            return new List<XmlElement>();
+        }
 
         public T GetAttributeValue<T>(string name)
         {

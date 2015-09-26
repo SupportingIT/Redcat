@@ -73,6 +73,23 @@ namespace Redcat.Xmpp.Tests
             Assert.That(actualElement.Value, Is.EqualTo("Some-Value"));
         }
 
+        [Test]
+        public void Correctly_Writes_Child_Elements()
+        {
+            XmppStreamWriter writer = CreateStreamWriter();
+            XmlElement rootElement = new XmlElement("root");
+            XmlElement element1 = new XmlElement("element1") { Value = "value1" };
+            XmlElement element2 = new XmlElement("element2") { Value = "value2" };
+            rootElement.Childs.Add(element1);
+            rootElement.Childs.Add(element2);
+
+            writer.Write(rootElement);
+
+            XElement actualElement = XElement.Parse(stringBuilder.ToString());
+            Assert.That(actualElement.Element("element1").Value, Is.EqualTo("value1"));
+            Assert.That(actualElement.Element("element2").Value, Is.EqualTo("value2"));
+        }
+
         private XmppStreamWriter CreateStreamWriter()
         {
             TextWriter writer = new StringWriter(stringBuilder);
