@@ -83,7 +83,7 @@ namespace Redcat.Xmpp
         public static XmppStreamReader CreateReader(Stream stream)
         {
             XmppStreamReader reader = new XmppStreamReader(stream);
-            reader.Parsers.Add(new StreamHeaderParser());
+            //reader.Parsers.Add(new StreamHeaderParser());
             return reader;
         }
     }

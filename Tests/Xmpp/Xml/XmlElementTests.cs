@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using Redcat.Xmpp.Xml;
+using System.Collections.Generic;
+using System;
 
 namespace Redcat.Xmpp.Tests.Xml
 {
@@ -51,6 +53,39 @@ namespace Redcat.Xmpp.Tests.Xml
             foreach (var attribute in expectedAttributes) element.SetAttributeValue(attribute.Name, attribute.Value);
             
             Assert.That(element.Attributes, Is.EquivalentTo(expectedAttributes));
+        }
+
+        [Test]
+        public void ForEachAttribute_Iterates_Over_Each_Attribute()
+        {
+            Dictionary<string, object> expectedAttributes = new Dictionary<string, object>{ { "value1", 1}, { "value2", "value" } };
+            XmlElement element = new XmlElement("element");
+            foreach (var attribute in expectedAttributes) element.SetAttributeValue(attribute.Key, attribute.Value);
+            Dictionary<string, object> actualAttributes = new Dictionary<string, object>();
+
+            element.ForEachAttribute((n, v) => actualAttributes.Add(n, v));
+
+            Assert.That(actualAttributes, Is.EquivalentTo(expectedAttributes));
+        }
+
+        [Test]
+        public void GetAttributeValue_Returns_Default_Value_If_Existed_Value_Type_Differend()
+        {
+            XmlElement element = new XmlElement("element");
+            element.SetAttributeValue("attr", "value");
+
+            Assert.That(element.GetAttributeValue<int>("attr"), Is.EqualTo(0));
+            Assert.That(element.GetAttributeValue<Delegate>("attr"), Is.EqualTo(null));
+        }
+
+        [Test]
+        public void GetAttributeValue_Returns_Correct_Attribute_Value()
+        {
+            XmlElement element = new XmlElement("element");
+            Guid value = Guid.NewGuid();
+            element.SetAttributeValue("attr", value);
+
+            Assert.That(element.GetAttributeValue<Guid>("attr"), Is.EqualTo(value));
         }
     }
 }

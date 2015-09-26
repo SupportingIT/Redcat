@@ -190,7 +190,7 @@ namespace Redcat.Xmpp.Xml
 
         public T GetAttributeValue<T>(string name)
         {
-            if (!attributes.ContainsKey(name)) return default(T);
+            if (!attributes.ContainsKey(name) || !(attributes[name] is T)) return default(T);
             return (T)attributes[name];
         }
 
@@ -201,7 +201,7 @@ namespace Redcat.Xmpp.Xml
 
         public void ForEachAttribute(Action<string, object> attributeAction)
         {
-            throw new NotImplementedException();
+            foreach (var attribute in attributes) attributeAction(attribute.Key, attribute.Value);
         }
     }
 
