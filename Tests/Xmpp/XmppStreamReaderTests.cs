@@ -104,13 +104,13 @@ namespace Redcat.Xmpp.Tests
         public void Returns_Parsed_Element()
         {
             IElementParser parser = A.Fake<IElementParser>();
-            Element element = A.Fake<Element>();
+            XmlElement element = A.Fake<XmlElement>();
             XmppStreamReader reader = CreateReader("<element01>val</element01>", parser);
 
             A.CallTo(() => parser.ParsedElement).Returns(element);
             A.CallTo(() => parser.CanParse(A<string>.Ignored)).Returns(true);
 
-            Element parsedElement = reader.Read();
+            XmlElement parsedElement = reader.Read();
             
             Assert.That(element, Is.SameAs(parsedElement));
         }

@@ -32,7 +32,7 @@ namespace Redcat.Xmpp
             get { return stream; }
         }
 
-        public Element Read()
+        public XmlElement Read()
         {
             xmlReader.Read();
             var parser = GetInitializedParser();

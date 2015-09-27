@@ -5,7 +5,7 @@ using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp.Parsing
 {
-    public class DelegateParser<T> : IElementParser where T : Element
+    public class DelegateParser<T> : IElementParser where T : XmlElement
     {
         private IDictionary<string, Action<ParsingContext>> attributeBuilders;
         private IDictionary<string, Action<ParsingContext>> nodeBuilders;
@@ -25,7 +25,7 @@ namespace Redcat.Xmpp.Parsing
         {
             get { return attributeBuilders; } }
 
-        public Element ParsedElement
+        public XmlElement ParsedElement
         {
             get { return context.Element; }
         }

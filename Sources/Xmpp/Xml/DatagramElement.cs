@@ -1,48 +1,33 @@
-﻿using System.Xml;
-
-namespace Redcat.Xmpp.Xml
+﻿namespace Redcat.Xmpp.Xml
 {
-    public abstract class DatagramElement : CompositeElement
+    public class DatagramElement : XmlElement
     {
-        protected DatagramElement(string name) : base(name)
+        public DatagramElement(string name, string xmlns = null) : base(name, xmlns)
         {
         }
 
         public object Id 
         {
-            get { return GetAttributeValue("id"); }
+            get { return GetAttributeValue<object>("id"); }
             set { SetAttributeValue("id", value); } 
         }
 
         public JID From
         {
-            get { return (JID) GetAttributeValue("from"); }
+            get { return GetAttributeValue<JID>("from"); }
             set { SetAttributeValue("from", value); }
         }
 
         public JID To
         {
-            get { return (JID) GetAttributeValue("to"); }
+            get { return GetAttributeValue<JID>("to"); }
             set { SetAttributeValue("to", value); }
         }
 
-        public string XmlLang { get; set; }
-
-        protected override void WriteAttributes(XmlWriter writer)
+        public string XmlLang
         {
-            base.WriteAttributes(writer);
-            if (!string.IsNullOrEmpty(XmlLang)) writer.WriteAttributeString("xml", "lang", null, XmlLang);
-        }
-
-        public override bool Equals(object obj)
-        {
-            DatagramElement element = obj as DatagramElement;
-            return Equals(element);
-        }
-
-        public bool Equals(DatagramElement element)
-        {
-            return base.Equals(element) && AreValuesEquals(XmlLang, element.XmlLang);
+            get { return GetAttributeValue<string>("xml:lang"); }
+            set { SetAttributeValue("xml:lang", value); }
         }
     }
 }

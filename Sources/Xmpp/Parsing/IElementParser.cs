@@ -6,7 +6,7 @@ namespace Redcat.Xmpp.Parsing
     {
         bool CanParse(string elementName);
 
-        Element ParsedElement { get; }
+        XmlElement ParsedElement { get; }
 
         void AddAttribute(string name, string value);
 

@@ -20,10 +20,7 @@ namespace Redcat.Xmpp.Services
             //writer.Write("<?xml version='1.0' ?>");
             //writer.Write("<stream:stream to='redcat' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0' />");
 
-            XmppStreamReader reader = XmppStreamReader.CreateReader(stream);
-            StreamHeader header = reader.Read() as StreamHeader;
-
-            Element features = reader.Read();
+            XmppStreamReader reader = XmppStreamReader.CreateReader(stream);            
         }
 
         public override Message Receive()
