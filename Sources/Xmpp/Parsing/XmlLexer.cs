@@ -20,10 +20,14 @@ namespace Redcat.Xmpp.Parsing
             return tokens.Cast<Match>().Select(m => new XmlToken(m.Value, GetTokenType(m.Value)));
         }
 
+        public static IDictionary<string, string> GetTagAttributes(XmlToken token)
+        {
+            throw new NotImplementedException();
+        }
+
         public static string GetTagName(XmlToken token)
         {
-            var match = Regex.Match(token.Text, @"\<\w+").Value;
-            return match.Substring(1, match.Length - 1);
+            return Regex.Match(token.Text, @"\w+").Value;
         }
 
         private static XmlTokenType GetTokenType(string token)

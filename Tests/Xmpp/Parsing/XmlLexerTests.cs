@@ -7,19 +7,12 @@ namespace Redcat.Xmpp.Tests.Parsing
     [TestFixture]
     public class XmlLexerTests
     {
-        [Test]
-        public void GetTokens_Correctly_Parses_Enclosed_Tag()
-        {
-            VerifyEnclosingTagParsing("<element />");
-        }
+        private string[] enclosedTags = { "<element />", "<element attr1='val0' attr2='val' />" };
+        private string[] elementsWithValue = { "<node>Value</node>", "<node attr1='val0' attr2='val'>Value</node>" };
+        private string[] tagsForGetTagName = { @"<kitty />", @"<kitty>", @"<kitty attr1='val1' attr0='val0'>" };
 
         [Test]
-        public void GetTokens_Correctly_Parses_Enclosed_Tag_With_Attributes()
-        {
-            VerifyEnclosingTagParsing("<element attr1='val0' attr2='val' />");
-        }
-
-        private void VerifyEnclosingTagParsing(string tag)
+        public void GetTokens_Correctly_Parses_Enclosed_Tag([ValueSource("enclosedTags")]string tag)
         {
             var tokens = XmlLexer.GetTokens(tag).ToArray();
             Assert.That(tokens.Length, Is.EqualTo(1));
@@ -27,18 +20,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         }
 
         [Test]
-        public void GetTokens_Correctly_Parses_Element_With_Value()
-        {
-            VerifyElementWithValueParsing("<node>Value</node>");
-        }
-
-        [Test]
-        public void GetTokens_Correctly_Parses_Element_With_Attributes_And_Value()
-        {
-            VerifyElementWithValueParsing("<node attr1='val0' attr2='val'>Value</node>");
-        }
-
-        private void VerifyElementWithValueParsing(string element)
+        public void GetTokens_Correctly_Parses_Element_With_Value([ValueSource("elementsWithValue")]string element)
         {
             var tokens = XmlLexer.GetTokens(element).ToArray();
 
@@ -50,7 +32,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         }
 
         [Test]
-        public void GetTagName_Returns_Tag_Name([Values(@"<kitty />", @"<kitty>", @"<kitty attr1='val1' attr0='val0'>")]string tag)
+        public void GetTagName_Returns_Tag_Name([ValueSource("tagsForGetTagName")]string tag)
         {
             XmlToken token = XmlLexer.GetTokens(tag).Single();
 
