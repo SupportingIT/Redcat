@@ -7,12 +7,12 @@ namespace Redcat.Xmpp.Parsing
 {
     public static class XmlLexer
     {
-        public static readonly string XmlEnclosedTagRegex = @"\<\w[\s|\S]*\/\>";
-        public static readonly string XmlStartTagRegex = @"\<\w+[\s|\S]*\>";
-        public static readonly string XmlClosingTagRegex = @"\<\/\w+\>";
-        public static readonly string XmlValueRegex = @"[^\<\>\/]+";
-        public static readonly string XmlElementWithValueRegex = string.Format(@"({0}\b)|({1})|({2})", XmlStartTagRegex, XmlValueRegex, XmlClosingTagRegex);
-        public static readonly string GenericXmlElementRegex = string.Format("({0})|({1})", XmlEnclosedTagRegex, XmlElementWithValueRegex);
+        private static readonly string XmlEnclosedTagRegex = @"\<[\w-\:]+[^\<\>\/]*\/\>";
+        private static readonly string XmlStartTagRegex = @"\<[\w-\:]+[^\<\>\/]*\>";
+        private static readonly string XmlClosingTagRegex = @"\<\/\s*\w+\>";
+        private static readonly string XmlValueRegex = @"[^\<\>\/]+";
+        private static readonly string WhitespaceRegex = @"[\s\t]+";
+        private static readonly string GenericXmlElementRegex = string.Format(@"({0})|({1})|({2})|({3})", XmlStartTagRegex, XmlClosingTagRegex, XmlEnclosedTagRegex, XmlValueRegex);
 
         private static readonly string XmlAttributeRegex = @"[\w-\:]+=('|"")[\w-\:]*\1";
 
@@ -37,12 +37,33 @@ namespace Redcat.Xmpp.Parsing
             return Regex.Match(token.Text, @"[\w-\:]+").Value;
         }
 
-        private static XmlTokenType GetTokenType(string token)
+        public static XmlTokenType GetTokenType(string token)
         {
-            if (Regex.IsMatch(token, XmlEnclosedTagRegex)) return XmlTokenType.EnclosedTag;
-            if (Regex.IsMatch(token, XmlStartTagRegex)) return XmlTokenType.StartTag;
-            if (Regex.IsMatch(token, XmlClosingTagRegex)) return XmlTokenType.ClosingTag;
+            if (IsEnclosedTag(token)) return XmlTokenType.EnclosedTag;
+            if (IsStartTag(token)) return XmlTokenType.StartTag;
+            if (IsClosingTag(token)) return XmlTokenType.ClosingTag;
+            if (IsWhitespace(token)) return XmlTokenType.Whitespace;
             return XmlTokenType.Value;
+        }
+
+        public static bool IsEnclosedTag(string token)
+        {
+            return Regex.IsMatch(token, XmlEnclosedTagRegex);
+        }
+
+        public static bool IsStartTag(string token)
+        {
+            return Regex.IsMatch(token, XmlStartTagRegex);
+        }
+
+        public static bool IsClosingTag(string token)
+        {
+            return Regex.IsMatch(token, XmlClosingTagRegex);
+        }
+
+        public static bool IsWhitespace(string token)
+        {
+            return token.Trim().Length == 0;
         }
     }
 
@@ -66,6 +87,11 @@ namespace Redcat.Xmpp.Parsing
         {
             get { return type; }
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}[{1}]", Text, Type);
+        }
     }
 
     public enum XmlTokenType
@@ -73,6 +99,7 @@ namespace Redcat.Xmpp.Parsing
         EnclosedTag,
         StartTag,
         ClosingTag,
-        Value
+        Value,
+        Whitespace
     }
 }

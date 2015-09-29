@@ -33,6 +33,42 @@ namespace Redcat.Xmpp.Tests.Parsing
             Assert.That(tokens[2].Type, Is.EqualTo(XmlTokenType.ClosingTag));
         }
 
+        [Test]
+        public void GetTokens_Correctly_Parses_Element_With_Childs()
+        {
+            string element = @"<root ><child1 /><child2>Fer kol</ child0><child3 atr=""1"" art='rtr'/></root>";
+
+            var tokens = XmlLexer.GetTokens(element).ToArray();
+
+            Assert.That(tokens.Length, Is.EqualTo(7));
+            AssertToken(tokens[0], XmlTokenType.StartTag, "root");
+            AssertToken(tokens[1], XmlTokenType.EnclosedTag, "child1");
+            AssertToken(tokens[2], XmlTokenType.StartTag, "child2");
+            AssertToken(tokens[3], XmlTokenType.Value, "Fer kol");
+            AssertToken(tokens[4], XmlTokenType.ClosingTag, "child0");
+            AssertToken(tokens[5], XmlTokenType.EnclosedTag, "child3");
+            AssertToken(tokens[6], XmlTokenType.ClosingTag, "root");
+        }
+
+        private void AssertToken(XmlToken token, XmlTokenType type, string nameOrValue)
+        {
+            Assert.That(token.Type, Is.EqualTo(type));
+            if (token.Type != XmlTokenType.Value) Assert.That(XmlLexer.GetTagName(token), Is.EqualTo(nameOrValue));
+            else Assert.That(token.Text, Is.EqualTo(nameOrValue));
+        }
+
+        [Test]
+        public void GetTokens_Correctly_Parses_Whitespaces()
+        {
+            string xml = @"\t<element/>\n <a>Val</a> ";
+
+            var tokens = XmlLexer.GetTokens(xml).ToArray();
+
+            Assert.That(tokens[0].Type, Is.EqualTo(XmlTokenType.Whitespace));
+            Assert.That(tokens[2].Type, Is.EqualTo(XmlTokenType.Whitespace));
+            Assert.That(tokens[6].Type, Is.EqualTo(XmlTokenType.Whitespace));
+        }
+
         private Tuple<string, string>[] dataForGetTagName =
         {
             new Tuple<string, string>(@"<kitty />", "kitty"), 
