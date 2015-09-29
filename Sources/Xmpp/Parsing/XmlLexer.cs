@@ -63,7 +63,7 @@ namespace Redcat.Xmpp.Parsing
 
         public static bool IsWhitespace(string token)
         {
-            return token.Trim().Length == 0;
+            return Regex.IsMatch(token, WhitespaceRegex);
         }
     }
 

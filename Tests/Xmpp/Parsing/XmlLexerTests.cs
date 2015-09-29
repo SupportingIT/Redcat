@@ -60,7 +60,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         [Test]
         public void GetTokens_Correctly_Parses_Whitespaces()
         {
-            string xml = @"\t<element/>\n <a>Val</a> ";
+            string xml = "\t<element/>\n <a>Val</a> ";
 
             var tokens = XmlLexer.GetTokens(xml).ToArray();
 
