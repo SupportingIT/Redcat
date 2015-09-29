@@ -14,20 +14,27 @@ namespace Redcat.Xmpp.Parsing
         public static readonly string XmlElementWithValueRegex = string.Format(@"({0}\b)|({1})|({2})", XmlStartTagRegex, XmlValueRegex, XmlClosingTagRegex);
         public static readonly string GenericXmlElementRegex = string.Format("({0})|({1})", XmlEnclosedTagRegex, XmlElementWithValueRegex);
 
+        private static readonly string XmlAttributeRegex = @"[\w-\:]+=('|"")[\w-\:]*\1";
+
         public static IEnumerable<XmlToken> GetTokens(string xmlFragment)
         {
             var tokens = Regex.Matches(xmlFragment, GenericXmlElementRegex);
             return tokens.Cast<Match>().Select(m => new XmlToken(m.Value, GetTokenType(m.Value)));
         }
 
-        public static IDictionary<string, string> GetTagAttributes(XmlToken token)
+        public static IEnumerable<Tuple<string, string>> GetTagAttributes(XmlToken token)
         {
-            throw new NotImplementedException();
+            var attributes = Regex.Matches(token.Text, XmlAttributeRegex).Cast<Match>().Select(m => m.Value).ToArray();
+            return attributes.Select(a =>
+            {
+                var attr = a.Split('=');
+                return new Tuple<string, string>(attr[0], Regex.Match(attr[1], @"[^""']+").Value);
+            });
         }
 
         public static string GetTagName(XmlToken token)
         {
-            return Regex.Match(token.Text, @"\w+").Value;
+            return Regex.Match(token.Text, @"[\w-\:]+").Value;
         }
 
         private static XmlTokenType GetTokenType(string token)
