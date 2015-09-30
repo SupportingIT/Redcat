@@ -44,7 +44,7 @@
     <Compile Include="JID.cs" />
     <Compile Include="Parsing\DelegateParser.cs" />
     <Compile Include="Parsing\DelegateParserExtensions.cs" />
-    <Compile Include="Parsing\IElementParser.cs" />
+    <Compile Include="Parsing\IXmlElementBuilder.cs" />
     <Compile Include="Parsing\XmlLexer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\XmppChannelFactory.cs" />

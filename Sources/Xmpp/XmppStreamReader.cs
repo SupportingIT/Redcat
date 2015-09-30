@@ -4,85 +4,106 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 
 namespace Redcat.Xmpp
 {
     public class XmppStreamReader
     {
-        private ICollection<IElementParser> parsers;
-        private Stream stream;
-        private XmlReader xmlReader;
+        private ICollection<IXmlElementBuilder> builders;
+        private TextReader reader;
 
-        public XmppStreamReader(Stream stream)
+        private XmppStreamReader()
         {
-            if (stream == null) throw new ArgumentNullException("stream");
-            this.stream = stream;
-            parsers = new List<IElementParser>();
-            xmlReader = XmlReader.Create(stream);
+            builders = new List<IXmlElementBuilder>();
         }
 
-        public ICollection<IElementParser> Parsers
+        public XmppStreamReader(TextReader reader) : this()
         {
-            get { return parsers; }
+            if (reader == null) throw new ArgumentNullException();
+            this.reader = reader;
         }
 
-        public Stream Stream
+        public ICollection<IXmlElementBuilder> Builders
         {
-            get { return stream; }
+            get { return builders; }
         }
 
         public XmlElement Read()
         {
-            xmlReader.Read();
-            var parser = GetInitializedParser();
-            ParseAttributes(parser);
-            ParseContent(parser);
-
-            return parser.ParsedElement;
+            var tokens = ReadXmlTokens();
+            var builder = GetBuilder(tokens[0]);
+            BuildElement(builder, tokens);
+            return builder.Element;
         }
 
-        private void ParseContent(IElementParser parser)
+        private XmlToken[] ReadXmlTokens()
         {
-            while (xmlReader.Read())
-            {                
-                if (xmlReader.NodeType == XmlNodeType.Text) parser.SetNodeValue(xmlReader.Value);
-                if (xmlReader.NodeType == XmlNodeType.Element)
-                {
-                    parser.StartNode(xmlReader.Name);
-                    ParseAttributes(parser);                    
-                }
-                if (xmlReader.Name == "stream:stream") break;
-                if (xmlReader.NodeType == XmlNodeType.EndElement)
-                {
-                    parser.EndNode();
-                    break;
-                }
-            }
+            string xml = reader.ReadToEnd();
+            return XmlLexer.GetTokens(xml).ToArray();
         }
 
-        private IElementParser GetInitializedParser()
+        private IXmlElementBuilder GetBuilder(XmlToken token)
         {
-            var parser = parsers.FirstOrDefault(p => p.CanParse(xmlReader.Name));
-            if (parser == null) throw new InvalidOperationException("No parsers for element " + xmlReader.Name);
-            parser.NewElement(xmlReader.Name);
-            return parser;
+            string name = XmlLexer.GetTagName(token);
+            var builder = builders.FirstOrDefault(b => b.CanParse(name));
+            if (builder == null) throw new InvalidOperationException("No builders for element " + name);
+            return builder;
         }
 
-        private void ParseAttributes(IElementParser parser)
+        private void BuildElement(IXmlElementBuilder builder, XmlToken[] tokens)
         {
-            if (xmlReader.HasAttributes)
+            string elementName = XmlLexer.GetTagName(tokens[0]);
+            builder.NewElement(elementName);
+            BuildAttributes(builder, tokens[0]);
+            BuildElementContent(builder, tokens);
+        }
+
+        private void BuildElementContent(IXmlElementBuilder builder, XmlToken[] tokens)
+        {
+            foreach (var token in tokens.Skip(1))
             {
-                xmlReader.MoveToFirstAttribute();
-                do parser.AddAttribute(xmlReader.Name, xmlReader.Value);
-                while (xmlReader.MoveToNextAttribute());
-                xmlReader.MoveToElement();
+                if (IsStartOrEnclosedTag(token)) BuildStartNode(builder, token);
+                if (IsValue(token)) builder.SetNodeValue(token.Text);
+                if (IsClosingOrEnclosedTag(token)) builder.EndNode();
             }
+        }
+
+        private bool IsValue(XmlToken token)
+        {
+            return token.Type == XmlTokenType.Value;
+        }
+
+        private bool IsClosingOrEnclosedTag(XmlToken token)
+        {
+            return token.Type == XmlTokenType.ClosingTag || token.Type == XmlTokenType.EnclosedTag;
+        }
+
+        private void BuildStartNode(IXmlElementBuilder builder, XmlToken token)
+        {
+            string name = XmlLexer.GetTagName(token);
+            builder.StartNode(name);
+            BuildAttributes(builder, token);
+        }
+
+        private void BuildAttributes(IXmlElementBuilder builder, XmlToken token)
+        {
+            if (!IsStartOrEnclosedTag(token)) return;
+
+            var attributes = XmlLexer.GetTagAttributes(token);
+            foreach (var attribute in attributes)
+            {
+                builder.AddAttribute(attribute.Item1, attribute.Item2);
+            }
+        }
+
+        private bool IsStartOrEnclosedTag(XmlToken token)
+        {
+            return token.Type == XmlTokenType.StartTag || token.Type == XmlTokenType.EnclosedTag;
         }
 
         public static XmppStreamReader CreateReader(Stream stream)
         {
-            XmppStreamReader reader = new XmppStreamReader(stream);
+            XmppStreamReader reader = new XmppStreamReader();
             //reader.Parsers.Add(new StreamHeaderParser());
             return reader;
         }

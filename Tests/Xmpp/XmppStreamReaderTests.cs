@@ -12,10 +12,10 @@ namespace Redcat.Xmpp.Tests
     public class XmppStreamReaderTests
     {
         [Test]
-        public void Uses_Correct_Parser_For_Xml_Element()
+        public void Uses_Correct_Builder_For_Xml_Element()
         {
-            IElementParser parser1 = A.Fake<IElementParser>();
-            IElementParser parser2 = A.Fake<IElementParser>();
+            IXmlElementBuilder parser1 = A.Fake<IXmlElementBuilder>();
+            IXmlElementBuilder parser2 = A.Fake<IXmlElementBuilder>();
 
             A.CallTo(() => parser1.CanParse("element2")).Returns(false);
             A.CallTo(() => parser2.CanParse("element2")).Returns(true);
@@ -27,9 +27,9 @@ namespace Redcat.Xmpp.Tests
         }
 
         [Test]
-        public void Correctly_Parses_Xml_Attributes()
+        public void Correctly_Builds_Xml_Attributes()
         {
-            IElementParser parser = A.Fake<IElementParser>();
+            IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
             A.CallTo(() => parser.CanParse("element")).Returns(true);
 
             CreateAndRunReader("<element attribute1='value1' attribute2='value2' />", parser);
@@ -40,9 +40,9 @@ namespace Redcat.Xmpp.Tests
 
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void Throws_Exception_If_No_Parsers_For_Element()
+        public void Throws_Exception_If_No_Builders_For_Element()
         {
-            IElementParser parser = A.Fake<IElementParser>();
+            IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
             A.CallTo(() => parser.CanParse("element1")).Returns(true);
 
             CreateAndRunReader("<element2></element2>", parser);
@@ -51,7 +51,7 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void Set_Correct_Node_Value()
         {
-            IElementParser parser = A.Fake<IElementParser>();
+            IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
             A.CallTo(() => parser.CanParse("element")).Returns(true);
 
             CreateAndRunReader("<element>value0</element>", parser);
@@ -60,10 +60,10 @@ namespace Redcat.Xmpp.Tests
         }
 
         [Test]
-        public void Correctly_Parses_Attributes_For_Inner_Elements()
+        public void Correctly_Builds_Attributes_For_Inner_Elements()
         {
-            IElementParser parser = A.Fake<IElementParser>();
-            A.CallTo(() => parser.CanParse(A<string>.Ignored)).Returns(true);
+            IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
+            A.CallTo(() => parser.CanParse(A<string>._)).Returns(true);
 
             CreateAndRunReader(@"<root>
                                     <child1 attr1='value1' />
@@ -82,7 +82,7 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void Correctly_Set_Values_And_Attributes_For_Inner_Elements()
         {
-            IElementParser parser = A.Fake<IElementParser>();
+            IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
             A.CallTo(() => parser.CanParse(A<string>.Ignored)).Returns(true);
 
             CreateAndRunReader(@"<root>
@@ -101,13 +101,13 @@ namespace Redcat.Xmpp.Tests
         }
 
         [Test]
-        public void Returns_Parsed_Element()
+        public void Returns_Builded_Element()
         {
-            IElementParser parser = A.Fake<IElementParser>();
+            IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
             XmlElement element = A.Fake<XmlElement>();
             XmppStreamReader reader = CreateReader("<element01>val</element01>", parser);
 
-            A.CallTo(() => parser.ParsedElement).Returns(element);
+            A.CallTo(() => parser.Element).Returns(element);
             A.CallTo(() => parser.CanParse(A<string>.Ignored)).Returns(true);
 
             XmlElement parsedElement = reader.Read();
@@ -115,25 +115,25 @@ namespace Redcat.Xmpp.Tests
             Assert.That(element, Is.SameAs(parsedElement));
         }
 
-        private XmppStreamReader CreateAndRunReader(string xml, params IElementParser[] parsers)
+        private XmppStreamReader CreateAndRunReader(string xml, params IXmlElementBuilder[] parsers)
         {
             XmppStreamReader reader = CreateReader(xml, parsers);
             reader.Read();
             return reader;
         }
 
-        private XmppStreamReader CreateReader(string xml, params IElementParser[] parsers)
+        private XmppStreamReader CreateReader(string xml, params IXmlElementBuilder[] parsers)
         {
             Stream stream = CreateStream(xml);
-            XmppStreamReader reader = new XmppStreamReader(stream);
-            foreach (var parser in parsers) reader.Parsers.Add(parser);
+            XmppStreamReader reader = new XmppStreamReader(new StreamReader(stream, Encoding.UTF8));
+            foreach (var parser in parsers) reader.Builders.Add(parser);
             return reader;
         }
 
         private Stream CreateStream(string content)
         {
             MemoryStream stream = new MemoryStream();
-            byte[] bytes = Encoding.Unicode.GetBytes(content);
+            byte[] bytes = Encoding.UTF8.GetBytes(content);
             stream.Write(bytes, 0, bytes.Length);
             stream.Seek(0, SeekOrigin.Begin);
             return stream;

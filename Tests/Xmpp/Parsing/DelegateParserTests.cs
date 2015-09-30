@@ -23,7 +23,7 @@ namespace Redcat.Xmpp.Tests.Parsing
 
             parser.NewElement(expectedElementName);
 
-            Assert.That(parser.ParsedElement, Is.SameAs(xmlElement));
+            Assert.That(parser.Element, Is.SameAs(xmlElement));
             Assert.That(actualElementName, Is.EqualTo(expectedElementName));
         }
 
