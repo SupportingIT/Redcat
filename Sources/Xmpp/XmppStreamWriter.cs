@@ -23,6 +23,11 @@ namespace Redcat.Xmpp
             this.writer = writer;
         }
 
+        public void Write(string xml)
+        {
+            writer.Write(xml);
+        }
+
         public void Write(XmlElement element)
         {
             WriteElementStart(element.Name);

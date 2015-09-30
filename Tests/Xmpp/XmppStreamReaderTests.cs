@@ -17,12 +17,12 @@ namespace Redcat.Xmpp.Tests
             IXmlElementBuilder parser1 = A.Fake<IXmlElementBuilder>();
             IXmlElementBuilder parser2 = A.Fake<IXmlElementBuilder>();
 
-            A.CallTo(() => parser1.CanParse("element2")).Returns(false);
-            A.CallTo(() => parser2.CanParse("element2")).Returns(true);
+            A.CallTo(() => parser1.CanBuild("element2")).Returns(false);
+            A.CallTo(() => parser2.CanBuild("element2")).Returns(true);
 
             CreateAndRunReader("<element2></element2>", parser1, parser2);
                         
-            A.CallTo(() => parser2.CanParse("element2")).MustHaveHappened();
+            A.CallTo(() => parser2.CanBuild("element2")).MustHaveHappened();
             A.CallTo(() => parser2.NewElement("element2")).MustHaveHappened();
         }
 
@@ -30,7 +30,7 @@ namespace Redcat.Xmpp.Tests
         public void Correctly_Builds_Xml_Attributes()
         {
             IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
-            A.CallTo(() => parser.CanParse("element")).Returns(true);
+            A.CallTo(() => parser.CanBuild("element")).Returns(true);
 
             CreateAndRunReader("<element attribute1='value1' attribute2='value2' />", parser);
 
@@ -43,7 +43,7 @@ namespace Redcat.Xmpp.Tests
         public void Throws_Exception_If_No_Builders_For_Element()
         {
             IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
-            A.CallTo(() => parser.CanParse("element1")).Returns(true);
+            A.CallTo(() => parser.CanBuild("element1")).Returns(true);
 
             CreateAndRunReader("<element2></element2>", parser);
         }
@@ -52,7 +52,7 @@ namespace Redcat.Xmpp.Tests
         public void Set_Correct_Node_Value()
         {
             IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
-            A.CallTo(() => parser.CanParse("element")).Returns(true);
+            A.CallTo(() => parser.CanBuild("element")).Returns(true);
 
             CreateAndRunReader("<element>value0</element>", parser);
 
@@ -63,7 +63,7 @@ namespace Redcat.Xmpp.Tests
         public void Correctly_Builds_Attributes_For_Inner_Elements()
         {
             IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
-            A.CallTo(() => parser.CanParse(A<string>._)).Returns(true);
+            A.CallTo(() => parser.CanBuild(A<string>._)).Returns(true);
 
             CreateAndRunReader(@"<root>
                                     <child1 attr1='value1' />
@@ -83,7 +83,7 @@ namespace Redcat.Xmpp.Tests
         public void Correctly_Set_Values_And_Attributes_For_Inner_Elements()
         {
             IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
-            A.CallTo(() => parser.CanParse(A<string>.Ignored)).Returns(true);
+            A.CallTo(() => parser.CanBuild(A<string>.Ignored)).Returns(true);
 
             CreateAndRunReader(@"<root>
                                     <child1 attr0='val0'>value0</child1>
@@ -108,7 +108,7 @@ namespace Redcat.Xmpp.Tests
             XmppStreamReader reader = CreateReader("<element01>val</element01>", parser);
 
             A.CallTo(() => parser.Element).Returns(element);
-            A.CallTo(() => parser.CanParse(A<string>.Ignored)).Returns(true);
+            A.CallTo(() => parser.CanBuild(A<string>.Ignored)).Returns(true);
 
             XmlElement parsedElement = reader.Read();
             

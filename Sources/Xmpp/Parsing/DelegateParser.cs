@@ -45,7 +45,7 @@ namespace Redcat.Xmpp.Parsing
             nodeBuilders.Add(nodeName, valueBuilder);
         }
 
-        public bool CanParse(string elementName)
+        public bool CanBuild(string elementName)
         {
             return supportedElements.Any(s => string.CompareOrdinal(s, elementName) == 0);
         }

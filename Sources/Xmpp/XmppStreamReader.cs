@@ -4,17 +4,25 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Redcat.Xmpp
 {
     public class XmppStreamReader
     {
+        private static Encoding defaultEncoding = Encoding.UTF8;
         private ICollection<IXmlElementBuilder> builders;
         private TextReader reader;
 
         private XmppStreamReader()
         {
             builders = new List<IXmlElementBuilder>();
+        }
+
+        public XmppStreamReader(Stream stream) : this()
+        {
+            if (stream == null) throw new ArgumentNullException("steam");
+            reader = new StreamReader(stream, defaultEncoding);
         }
 
         public XmppStreamReader(TextReader reader) : this()
@@ -45,7 +53,7 @@ namespace Redcat.Xmpp
         private IXmlElementBuilder GetBuilder(XmlToken token)
         {
             string name = XmlLexer.GetTagName(token);
-            var builder = builders.FirstOrDefault(b => b.CanParse(name));
+            var builder = builders.FirstOrDefault(b => b.CanBuild(name));
             if (builder == null) throw new InvalidOperationException("No builders for element " + name);
             return builder;
         }
@@ -103,7 +111,7 @@ namespace Redcat.Xmpp
 
         public static XmppStreamReader CreateReader(Stream stream)
         {
-            XmppStreamReader reader = new XmppStreamReader();
+            XmppStreamReader reader = new XmppStreamReader(stream);
             //reader.Parsers.Add(new StreamHeaderParser());
             return reader;
         }

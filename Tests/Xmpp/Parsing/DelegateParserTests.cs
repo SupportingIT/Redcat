@@ -32,9 +32,9 @@ namespace Redcat.Xmpp.Tests.Parsing
         {
             DelegateParser<XmlElement> parser = new DelegateParser<XmlElement>(s => A.Fake<XmlElement>(), "elem", "e0");
 
-            Assert.That(parser.CanParse("elem"), Is.True);
-            Assert.That(parser.CanParse("element2"), Is.False);
-            Assert.That(parser.CanParse("e0"), Is.True);
+            Assert.That(parser.CanBuild("elem"), Is.True);
+            Assert.That(parser.CanBuild("element2"), Is.False);
+            Assert.That(parser.CanBuild("e0"), Is.True);
         }
 
         [Test]
