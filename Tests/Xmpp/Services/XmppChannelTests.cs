@@ -8,7 +8,7 @@ namespace Redcat.Xmpp.Tests.Services
     [TestFixture]
     public class XmppChannelTests
     {
-        [Test]
+        [Test, Ignore]
         public void Open_Sends_Stream_Headers()
         {            
             Assert.Fail();

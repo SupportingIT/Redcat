@@ -26,6 +26,7 @@ namespace Redcat.Xmpp
         public void Write(string xml)
         {
             writer.Write(xml);
+            writer.Flush();
         }
 
         public void Write(XmlElement element)
@@ -35,6 +36,7 @@ namespace Redcat.Xmpp
 
             if (element.HasContent) WriteContent(element);
             else writer.Write(" />");
+            writer.Flush();
         }
 
         private void WriteElementStart(string name)

@@ -5,23 +5,23 @@ using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp.Parsing
 {
-    public class DelegateParser<T> : IXmlElementBuilder where T : XmlElement
+    public class BuilderParser<T> : IXmlElementBuilder where T : XmlElement
     {
-        private IDictionary<string, Action<ParsingContext>> attributeBuilders;
-        private IDictionary<string, Action<ParsingContext>> nodeBuilders;
+        private IDictionary<string, Action<BuildingContext>> attributeBuilders;
+        private IDictionary<string, Action<BuildingContext>> nodeBuilders;
         private Func<string,T> createElement;
         private string[] supportedElements;
-        private ParsingContext context;
+        private BuildingContext context;
 
-        public DelegateParser(Func<string,T> createElementFunc, params string[] supportedElements)
+        public BuilderParser(Func<string,T> createElementFunc, params string[] supportedElements)
         {
-            attributeBuilders = new Dictionary<string, Action<ParsingContext>>();
+            attributeBuilders = new Dictionary<string, Action<BuildingContext>>();
             createElement = createElementFunc;
-            context = new ParsingContext();
+            context = new BuildingContext();
             this.supportedElements = supportedElements;
         }
 
-        public IDictionary<string, Action<ParsingContext>> AttributeBuilders
+        public IDictionary<string, Action<BuildingContext>> AttributeBuilders
         {
             get { return attributeBuilders; } }
 
@@ -39,9 +39,9 @@ namespace Redcat.Xmpp.Parsing
             context.AttributeName = context.AttributeValue = null;
         }
 
-        public void AddNodeBuilder(string nodeName, Action<ParsingContext> valueBuilder)
+        public void AddNodeBuilder(string nodeName, Action<BuildingContext> valueBuilder)
         {
-            if (nodeBuilders == null) nodeBuilders = new Dictionary<string, Action<ParsingContext>>();
+            if (nodeBuilders == null) nodeBuilders = new Dictionary<string, Action<BuildingContext>>();
             nodeBuilders.Add(nodeName, valueBuilder);
         }
 
@@ -73,9 +73,9 @@ namespace Redcat.Xmpp.Parsing
             context.NodeName = name;
         }
 
-        public class ParsingContext
+        public class BuildingContext
         {
-            internal ParsingContext() { }
+            internal BuildingContext() { }
 
             public T Element { get; internal set; }
 

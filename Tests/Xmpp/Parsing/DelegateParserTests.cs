@@ -15,7 +15,7 @@ namespace Redcat.Xmpp.Tests.Parsing
             XmlElement xmlElement = A.Fake<XmlElement>();
             string expectedElementName = "elem";
             string actualElementName = null;
-            DelegateParser<XmlElement> parser = new DelegateParser<XmlElement>(e => 
+            BuilderParser<XmlElement> parser = new BuilderParser<XmlElement>(e => 
             {
                 actualElementName = e;
                 return xmlElement;
@@ -30,7 +30,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         [Test]
         public void CanParse_Returns_Correct_Result()
         {
-            DelegateParser<XmlElement> parser = new DelegateParser<XmlElement>(s => A.Fake<XmlElement>(), "elem", "e0");
+            BuilderParser<XmlElement> parser = new BuilderParser<XmlElement>(s => A.Fake<XmlElement>(), "elem", "e0");
 
             Assert.That(parser.CanBuild("elem"), Is.True);
             Assert.That(parser.CanBuild("element2"), Is.False);
@@ -41,7 +41,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         public void AddAttribute_Correctly_Calls_Attribute_Builder()
         {
             XmlElement actualElement = null, expectedElement = A.Fake<XmlElement>();
-            DelegateParser<XmlElement> parser = new DelegateParser<XmlElement>(s => expectedElement);
+            BuilderParser<XmlElement> parser = new BuilderParser<XmlElement>(s => expectedElement);
             string actualAttrName = null, expectedAttrName = "Attr8";
             string actualAttrValue = null, expectedAttrValue = "value08";
             
@@ -64,14 +64,14 @@ namespace Redcat.Xmpp.Tests.Parsing
         [ExpectedException(typeof(InvalidOperationException))]
         public void AddAttribute_Throws_Exception_If_NoElements_Created()
         {
-            DelegateParser<XmlElement> parser = new DelegateParser<XmlElement>(s => null);
+            BuilderParser<XmlElement> parser = new BuilderParser<XmlElement>(s => null);
             parser.AddAttribute("name", "value");
         }
 
         [Test]
         public void AddAttribute_Does_Nothing_If_No_Attribute_Builders_For_Attribute_Name()
         {
-            DelegateParser<XmlElement> parser = new DelegateParser<XmlElement>(s => A.Fake<XmlElement>());
+            BuilderParser<XmlElement> parser = new BuilderParser<XmlElement>(s => A.Fake<XmlElement>());
             parser.NewElement("");
             parser.AddAttribute("name", "value");
         }
@@ -80,7 +80,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         [ExpectedException(typeof(InvalidOperationException))]
         public void SetNodeValue_Thorow_Exception_If_StartNode_Havent_Been_called_Before()
         {
-            var parser = new DelegateParser<XmlElement>(s => A.Fake<XmlElement>());
+            var parser = new BuilderParser<XmlElement>(s => A.Fake<XmlElement>());
             parser.NewElement("");
             parser.SetNodeValue("value");
         }
@@ -89,7 +89,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         [ExpectedException(typeof(InvalidOperationException))]
         public void SetNodeValue_Throws_Exception_If_Called_After_EndNode()
         {
-            var parser = new DelegateParser<XmlElement>(s => A.Fake<XmlElement>());
+            var parser = new BuilderParser<XmlElement>(s => A.Fake<XmlElement>());
             parser.NewElement("");
             parser.StartNode("node");
             parser.EndNode();
@@ -99,7 +99,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         [Test]
         public void SetNodeValue_Does_Nothing_If_No_NodeBuilders()
         {
-            var parser = new DelegateParser<XmlElement>(s => A.Fake<XmlElement>());
+            var parser = new BuilderParser<XmlElement>(s => A.Fake<XmlElement>());
             parser.NewElement("");
             parser.StartNode("some-node");
             parser.SetNodeValue("value");
@@ -111,7 +111,7 @@ namespace Redcat.Xmpp.Tests.Parsing
             XmlElement actualElement = null, expectedElement = A.Fake<XmlElement>();
             string actualNodeName = null, expectedNodeName = "some-node";
             string actualNodeValue = null, expectedNodeValue = "Some-value";
-            var parser = new DelegateParser<XmlElement>(s => expectedElement);
+            var parser = new BuilderParser<XmlElement>(s => expectedElement);
             parser.AddNodeBuilder(expectedNodeName, context =>
             {
                 actualElement = context.Element;

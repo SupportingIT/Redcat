@@ -17,7 +17,7 @@ namespace Redcat.Xmpp.Services
             XmppStreamWriter writer = new XmppStreamWriter(stream);
             XmppStreamReader reader = XmppStreamReader.CreateReader(stream);
             writer.Write("<?xml version='1.0' ?>");
-            writer.Write("<stream:stream to='jabber.ru' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0' />");
+            writer.Write("<stream:stream to='redcat' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>");
 
             var response = reader.Read();            
         }

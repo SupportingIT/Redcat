@@ -21,7 +21,7 @@ namespace Redcat.Xmpp
 
         public XmppStreamReader(Stream stream) : this()
         {
-            if (stream == null) throw new ArgumentNullException("steam");
+            if (stream == null) throw new ArgumentNullException("stream");
             reader = new StreamReader(stream, defaultEncoding);
         }
 

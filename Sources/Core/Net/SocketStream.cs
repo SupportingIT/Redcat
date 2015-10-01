@@ -41,7 +41,7 @@ namespace Redcat.Core.Net
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            //if (socket.Available == 0) return 0;
+            if (socket.Available == 0) return 0;
             return socket.Receive(buffer, offset, count);
         }
 
