@@ -1,39 +1,49 @@
-﻿using Redcat.Xmpp.Xml;
+﻿using System.Collections.Generic;
+using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp.Parsing
 {
-    public class XmlElementBuilder : IXmlElementBuilder
+    public class XmlElementBuilder : XmlElementBuilderBase
     {
-        public bool CanBuild(string name)
+        private readonly Stack<XmlElement> nodesBranch = new Stack<XmlElement>();
+
+        protected XmlElement CurrentNode
         {
-            throw new System.NotImplementedException();
+            get { return nodesBranch.Peek(); }
         }
 
-        public void NewElement(string name)
+        public override bool CanBuild(string name)
         {
-            throw new System.NotImplementedException();
+            return true;
         }
 
-        public void AddAttribute(string name, string value)
+        protected override XmlElement CreateElement(string elementName)
         {
-            throw new System.NotImplementedException();
+            XmlElement element = new XmlElement(elementName);
+            nodesBranch.Push(element);
+            return element;
         }
 
-        public void StartNode(string name)
+        protected override void OnAddAttribute(BuilderContext context)
         {
-            throw new System.NotImplementedException();
+            CurrentNode.SetAttributeValue(context.AttributeName, context.AttributeValue);
         }
 
-        public void SetNodeValue(string value)
+        protected override void OnStartNode(BuilderContext context)
         {
-            throw new System.NotImplementedException();
+            XmlElement element = new XmlElement(context.NodeName);
+            CurrentNode.Childs.Add(element);
+            nodesBranch.Push(element);
         }
 
-        public void EndNode()
+        protected override void OnSetNodeValue(BuilderContext context)
         {
-            throw new System.NotImplementedException();
+            CurrentNode.Value = context.NodeValue;
         }
 
-        public XmlElement Element { get; private set; }
+        protected override void OnEndNode(BuilderContext context)
+        {
+            nodesBranch.Pop();
+        }
     }
 }

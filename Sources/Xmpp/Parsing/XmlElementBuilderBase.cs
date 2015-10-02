@@ -16,7 +16,7 @@ namespace Redcat.Xmpp.Parsing
             this.supportedElements = supportedElements;
         }
 
-        public bool CanBuild(string name)
+        public virtual bool CanBuild(string name)
         {
             return supportedElements.Any(s => string.CompareOrdinal(s, name) == 0);
         }
@@ -32,8 +32,12 @@ namespace Redcat.Xmpp.Parsing
 
         public void AddAttribute(string name, string value)
         {
-            throw new System.NotImplementedException();
+            context.AttributeName = name;
+            context.AttributeValue = value;
+            OnAddAttribute(context);
         }
+
+        protected abstract void OnAddAttribute(BuilderContext context);
 
         public void StartNode(string name)
         {
@@ -47,8 +51,11 @@ namespace Redcat.Xmpp.Parsing
 
         public void SetNodeValue(string value)
         {
-            throw new System.NotImplementedException();
+            context.NodeValue = value;
+            OnSetNodeValue(context);
         }
+
+        protected abstract void OnSetNodeValue(BuilderContext context);
 
         public void EndNode()
         {            

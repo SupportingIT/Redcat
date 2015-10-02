@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
+using Redcat.Xmpp.Parsing;
 using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp.Tests
@@ -88,6 +89,19 @@ namespace Redcat.Xmpp.Tests
             XElement actualElement = XElement.Parse(stringBuilder.ToString());
             Assert.That(actualElement.Element("element1").Value, Is.EqualTo("value1"));
             Assert.That(actualElement.Element("element2").Value, Is.EqualTo("value2"));
+        }
+
+        [Test]
+        public void Correctly_Writes_StreamHeader()
+        {
+            StreamHeader header = StreamHeader.CreateClientHeader("me@home.com");
+            XmppStreamWriter writer = CreateStreamWriter();
+
+            writer.Write(header);
+
+            var tokens = XmlLexer.GetTokens(stringBuilder.ToString()).ToArray();
+            Assert.That(tokens[0].Type, Is.EqualTo(XmlTokenType.Declaration));
+            Assert.That(tokens[1].Type, Is.EqualTo(XmlTokenType.StartTag));
         }
 
         private XmppStreamWriter CreateStreamWriter()

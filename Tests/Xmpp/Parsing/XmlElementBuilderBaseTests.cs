@@ -11,7 +11,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         [Test]
         public void CanParse_Returns_Correct_Result()
         {
-            XmlElementBuilderBase parser = new XmlElementBuilderBaseImpl("elem", "e0");
+            var parser = new XmlElementBuilderBaseImpl("elem", "e0");
 
             Assert.That(parser.CanBuild("elem"), Is.True);
             Assert.That(parser.CanBuild("element2"), Is.False);
@@ -22,7 +22,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         [ExpectedException(typeof(InvalidOperationException))]
         public void NewElement_Throws_Exception_If_Unsupported_Name_Specified()
         {
-            XmlElementBuilderBase builder = new XmlElementBuilderBaseImpl("elem0");
+            var builder = new XmlElementBuilderBaseImpl("elem0");
 
             builder.NewElement("elem1");
         }
@@ -47,7 +47,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         [Test]
         public void NewElement_Sets_Element_Property_After_Calling_NewElement()
         {
-            XmlElementBuilderBaseImpl builder = new XmlElementBuilderBaseImpl("elem");
+            var builder = new XmlElementBuilderBaseImpl("elem");
             Assert.That(builder.Element, Is.Null);
             XmlElement element = new XmlElement("elem");
             builder.SetCreateElementFunc(n => element);
@@ -55,6 +55,29 @@ namespace Redcat.Xmpp.Tests.Parsing
             builder.NewElement("elem");
 
             Assert.That(builder.Element, Is.EqualTo(element));
+        }
+
+        [Test]
+        public void AddAttribute_Sets_AttributeName_And_Attribute_Value()
+        {
+            var builder = new XmlElementBuilderBaseImpl("elem");
+            string nodeName = null;
+            string attributeName = null;
+            string attributeValue = null;
+            builder.SetAddAttribute(c =>
+            {
+                nodeName = c.NodeName;
+                attributeName = c.AttributeName;
+                attributeValue = c.AttributeValue;
+            });
+
+            builder.NewElement("elem");
+            builder.StartNode("node1");
+            builder.AddAttribute("attr0", "val01");
+
+            Assert.That(nodeName, Is.EqualTo("node1"));
+            Assert.That(attributeName, Is.EqualTo("attr0"));
+            Assert.That(attributeValue, Is.EqualTo("val01"));
         }
 
         [Test]
@@ -69,7 +92,7 @@ namespace Redcat.Xmpp.Tests.Parsing
         [Test]
         public void StartNode_Increases_Depth_And_Correctly_Sets_NodeName_For_Context()
         {
-            XmlElementBuilderBaseImpl builder = new XmlElementBuilderBaseImpl("elem");
+            var builder = new XmlElementBuilderBaseImpl("elem");
             BuilderContext context = null;
             builder.SetOnStartNode(c => context = c);
             
@@ -83,9 +106,29 @@ namespace Redcat.Xmpp.Tests.Parsing
         }
 
         [Test]
+        public void SetNodeValue_Correctly_Sets_NodeName_And_NodeValue_For_Context()
+        {
+            var builder = new XmlElementBuilderBaseImpl("elem");
+            string nodeName = null;
+            string nodeValue = null;
+            builder.SetOnSetNodeValue(c =>
+            {
+                nodeName = c.NodeName;
+                nodeValue = c.NodeValue;
+            });
+
+            builder.NewElement("elem");
+            builder.StartNode("node8");
+            builder.SetNodeValue("some-value8");
+
+            Assert.That(nodeName, Is.EqualTo("node8"));
+            Assert.That(nodeValue, Is.EqualTo("some-value8"));
+        }
+
+        [Test]
         public void EndNode_Decreases_Depth_And_Correctly_Sets_NodeName_For_Context()
         {
-            XmlElementBuilderBaseImpl builder = new XmlElementBuilderBaseImpl("element");
+            var builder = new XmlElementBuilderBaseImpl("element");
             int depth = -1;
             string nodeName = null;
             builder.SetOnEndNode(c => { depth = c.Depth; nodeName = c.NodeName; });
@@ -114,7 +157,9 @@ namespace Redcat.Xmpp.Tests.Parsing
         internal class XmlElementBuilderBaseImpl : XmlElementBuilderBase
         {
             private Func<string, XmlElement> createFunc;
+            private Action<BuilderContext> addAttribute; 
             private Action<BuilderContext> onStartNode;
+            private Action<BuilderContext> onSetNodeValue; 
             private Action<BuilderContext> onEndNode;
 
             public XmlElementBuilderBaseImpl(params string[] supportedElements) : base(supportedElements)
@@ -128,14 +173,34 @@ namespace Redcat.Xmpp.Tests.Parsing
                 return createFunc(elementName);
             }
 
+            protected override void OnAddAttribute(BuilderContext context)
+            {
+                addAttribute(context);
+            }
+
             protected override void OnStartNode(BuilderContext context)
             {
                 onStartNode(context);
             }
 
+            protected override void OnSetNodeValue(BuilderContext context)
+            {
+                onSetNodeValue(context);
+            }
+
             protected override void OnEndNode(BuilderContext context)
             {
                 onEndNode(context);
+            }
+
+            public void SetOnSetNodeValue(Action<BuilderContext> action)
+            {
+                onSetNodeValue = action;
+            }
+
+            public void SetAddAttribute(Action<BuilderContext> action)
+            {
+                addAttribute = action;
             }
 
             public void SetOnEndNode(Action<BuilderContext> action)

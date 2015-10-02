@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Redcat.Xmpp.Xml
 {
@@ -73,6 +75,15 @@ namespace Redcat.Xmpp.Xml
         public void ForEachAttribute(Action<string, object> attributeAction)
         {
             foreach (var attribute in attributes) attributeAction(attribute.Key, attribute.Value);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            StringWriter writer = new StringWriter(builder);
+            XmppStreamWriter xmppWriter = new XmppStreamWriter(writer);
+            xmppWriter.Write(this);
+            return builder.ToString();
         }
     }
 

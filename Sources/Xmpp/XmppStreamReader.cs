@@ -12,11 +12,13 @@ namespace Redcat.Xmpp
     {
         private static Encoding defaultEncoding = Encoding.UTF8;
         private ICollection<IXmlElementBuilder> builders;
+        private IXmlElementBuilder defaultBuilder;
         private TextReader reader;
 
         private XmppStreamReader()
         {
             builders = new List<IXmlElementBuilder>();
+            defaultBuilder = new XmlElementBuilder();
         }
 
         public XmppStreamReader(Stream stream) : this()
@@ -54,7 +56,7 @@ namespace Redcat.Xmpp
         {
             string name = XmlLexer.GetTagName(token);
             var builder = builders.FirstOrDefault(b => b.CanBuild(name));
-            if (builder == null) throw new InvalidOperationException("No builders for element " + name);
+            if (builder == null) return defaultBuilder;
             return builder;
         }
 

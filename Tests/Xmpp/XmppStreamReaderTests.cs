@@ -39,13 +39,15 @@ namespace Redcat.Xmpp.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Throws_Exception_If_No_Builders_For_Element()
+        public void Uses_Default_Builder_If_No_Builders_For_Element()
         {
             IXmlElementBuilder parser = A.Fake<IXmlElementBuilder>();
             A.CallTo(() => parser.CanBuild("element1")).Returns(true);
 
-            CreateAndRunReader("<element2></element2>", parser);
+            var reader = CreateReader("<element2></element2>", parser);
+            var element = reader.Read();
+
+            Assert.That(element, Is.TypeOf<XmlElement>());
         }
 
         [Test]

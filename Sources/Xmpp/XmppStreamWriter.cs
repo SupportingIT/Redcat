@@ -31,12 +31,29 @@ namespace Redcat.Xmpp
 
         public void Write(XmlElement element)
         {
+            string closingChars = " />";
+            if (IsStreamHeader(element))
+            {
+                WriteDeclaration();
+                closingChars = ">";
+            }
+
             WriteElementStart(element.Name);
             WriteAttributes(element.Attributes);
-
+            
             if (element.HasContent) WriteContent(element);
-            else writer.Write(" />");
+            else writer.Write(closingChars);
             writer.Flush();
+        }
+
+        private bool IsStreamHeader(XmlElement element)
+        {
+            return element.Name == "stream:stream";
+        }
+
+        private void WriteDeclaration()
+        {
+            writer.Write("<?xml version='1.0' ?>");
         }
 
         private void WriteElementStart(string name)
