@@ -1,91 +1,62 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp.Parsing
 {
-    public class BuilderParser<T> : IXmlElementBuilder where T : XmlElement
+    public abstract class DelegateBuilder<T> : XmlElementBuilderBase where T : XmlElement
     {
-        private IDictionary<string, Action<BuildingContext>> attributeBuilders;
-        private IDictionary<string, Action<BuildingContext>> nodeBuilders;
-        private Func<string,T> createElement;
-        private string[] supportedElements;
-        private BuildingContext context;
+        private IDictionary<string, Action<T, string>> attributeSetters;
+        private IDictionary<string, Action<T, string>> valueSetters;
+        private T currentElement;
 
-        public BuilderParser(Func<string,T> createElementFunc, params string[] supportedElements)
+        protected DelegateBuilder(params string[] supportedElements) : base(supportedElements)
         {
-            attributeBuilders = new Dictionary<string, Action<BuildingContext>>();
-            createElement = createElementFunc;
-            context = new BuildingContext();
-            this.supportedElements = supportedElements;
+            attributeSetters = new Dictionary<string, Action<T, string>>();
+            valueSetters = new Dictionary<string, Action<T, string>>();
         }
 
-        public IDictionary<string, Action<BuildingContext>> AttributeBuilders
+        protected T CurrentElement
         {
-            get { return attributeBuilders; } }
-
-        public XmlElement Element
-        {
-            get { return context.Element; }
+            get { return currentElement; }
         }
 
-        public void AddAttribute(string name, string value)
+        protected override XmlElement CreateElement(string elementName)
         {
-            if (context.Element == null) throw new InvalidOperationException();
-            context.AttributeName = name;
-            context.AttributeValue = value;
-            if (attributeBuilders.ContainsKey(name)) attributeBuilders[name](context);
-            context.AttributeName = context.AttributeValue = null;
+            currentElement = CreateInstance(elementName);
+            return currentElement;
         }
 
-        public void AddNodeBuilder(string nodeName, Action<BuildingContext> valueBuilder)
+        protected abstract T CreateInstance(string elementName);
+
+        protected override void OnAddAttribute(BuilderContext context)
         {
-            if (nodeBuilders == null) nodeBuilders = new Dictionary<string, Action<BuildingContext>>();
-            nodeBuilders.Add(nodeName, valueBuilder);
+            if (!attributeSetters.ContainsKey(context.AttributeName))
+                Element.SetAttributeValue(context.AttributeName, context.AttributeValue);
+            else
+                attributeSetters[context.AttributeName](currentElement, context.AttributeValue);
         }
 
-        public bool CanBuild(string elementName)
+        protected void Attribute(string name, Action<T, string> setter)
         {
-            return supportedElements.Any(s => string.CompareOrdinal(s, elementName) == 0);
+            attributeSetters[name] = setter;
         }
 
-        public void EndNode()
+        protected void NodeValue(string nodeName, Action<T, string> setter)
         {
-            context.NodeName = context.NodeValue = null;
+            valueSetters[nodeName] = setter;
         }
 
-        public void NewElement(string name)
+        protected override void OnStartNode(BuilderContext context)
+        { }
+
+        protected override void OnSetNodeValue(BuilderContext context)
         {
-            context.Element = createElement(name);
+            if (valueSetters.ContainsKey(context.NodeName))
+                valueSetters[context.NodeName](CurrentElement, context.NodeValue);
         }
 
-        public void SetNodeValue(string value)
-        {
-            if (string.IsNullOrEmpty(context.NodeName)) throw new InvalidOperationException();
-            if (nodeBuilders == null || !nodeBuilders.ContainsKey(context.NodeName)) return;
-            context.NodeValue = value;
-            nodeBuilders[context.NodeName](context);
-        }
-
-        public void StartNode(string name)
-        {
-            context.NodeName = name;
-        }
-
-        public class BuildingContext
-        {
-            internal BuildingContext() { }
-
-            public T Element { get; internal set; }
-
-            public string AttributeName { get; internal set; }
-            public string AttributeValue { get; internal set; }
-            
-            public string NodeName { get; internal set; }
-            public string NodeValue { get; internal set; }
-
-            public int Depth { get; internal set; }
-        }
-    }    
+        protected override void OnEndNode(BuilderContext context)
+        { }        
+    }
 }

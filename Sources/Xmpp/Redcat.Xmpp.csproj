@@ -43,11 +43,11 @@
   <ItemGroup>
     <Compile Include="JID.cs" />
     <Compile Include="Parsing\DelegateBuilder.cs" />
-    <Compile Include="Parsing\DelegateParserExtensions.cs" />
     <Compile Include="Parsing\IXmlElementBuilder.cs" />
     <Compile Include="Parsing\XmlElementBuilder.cs" />
     <Compile Include="Parsing\XmlElementBuilderBase.cs" />
     <Compile Include="Parsing\XmlLexer.cs" />
+    <Compile Include="Parsing\XmppStreamParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\XmppChannelFactory.cs" />
     <Compile Include="Services\XmppChannel.cs" />

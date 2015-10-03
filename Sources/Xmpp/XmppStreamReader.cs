@@ -40,76 +40,8 @@ namespace Redcat.Xmpp
 
         public XmlElement Read()
         {
-            var tokens = ReadXmlTokens();
-            var builder = GetBuilder(tokens[0]);
-            BuildElement(builder, tokens);
-            return builder.Element;
-        }
-
-        private XmlToken[] ReadXmlTokens()
-        {
-            string xml = reader.ReadToEnd();
-            return XmlLexer.GetTokens(xml).ToArray();
-        }
-
-        private IXmlElementBuilder GetBuilder(XmlToken token)
-        {
-            string name = XmlLexer.GetTagName(token);
-            var builder = builders.FirstOrDefault(b => b.CanBuild(name));
-            if (builder == null) return defaultBuilder;
-            return builder;
-        }
-
-        private void BuildElement(IXmlElementBuilder builder, XmlToken[] tokens)
-        {
-            string elementName = XmlLexer.GetTagName(tokens[0]);
-            builder.NewElement(elementName);
-            BuildAttributes(builder, tokens[0]);
-            BuildElementContent(builder, tokens);
-        }
-
-        private void BuildElementContent(IXmlElementBuilder builder, XmlToken[] tokens)
-        {
-            foreach (var token in tokens.Skip(1))
-            {
-                if (IsStartOrEnclosedTag(token)) BuildStartNode(builder, token);
-                if (IsValue(token)) builder.SetNodeValue(token.Text);
-                if (IsClosingOrEnclosedTag(token)) builder.EndNode();
-            }
-        }
-
-        private bool IsValue(XmlToken token)
-        {
-            return token.Type == XmlTokenType.Value;
-        }
-
-        private bool IsClosingOrEnclosedTag(XmlToken token)
-        {
-            return token.Type == XmlTokenType.ClosingTag || token.Type == XmlTokenType.EnclosedTag;
-        }
-
-        private void BuildStartNode(IXmlElementBuilder builder, XmlToken token)
-        {
-            string name = XmlLexer.GetTagName(token);
-            builder.StartNode(name);
-            BuildAttributes(builder, token);
-        }
-
-        private void BuildAttributes(IXmlElementBuilder builder, XmlToken token)
-        {
-            if (!IsStartOrEnclosedTag(token)) return;
-
-            var attributes = XmlLexer.GetTagAttributes(token);
-            foreach (var attribute in attributes)
-            {
-                builder.AddAttribute(attribute.Item1, attribute.Item2);
-            }
-        }
-
-        private bool IsStartOrEnclosedTag(XmlToken token)
-        {
-            return token.Type == XmlTokenType.StartTag || token.Type == XmlTokenType.EnclosedTag;
-        }
+            throw new NotImplementedException();
+        }       
 
         public static XmppStreamReader CreateReader(Stream stream)
         {

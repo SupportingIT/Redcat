@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Redcat.Xmpp.Parsing
 {
-    public static class XmlLexer
+    public class XmlLexer
     {
         private static readonly string XmlDeclarationRegexp = @"\<\?xml[^\<\>\\]*\?\>";
         private static readonly string XmlEnclosedTagRegex = @"\<[\w-\:]+[^\<\>\\]*\/\>";
@@ -17,15 +17,47 @@ namespace Redcat.Xmpp.Parsing
 
         private static readonly string XmlAttributeRegex = @"[\w-\:]+=('|"")[\w-\:]*\1";
 
-        public static IEnumerable<XmlToken> GetTokens(string xmlFragment)
+        private XmlLexerOptions options;
+
+        public XmlLexer()
         {
-            var tokens = Regex.Matches(xmlFragment, GenericXmlElementRegex);
-            return tokens.Cast<Match>().Select(m => new XmlToken(m.Value, GetTokenType(m.Value)));
+            options = new XmlLexerOptions();
+        }
+
+        public XmlLexer(XmlLexerOptions options)
+        {
+            this.options = options;
+        }
+
+        public XmlLexerOptions Options
+        {
+            get { return options; }
+        }
+
+        public XmlToken[] GetTokens(string xmlFragment)
+        {
+            MatchCollection matches = Regex.Matches(xmlFragment, GenericXmlElementRegex);
+            XmlToken[] tokens = new XmlToken[matches.Count];
+
+            for (int i = 0; i < matches.Count; i++)
+            {
+                string value = matches[i].Value;
+                tokens[i] = GetToken(value);
+            }
+
+            return tokens;
+        }
+
+        private XmlToken GetToken(string value)
+        {
+            XmlToken token = new XmlToken(value, GetTokenType(value));
+            if (options.ParseTagName && IsTag(token)) token.TagName = GetTagName(token);
+            return token;
         }
 
         public static IEnumerable<Tuple<string, string>> GetTagAttributes(XmlToken token)
         {
-            var attributes = Regex.Matches(token.Text, XmlAttributeRegex).Cast<Match>().Select(m => m.Value).ToArray();
+            var attributes = Regex.Matches(token.Value, XmlAttributeRegex).Cast<Match>().Select(m => m.Value).ToArray();
             return attributes.Select(a =>
             {
                 var attr = a.Split('=');
@@ -35,7 +67,7 @@ namespace Redcat.Xmpp.Parsing
 
         public static string GetTagName(XmlToken token)
         {
-            return Regex.Match(token.Text, @"[\w-\:]+").Value;
+            return Regex.Match(token.Value, @"[\w-\:]+").Value;
         }
 
         public static XmlTokenType GetTokenType(string token)
@@ -46,6 +78,13 @@ namespace Redcat.Xmpp.Parsing
             if (IsClosingTag(token)) return XmlTokenType.ClosingTag;
             //if (IsWhitespace(token)) return XmlTokenType.Whitespace;
             return XmlTokenType.Value;
+        }
+
+        public static bool IsTag(XmlToken token)
+        {
+            return token.Type == XmlTokenType.StartTag ||
+                   token.Type == XmlTokenType.ClosingTag ||
+                   token.Type == XmlTokenType.EnclosedTag;
         }
 
         public static bool IsDeclaration(string token)
@@ -74,20 +113,30 @@ namespace Redcat.Xmpp.Parsing
         }
     }
 
+    public class XmlLexerOptions
+    {
+        public bool ParseTagName { get; set; }
+    }
+
     public class XmlToken
     {
         private XmlTokenType type;
-        private string text;
+        private string value;
 
-        internal XmlToken(string text, XmlTokenType type)
+        internal XmlToken(string value, XmlTokenType type)
         {
             this.type = type;
-            this.text = text;
+            this.value = value;
         }
 
-        public string Text
+        public string Value
         {
-            get { return text; }
+            get { return value; }
+        }
+
+        public string TagName
+        {
+            get; internal set;
         }
 
         public XmlTokenType  Type
@@ -97,7 +146,7 @@ namespace Redcat.Xmpp.Parsing
 
         public override string ToString()
         {
-            return string.Format("{0}[{1}]", Text, Type);
+            return string.Format("{0}[{1}]", Value, Type);
         }
     }
 
