@@ -17,18 +17,26 @@ namespace Redcat.Xmpp.Parsing
             lexer.Options.ParseTagName = true;
         }
 
-        public IEnumerable<XmlElement> Parse(string xml)
+        public IEnumerable<XmlElement> Parse(string xmlText)
         {
-            if (xml == "") return Enumerable.Empty<XmlElement>();
-            XmlToken[] tokens = lexer.GetTokens(xml);
+            if (xmlText == null) throw new ArgumentNullException("xmlText");
+            if (xmlText == "") return Enumerable.Empty<XmlElement>();
+            XmlToken[] tokens = lexer.GetTokens(xmlText);
+            return ParseTokens(tokens);
+        }
+
+        private IEnumerable<XmlElement> ParseTokens(XmlToken[] tokens)
+        {
             List<XmlElement> parsedElements = new List<XmlElement>();
 
             for (int i = 0; i < tokens.Length; i++)
             {
-                if (tokens[i].Type == XmlTokenType.EnclosedTag) BuildSingleTagElement(tokens[i]);                
+                if (tokens[i].Type == XmlTokenType.EnclosedTag) BuildSingleTagElement(builder, tokens[i]);
                 if (tokens[i].Type == XmlTokenType.StartTag)
-                {                    
-                    BuildMultiTagElement(tokens, i);
+                {
+                    int index = GetClosingTagIndex(tokens, tokens[i].TagName, i);
+                    BuildMultiTagElement(tokens, i, index);
+                    i = index;
                 }
                 parsedElements.Add(builder.Element);
             }
@@ -45,21 +53,39 @@ namespace Redcat.Xmpp.Parsing
             throw new NotImplementedException();
         }
 
-        private void BuildSingleTagElement(XmlToken token)
+        private void BuildSingleTagElement(IXmlElementBuilder builder, XmlToken token)
         {
-            string name = XmlLexer.GetTagName(token);
-            builder.NewElement(name);
-            var attributes = XmlLexer.GetTagAttributes(token);
-            foreach (var attribute in attributes) builder.AddAttribute(attribute.Item1, attribute.Item2);
+            builder.NewElement(token.TagName);
+            BuildAttributes(builder, token);
         }
 
-        private void BuildMultiTagElement(XmlToken[] tokens, int offset)
+        private void BuildMultiTagElement(XmlToken[] tokens, int offset, int count)
         {
             builder.NewElement(tokens[offset].TagName);
-            int count = GetClosingTagIndex(tokens, tokens[offset].TagName, offset);
+            BuildAttributes(builder, tokens[offset]);
+
             for (int i = offset + 1; i < offset + count; i++)
             {
                 if (tokens[i].Type == XmlTokenType.Value) builder.SetNodeValue(tokens[i].Value);
+                if (tokens[i].Type == XmlTokenType.EnclosedTag) BuildChildEnclosedElement(builder, tokens[i]);                
+                if (tokens[i].Type == XmlTokenType.StartTag) builder.StartNode(tokens[i].TagName);
+                if (tokens[i].Type == XmlTokenType.ClosingTag) builder.EndNode();
+            }
+        }
+
+        private void BuildChildEnclosedElement(IXmlElementBuilder builder, XmlToken token)
+        {
+            builder.StartNode(token.TagName);
+            BuildAttributes(builder, token);
+            builder.EndNode();
+        }
+
+        private void BuildAttributes(IXmlElementBuilder builder, XmlToken token)
+        {
+            var attributes = XmlLexer.GetTagAttributes(token);
+            foreach (var attribute in attributes)
+            {
+                builder.AddAttribute(attribute.Item1, attribute.Item2);
             }
         }
     }
