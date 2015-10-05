@@ -99,7 +99,7 @@ namespace Redcat.Xmpp.Tests
 
             writer.Write(header);
 
-            XmlToken[] tokens = null;// XmlLexer.GetTokens(stringBuilder.ToString()).ToArray();
+            XmlToken[] tokens = new XmlLexer().GetTokens(stringBuilder.ToString()).ToArray();
             Assert.That(tokens[0].Type, Is.EqualTo(XmlTokenType.Declaration));
             Assert.That(tokens[1].Type, Is.EqualTo(XmlTokenType.StartTag));
         }

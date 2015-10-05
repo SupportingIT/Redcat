@@ -10,44 +10,44 @@ namespace Redcat.Xmpp
 {
     public class XmppStreamReader
     {
-        private static Encoding defaultEncoding = Encoding.UTF8;
-        private ICollection<IXmlElementBuilder> builders;
-        private IXmlElementBuilder defaultBuilder;
+        private static readonly Encoding defaultEncoding = Encoding.UTF8;
+        private IXmlParser parser;
         private TextReader reader;
+        private Queue<XmlElement> elementQueue = new Queue<XmlElement>();
 
-        private XmppStreamReader()
-        {
-            builders = new List<IXmlElementBuilder>();
-            defaultBuilder = new XmlElementBuilder();
-        }
-
-        public XmppStreamReader(Stream stream) : this()
+        public XmppStreamReader(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException("stream");
             reader = new StreamReader(stream, defaultEncoding);
         }
 
-        public XmppStreamReader(TextReader reader) : this()
+        public XmppStreamReader(TextReader reader)
         {
             if (reader == null) throw new ArgumentNullException();
             this.reader = reader;
         }
 
-        public ICollection<IXmlElementBuilder> Builders
+        public IXmlParser Parser
         {
-            get { return builders; }
+            get { return parser ?? (parser = CreateDefaultParser()); }
+            set { parser = value; }
+        }
+
+        private IXmlParser CreateDefaultParser()
+        {
+            return new XmppStreamParser();
         }
 
         public XmlElement Read()
         {
-            throw new NotImplementedException();
-        }       
+            string xml = reader.ReadToEnd();
+            foreach (var element in Parser.Parse(xml))
+            {
+                elementQueue.Enqueue(element);
+            }
 
-        public static XmppStreamReader CreateReader(Stream stream)
-        {
-            XmppStreamReader reader = new XmppStreamReader(stream);
-            //reader.Parsers.Add(new StreamHeaderParser());
-            return reader;
+            if (elementQueue.Count == 0) return null;
+            return elementQueue.Dequeue();
         }
     }
 }

@@ -44,6 +44,7 @@
     <Compile Include="JID.cs" />
     <Compile Include="Parsing\DelegateBuilder.cs" />
     <Compile Include="Parsing\IXmlElementBuilder.cs" />
+    <Compile Include="Parsing\IXmlParser.cs" />
     <Compile Include="Parsing\XmlElementBuilder.cs" />
     <Compile Include="Parsing\XmlElementBuilderBase.cs" />
     <Compile Include="Parsing\XmlLexer.cs" />
@@ -52,6 +53,13 @@
     <Compile Include="Services\XmppChannelFactory.cs" />
     <Compile Include="Services\XmppChannel.cs" />
     <Compile Include="Xml\DatagramElement.cs" />
+    <Compile Include="Xml\Iq.cs" />
+    <Compile Include="Xml\IqQuery.cs" />
+    <Compile Include="Xml\IqStanza.cs" />
+    <Compile Include="Xml\Presence.cs" />
+    <Compile Include="Xml\PresenceStanza.cs" />
+    <Compile Include="Xml\RosterItem.cs" />
+    <Compile Include="Xml\Stanza.cs" />
     <Compile Include="Xml\XmlElement.cs" />
     <Compile Include="Xml\Namespaces.cs" />
     <Compile Include="Xml\StreamHeader.cs" />

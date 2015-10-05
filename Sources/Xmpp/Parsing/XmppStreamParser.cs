@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Redcat.Xmpp.Parsing
 {
-    public class XmppStreamParser
+    public class XmppStreamParser : IXmlParser
     {
         private IXmlElementBuilder builder;
         private XmlLexer lexer;            
@@ -34,11 +34,15 @@ namespace Redcat.Xmpp.Parsing
                 if (tokens[i].Type == XmlTokenType.EnclosedTag) BuildSingleTagElement(builder, tokens[i]);
                 if (tokens[i].Type == XmlTokenType.StartTag)
                 {
-                    int index = GetClosingTagIndex(tokens, tokens[i].TagName, i);
-                    BuildMultiTagElement(tokens, i, index);
-                    i = index;
+                    if (tokens[i].TagName != "stream:stream")
+                    {
+                        int index = GetClosingTagIndex(tokens, tokens[i].TagName, i);
+                        BuildMultiTagElement(tokens, i, index);
+                        i = index;
+                    }
+                    else BuildSingleTagElement(builder, tokens[i]);
                 }
-                parsedElements.Add(builder.Element);
+                if (builder.Element != null) parsedElements.Add(builder.Element);
             }
 
             return parsedElements;
@@ -63,8 +67,8 @@ namespace Redcat.Xmpp.Parsing
         {
             builder.NewElement(tokens[offset].TagName);
             BuildAttributes(builder, tokens[offset]);
-
-            for (int i = offset + 1; i < offset + count; i++)
+            
+            for (int i = offset + 1; i < count; i++)
             {
                 if (tokens[i].Type == XmlTokenType.Value) builder.SetNodeValue(tokens[i].Value);
                 if (tokens[i].Type == XmlTokenType.EnclosedTag) BuildChildEnclosedElement(builder, tokens[i]);                

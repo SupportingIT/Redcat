@@ -107,6 +107,18 @@ namespace Redcat.Xmpp.Tests.Parsing
             Assert.That(elements[2].GetAttributeValue<string>("attr"), Is.EqualTo("g2"));
         }
 
+        [Test]
+        public void Can_Parse_Stream_Header()
+        {
+            XmppStreamParser parser = new XmppStreamParser();
+
+            var elements = parser.Parse(@"<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'><stream:features><feature1/><feature2/></stream:features>").ToArray();
+            
+            Assert.That(elements.Length, Is.EqualTo(2));
+            Assert.That(elements[0].Name, Is.EqualTo("stream:stream"));
+            Assert.That(elements[1].Name, Is.EqualTo("stream:features"));
+        }
+
         private void AssertOnlyName(XmlElement element, string name)
         {
             Assert.That(element.Name, Is.EqualTo(name));

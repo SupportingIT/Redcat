@@ -39,7 +39,7 @@ namespace Redcat.Xmpp.Tests.Parsing
             Assert.That(XmlLexer.GetTagName(token), Is.EqualTo("stream:stream"));
         }
 
-        private string[] enclosedTags = { "<element />", "<element attr1='val0' attr2='val' />", "<c xmlns='http://jabber.org/protocol/caps' hash='sha-1' />" };
+        private string[] enclosedTags = { "<element />", "<ns:element />", "<c xmlns='http://jabber.org/protocol/caps' hash='sha-1' />" };
         
         [Test]
         public void GetTokens_Correctly_Parses_Enclosed_Tag([ValueSource("enclosedTags")]string tag)
@@ -47,6 +47,15 @@ namespace Redcat.Xmpp.Tests.Parsing
             var tokens = lexer.GetTokens(tag).ToArray();
             Assert.That(tokens.Length, Is.EqualTo(1));
             Assert.That(tokens[0].Type, Is.EqualTo(XmlTokenType.EnclosedTag));
+        }
+
+        private string[] closingTags = { "</ elem>", "</stream:features>", "</some-elem>" };
+
+        [Test]
+        public void GetTokens_Correctly_Parses_Closing_Tags([ValueSource("closingTags")]string tag)
+        {
+            var token = lexer.GetTokens(tag).Single();
+            Assert.That(token.Type, Is.EqualTo(XmlTokenType.ClosingTag));
         }
 
         private string[] elementsWithValue = { "<node>Value</node>", "<node attr1='val0' attr2='val'>Value</node>" };

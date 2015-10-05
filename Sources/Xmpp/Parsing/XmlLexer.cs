@@ -10,7 +10,7 @@ namespace Redcat.Xmpp.Parsing
         private static readonly string XmlDeclarationRegexp = @"\<\?xml[^\<\>\\]*\?\>";
         private static readonly string XmlEnclosedTagRegex = @"\<[\w-\:]+[^\<\>\\]*\/\>";
         private static readonly string XmlStartTagRegex = @"\<[\w-\:]+[^\<\>]*[^\\]\>";
-        private static readonly string XmlClosingTagRegex = @"\<\/\s*\w+\>";
+        private static readonly string XmlClosingTagRegex = @"\<\/\s*[\w-\:]+\>";
         private static readonly string XmlValueRegex = @"[^\<\>\\]+";
         private static readonly string WhitespaceRegex = @"[\s\t]+";
         private static readonly string GenericXmlElementRegex = string.Format(@"({0})|({1})|({2})|({3})|({4})", XmlDeclarationRegexp, XmlStartTagRegex, XmlClosingTagRegex, XmlEnclosedTagRegex, XmlValueRegex);
