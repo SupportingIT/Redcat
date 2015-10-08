@@ -1,28 +1,37 @@
 ﻿using System;
 using Redcat.Core;
 using Redcat.Core.Net;
-using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp.Services
 {
     public class XmppChannel : NetworkChannel
     {
+        private IXmppStream stream;
+
         public XmppChannel(ISocket socket, ConnectionSettings settings) : base(socket, settings)
         { }
 
         protected override void OnOpening()
         {
             base.OnOpening();
+            stream = OpenXmppStream();
+            InitializeStream(stream);
+        }
 
-            SocketStream stream = new SocketStream(Socket);
-            XmppStreamWriter writer = new XmppStreamWriter(stream);
-            XmppStreamReader reader = new XmppStreamReader(stream);
-            
-            StreamHeader header = StreamHeader.CreateClientHeader(Settings.Domain);
-            writer.Write(header);
+        protected virtual IXmppStream OpenXmppStream()
+        {
+            throw new NotImplementedException();
+        }
 
-            var responseHeader = reader.Read();
-            var features = reader.Read().Childs;
+        private void InitializeStream(IXmppStream stream)
+        {
+            var initializer = CreateStreamInitializer(Settings);
+            initializer.Start(stream);
+        }
+
+        protected virtual IStreamInitializer CreateStreamInitializer(ConnectionSettings Settings)
+        {
+            throw new NotImplementedException();
         }
 
         public override Message Receive()

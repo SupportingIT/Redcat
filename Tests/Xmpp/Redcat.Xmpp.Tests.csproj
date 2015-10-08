@@ -64,6 +64,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\XmppChannelTests.cs" />
     <Compile Include="SocketAdapter.cs" />
+    <Compile Include="StreamInitializerTests.cs" />
     <Compile Include="Xml\DatagramElementTests.cs" />
     <Compile Include="Xml\IqTest.cs" />
     <Compile Include="Xml\PresenceTests.cs" />
