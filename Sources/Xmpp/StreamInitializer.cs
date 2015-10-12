@@ -29,9 +29,9 @@ namespace Redcat.Xmpp
         public void Start(IXmppStream stream)
         {
             SendHeader(stream);
-
             var response = stream.Read();
             VerifyResponseHeader(response);
+
             response = stream.Read();
             VerifyStreamFeatures(response);
             foreach (var feature in response.Childs)

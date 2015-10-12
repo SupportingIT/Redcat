@@ -48,45 +48,6 @@ namespace Redcat.Core.Tests
 
             Assert.That(actualServices.Length, Is.EqualTo(2));
             Assert.That(actualServices.All(s => s != null));
-        }
-
-        [Test]
-        public void RiseEvent_Calls_Added_Event_Handler()
-        {
-            Kernel kernel = new Kernel();
-            bool handlerWasCalled = false;
-            kernel.AddEventHandler<EventArgs>("my-event", args => handlerWasCalled = true);
-
-            kernel.RiseEvent("my-event", EventArgs.Empty);
-
-            Assert.That(handlerWasCalled, Is.True);
-        }
-
-        [Test]
-        public void RiseEvent_Calls_Event_Handler_With_Correct_EventArgs_Type()
-        {
-            Kernel kernel = new Kernel();
-            bool handlerWasCalled = false;
-            kernel.AddEventHandler<EventArgs>("my-event", args => handlerWasCalled = true);
-            kernel.AddEventHandler<AssemblyLoadEventArgs>("my-event", args => handlerWasCalled = false);
-
-            kernel.RiseEvent("my-event", EventArgs.Empty);
-
-            Assert.That(handlerWasCalled, Is.True);
-        }
-
-        [Test]
-        public void RiseEvent_Dont_Calls_Removed_Event_Handler()
-        {
-            Kernel kernel = new Kernel();
-            bool handlerWasCalled = false;
-            Action<EventArgs> handler = args => handlerWasCalled = true;            
-
-            kernel.AddEventHandler("my-event", handler);
-            kernel.RemoveEventHandler("my-event", handler);
-            kernel.RiseEvent("my-event", EventArgs.Empty);
-
-            Assert.That(handlerWasCalled, Is.False);
-        }
+        }      
     }
 }
