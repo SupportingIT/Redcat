@@ -2,6 +2,8 @@
 using System.Linq;
 using Redcat.Core;
 using Redcat.Xmpp.Xml;
+using System.Net;
+using System;
 
 namespace Redcat.Xmpp
 {
@@ -9,11 +11,23 @@ namespace Redcat.Xmpp
     {
         private ICollection<IFeatureNegatiator> negotiators;
         private ConnectionSettings settings;
+        private int iterationLimit;
 
         public StreamInitializer(ConnectionSettings settings)
         {
             this.settings = settings;
             negotiators = new List<IFeatureNegatiator>();
+            iterationLimit = 100;
+        }
+
+        public int IterationLimit
+        {
+            get { return iterationLimit; }
+            set
+            {
+                if (value <= 0) throw new ArgumentOutOfRangeException();
+                iterationLimit = value;
+            }
         }
 
         public ICollection<IFeatureNegatiator> Negotiators
@@ -28,27 +42,41 @@ namespace Redcat.Xmpp
 
         public void Start(IXmppStream stream)
         {
-            SendHeader(stream);
-            var response = stream.Read();
-            VerifyResponseHeader(response);
-
-            response = stream.Read();
-            VerifyStreamFeatures(response);
-            foreach (var feature in response.Childs)
+            for (int i = 0; i < iterationLimit; i++)
             {
-                var negotiator = negotiators.First(n => n.CanNeogatiate(feature));
-                negotiator.Neogatiate(stream, feature);
+                ExchangeHeaders(stream);
+
+                var response = stream.Read();
+                VerifyStreamFeatures(response);
+
+                if (response.Childs.Count == 0) return;
+
+                HandleFeatures(stream, response.Childs);
             }
+            throw new InvalidOperationException();
         }
 
-        private void SendHeader(IXmppStream stream)
+        private void ExchangeHeaders(IXmppStream stream)
         {
             StreamHeader header = StreamHeader.CreateClientHeader(settings.Domain);
             stream.Write(header);
+            var response = stream.Read();
+            VerifyResponseHeader(response);
         }
 
         private void VerifyResponseHeader(XmlElement response)
         {
+            //var fromJid = response.GetAttributeValue<string>("from");
+            if (response.Name != "stream:stream") throw new ProtocolViolationException();
+            if (response.Xmlns != Namespaces.JabberClient) throw new ProtocolViolationException("Invalid xmlns for client header");
+            if (response.GetAttributeValue<string>("xmlns:stream") != Namespaces.Streams) throw new ProtocolViolationException();
+        }
+
+        private void HandleFeatures(IXmppStream stream, ICollection<XmlElement> features)
+        {
+            var feature = features.First();
+            var negotiator = negotiators.First(n => n.CanNeogatiate(feature));
+            negotiator.Neogatiate(stream, feature);
         }
 
         private void VerifyStreamFeatures(XmlElement response)

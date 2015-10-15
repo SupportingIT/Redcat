@@ -27,9 +27,9 @@ namespace Redcat.Xmpp.Tests
         }
 
         [Test]
-        public void Start_Sends_Valid_Stream_Header()
+        public void Sends_Valid_Stream_Header()
         {
-            RunInitializer(initializer, stream);
+            RunInitializer();
 
             var header = stream.GetSentElement();
 
@@ -44,24 +44,70 @@ namespace Redcat.Xmpp.Tests
         {
             var negotiators = A.CollectionOfFake<IFeatureNegatiator>(3);
             A.CallTo(() => negotiators[1].CanNeogatiate(A<XmlElement>._)).Returns(true);
-            initializer.AddNegotiators(negotiators);
+            initializer.AddNegotiators(negotiators);            
+            var feature = new XmlElement("feature1");
+            EnqueueResponse(feature);
 
-            XmlElement features = new XmlElement("stream:features");
-            features.Childs.Add(new XmlElement("feature1"));
-            stream.EnqueueResponse(StreamHeader.CreateClientHeader(settings.Domain));
-            stream.EnqueueResponse(features);
+            RunInitializer();
 
-            RunInitializer(initializer, stream);
-            
-            A.CallTo(() => negotiators[0].Neogatiate(stream, features.Childs.First())).MustNotHaveHappened();
-            A.CallTo(() => negotiators[1].Neogatiate(stream, features.Childs.First())).MustHaveHappened();
-            A.CallTo(() => negotiators[2].Neogatiate(stream, features.Childs.First())).MustNotHaveHappened();
+            A.CallTo(() => negotiators[0].Neogatiate(stream, feature)).MustNotHaveHappened();
+            A.CallTo(() => negotiators[1].Neogatiate(stream, feature)).MustHaveHappened();
+            A.CallTo(() => negotiators[2].Neogatiate(stream, feature)).MustNotHaveHappened();
         }
 
-        private void RunInitializer(StreamInitializer initializer, IXmppStream stream)
+        [Test]
+        public void Does_Not_Uses_Neogatiators_If_No_Features_Received()
         {
-            try { Task.Factory.StartNew(() => initializer.Start(stream)).Wait(); }
-            catch (AggregateException) { }
+            IFeatureNegatiator negotiator = A.Fake<IFeatureNegatiator>();
+            A.CallTo(() => negotiator.CanNeogatiate(A<XmlElement>._)).Returns(true);
+            initializer.Negotiators.Add(negotiator);
+
+            RunInitializer();
+
+            A.CallTo(() => negotiator.CanNeogatiate(A<XmlElement>._)).MustNotHaveHappened();
+            A.CallTo(() => negotiator.Neogatiate(stream, A<XmlElement>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Uses_Negotiator_Only_Once_Per_Feature_Response()
+        {
+            IFeatureNegatiator negotiator = A.Fake<IFeatureNegatiator>();
+            A.CallTo(() => negotiator.CanNeogatiate(A<XmlElement>._)).Returns(true);
+            var features = Enumerable.Range(0, 3).Select(i => new XmlElement("feature" + i)).ToArray();
+            initializer.Negotiators.Add(negotiator);
+            EnqueueResponse(features);
+
+            RunInitializer();
+
+            A.CallTo(() => negotiator.Neogatiate(stream, A<XmlElement>._)).MustHaveHappened(Repeated.Exactly.Once);
+        }
+
+        [Test]
+        public void Can_Negotiate_More_Than_One_Iteration()
+        {
+            IFeatureNegatiator negotiator = A.Fake<IFeatureNegatiator>();
+            A.CallTo(() => negotiator.CanNeogatiate(A<XmlElement>._)).Returns(true);
+            initializer.Negotiators.Add(negotiator);            
+                        
+            EnqueueResponse(new XmlElement("feature1"), new XmlElement("feature2"));            
+            EnqueueResponse(new XmlElement("feature3"));
+            RunInitializer();
+
+            A.CallTo(() => negotiator.Neogatiate(stream, A<XmlElement>._)).MustHaveHappened(Repeated.Exactly.Twice);
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Throws_Exception_If_IterationLimit_Exceed()
+        {
+            int iterationCount = 4;
+            initializer.IterationLimit = iterationCount - 1;
+            IFeatureNegatiator negotiator = A.Fake<IFeatureNegatiator>();
+            A.CallTo(() => negotiator.CanNeogatiate(A<XmlElement>._)).Returns(true);
+            initializer.Negotiators.Add(negotiator);
+            for (int i = 0; i < iterationCount; i++) EnqueueResponse(new []{ new XmlElement("element") });
+
+            RunInitializer(false);
         }
 
         private string[] invalidHeaders =
@@ -69,7 +115,7 @@ namespace Redcat.Xmpp.Tests
             "<stream:stream from='test-domain' xmlns='invalid-xmlns' xmlns:stream='http://etherx.jabber.org/streams'>",
             "<stream:stream from='test-domain' xmlns='jabber:client' xmlns:stream='invalid-xmlns-stream'>",
             "<invalid:name from='test-domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'/>",
-            "<stream:stream from='invalid-domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'>"
+            //"<stream:stream from='invalid-domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'>"
         };
 
         [Test]
@@ -77,8 +123,33 @@ namespace Redcat.Xmpp.Tests
         public void Throws_Exception_If_Invalid_Header_Received([ValueSource("invalidHeaders")]string headerXml)
         {
             stream.EnqueueResponse(Parse(headerXml));
+            EnqueueFeaturesResponse();
             
             initializer.Start(stream);
+        }
+
+        private void RunInitializer(bool enqueueEmptyResponse = true)
+        {
+            if (enqueueEmptyResponse) EnqueueResponse();
+            initializer.Start(stream);
+        }
+
+        private void EnqueueResponse(params XmlElement[] features)
+        {
+            EnqueueResponseHeader();
+            EnqueueFeaturesResponse(features);
+        }
+
+        private void EnqueueResponseHeader()
+        {
+            stream.EnqueueResponse(StreamHeader.CreateClientHeader(settings.Domain));
+        }
+
+        private void EnqueueFeaturesResponse(params XmlElement[] features)
+        {
+            XmlElement featuresElement = new XmlElement("stream:features");
+            foreach (var feature in features) featuresElement.Childs.Add(feature);
+            stream.EnqueueResponse(featuresElement);
         }
 
         private XmlElement Parse(string xml)
