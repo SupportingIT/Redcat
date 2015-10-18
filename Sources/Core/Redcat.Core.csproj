@@ -51,6 +51,7 @@
     <Compile Include="Net\NetworkChannel.cs" />
     <Compile Include="Net\SocketStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertySet.cs" />
     <Compile Include="ServiceProviderBase.cs" />
     <Compile Include="Services\ChannelManager.cs" />
     <Compile Include="Services\EventHub.cs" />
