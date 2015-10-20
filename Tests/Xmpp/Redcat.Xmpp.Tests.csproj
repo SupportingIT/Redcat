@@ -54,7 +54,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Integration\XmppProtocolExtensionTests.cs" />
     <Compile Include="JidTests.cs" />
     <Compile Include="Parsing\DelegateBuilderTests.cs" />
     <Compile Include="Parsing\XmlElementBuilderBaseTests.cs" />

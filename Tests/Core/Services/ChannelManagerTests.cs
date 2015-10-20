@@ -83,22 +83,9 @@ namespace Redcat.Core.Tests.Services
         }
 
         private ChannelManager CreateManager(params IChannelFactory[] factories)
-        {
-            IKernel kernel = CreateKernel(factories);
-            return new ChannelManager(kernel);
-        }
-
-        private IKernel CreateKernel(params IChannelFactory[] factories)
-        {
-            var providers = factories.Select(f => {
-                var provider = A.Fake<IServiceProvider>();
-                A.CallTo(() => provider.GetService(typeof(IChannelFactory))).Returns(f);
-                return provider;
-            });
-            IKernel kernel = new Kernel();
-            foreach (var provider in providers) kernel.Providers.Add(provider);
-            return kernel;
-        }
+        {            
+            return new ChannelManager();
+        }        
 
         private ConnectionSettings CreateSettings(string channelTypeId)
         {

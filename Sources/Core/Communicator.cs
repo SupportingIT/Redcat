@@ -6,6 +6,7 @@ namespace Redcat.Core
     public class Communicator : CommandProcessor
     {
         private IChannelManager channelManager;
+        private IMessageDispatcher messageDispatcher;
 
         protected IChannelManager ChannelManager
         {
@@ -15,6 +16,11 @@ namespace Redcat.Core
         protected IMessageChannel DefaultChannel
         {
             get { return ChannelManager.DefaultChannel; }
+        }
+
+        protected IMessageDispatcher MessageDispatcher
+        {
+            get { return messageDispatcher; }
         }
 
         public void Connect(ConnectionSettings settings)
@@ -29,24 +35,16 @@ namespace Redcat.Core
             throw new NotImplementedException();
         }
 
-        protected override void OnBeforeInit()
-        {
-            base.OnBeforeInit();
-            Kernel.Providers.Add(new CommunicatorServiceProvider(Kernel));
-        }
-
         protected override void OnAfterInit()
         {
-            base.OnAfterInit();
-            channelManager = Service<IChannelManager>();
-            if (channelManager == null) throw new InitializationException("Unable to find IChannelManager service which is required");
+            base.OnAfterInit();            
         }
 
         public void Send(Message message)
         {
             if (message == null) throw new ArgumentNullException("message");
             if (DefaultChannel == null) throw new InvalidOperationException("No active connections");
-            DefaultChannel.Send(message);
+            throw new NotImplementedException();
         }
     }
 }

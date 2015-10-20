@@ -67,8 +67,6 @@
     <Compile Include="Xml\XmlElement.cs" />
     <Compile Include="Xml\Namespaces.cs" />
     <Compile Include="Xml\StreamHeader.cs" />
-    <Compile Include="XmppProtocolExtension.cs" />
-    <Compile Include="XmppServiceProvider.cs" />
     <Compile Include="XmppStreamReader.cs" />
     <Compile Include="XmppStreamWriter.cs" />
   </ItemGroup>

@@ -39,13 +39,9 @@
   <ItemGroup>
     <Compile Include="CommandProcessor.cs" />
     <Compile Include="Communicator.cs" />
-    <Compile Include="CommunicatorServiceProvider.cs" />
     <Compile Include="ConnectionSettings.cs" />
-    <Compile Include="IKernel.cs" />
-    <Compile Include="IKernelExtension.cs" />
     <Compile Include="InitializationException.cs" />
     <Compile Include="IRunable.cs" />
-    <Compile Include="Kernel.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Net\ISocket.cs" />
     <Compile Include="Net\NetworkChannel.cs" />
@@ -55,6 +51,7 @@
     <Compile Include="Services\ChannelManager.cs" />
     <Compile Include="Services\EventHub.cs" />
     <Compile Include="Services\IEventHub.cs" />
+    <Compile Include="Services\IMessageDispatcher.cs" />
     <Compile Include="Services\MessageChannelBase.cs" />
     <Compile Include="Services\IChannelFactory.cs" />
     <Compile Include="Services\IChannelManager.cs" />
