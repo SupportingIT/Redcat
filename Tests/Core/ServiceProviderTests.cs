@@ -4,14 +4,14 @@ using System;
 namespace Redcat.Core.Tests
 {
     [TestFixture]
-    public class ServiceProviderBaseTests
+    public class ServiceProviderTests
     {
         [Test]
-        public void GetService_Returns_Same_Instance_Wich_Was_Registered_By_AddServiceInstance()
+        public void GetService_Returns_Same_Instance_Wich_Was_Registered_By_Add()
         {
-            ServiceProviderImpl provider = new ServiceProviderImpl();
+            ServiceProvider provider = new ServiceProvider();
             string service = "Some-Service";
-            provider.AddServiceInstance(service);
+            provider.Add(service);
 
             object actualService = provider.GetService(typeof(string));
 
@@ -19,12 +19,12 @@ namespace Redcat.Core.Tests
         }
 
         [Test]
-        public void GetService_Calls_Factory_Function_Wich_Was_Registered_By_AddServiceFactory()
+        public void GetService_Calls_Factory_Function_Wich_Was_Registered_By_AddFactory()
         {
-            ServiceProviderImpl provider = new ServiceProviderImpl();
+            ServiceProvider provider = new ServiceProvider();
             bool factoryWasCalled = false;
             int expectedResut = 8;
-            provider.AddServiceFactory(() => {
+            provider.AddFactory(() => {
                 factoryWasCalled = true;
                 return expectedResut;
             });
@@ -38,24 +38,11 @@ namespace Redcat.Core.Tests
         [Test]
         public void GetService_Returns_Null_If_No_Services_Was_Registered()
         {
-            ServiceProviderImpl provider = new ServiceProviderImpl();
+            ServiceProvider provider = new ServiceProvider();
 
             object actulResult = provider.GetService(typeof(string));
 
             Assert.That(actulResult, Is.Null);
-        }
-    }
-
-    internal class ServiceProviderImpl : ServiceProviderBase
-    {
-        internal new void AddServiceInstance<T>(T instance)
-        {
-            base.AddServiceInstance(instance);
-        }
-
-        internal new void AddServiceFactory<T>(Func<T> factory)
-        {
-            base.AddServiceFactory(factory);
         }
     }
 }

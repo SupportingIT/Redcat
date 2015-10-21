@@ -7,12 +7,14 @@ namespace Redcat.Core.Services
     public class ChannelManager : IChannelManager
     {
         private ICollection<IMessageChannel> activeChannels;
-        private IMessageChannel defaultChannel;        
+        private IMessageChannel defaultChannel;
+        private Func<IEnumerable<IChannelFactory>> GetChannelFactories;
 
-        public ChannelManager()
+        public ChannelManager(Func<IEnumerable<IChannelFactory>> factoryProvider)
         {            
             activeChannels = new List<IMessageChannel>();
-            defaultChannel = null;            
+            defaultChannel = null;
+            GetChannelFactories = factoryProvider;
         }
 
         public IEnumerable<IMessageChannel> ActiveChannels
@@ -27,7 +29,7 @@ namespace Redcat.Core.Services
 
         public IMessageChannel OpenChannel(ConnectionSettings settings)
         {
-            var factories = new List<IChannelFactory>();
+            var factories = GetChannelFactories();
             IChannelFactory factory = SelectFactory(factories, settings);
 
             if (factory == null) throw new InvalidOperationException("Unable to find channel factory");

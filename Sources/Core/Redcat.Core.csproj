@@ -42,13 +42,14 @@
     <Compile Include="ConnectionSettings.cs" />
     <Compile Include="InitializationException.cs" />
     <Compile Include="IRunable.cs" />
+    <Compile Include="IServiceContainer.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Net\ISocket.cs" />
     <Compile Include="Net\NetworkChannel.cs" />
     <Compile Include="Net\SocketStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySet.cs" />
-    <Compile Include="ServiceProviderBase.cs" />
+    <Compile Include="ServiceProvider.cs" />
     <Compile Include="Services\ChannelManager.cs" />
     <Compile Include="Services\EventHub.cs" />
     <Compile Include="Services\IEventHub.cs" />

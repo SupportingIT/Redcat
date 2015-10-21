@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 namespace Redcat.Core
 {
-    public abstract class ServiceProviderBase : IServiceProvider
+    public class ServiceProvider : IServiceContainer, IServiceProvider
     {
         private IDictionary<Type, object> serviceInstances;
         private IDictionary<Type, Func<object>> serviceFactories;
 
-        protected ServiceProviderBase()
+        public ServiceProvider()
         {
             serviceInstances = new Dictionary<Type, object>();
             serviceFactories = new Dictionary<Type, Func<object>>();
         }
 
-        protected void AddServiceInstance<T>(T service)
+        public void Add<T>(T service)
         {
             serviceInstances[typeof(T)] = service;
         }
 
-        protected void AddServiceFactory<T>(Func<T> factory)
+        public void AddFactory<T>(Func<T> factory)
         {
             serviceFactories[typeof(T)] = () => factory();
         }
@@ -34,6 +34,11 @@ namespace Redcat.Core
         public T GetService<T>()
         {
             return (T)GetService(typeof(T));
+        }
+
+        public IEnumerable<T> GetServices<T>()
+        {
+            throw new NotImplementedException();
         }
     }
 }

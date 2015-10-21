@@ -84,7 +84,7 @@ namespace Redcat.Core.Tests.Services
 
         private ChannelManager CreateManager(params IChannelFactory[] factories)
         {            
-            return new ChannelManager();
+            return new ChannelManager(() => factories);
         }        
 
         private ConnectionSettings CreateSettings(string channelTypeId)

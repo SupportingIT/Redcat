@@ -5,12 +5,18 @@ namespace Redcat.Core
 {
     public class Communicator : CommandProcessor
     {
-        private IChannelManager channelManager;
-        private IMessageDispatcher messageDispatcher;
+        private Lazy<IChannelManager> channelManager;
+        private Lazy<IMessageDispatcher> messageDispatcher;
+
+        public Communicator()
+        {
+            channelManager = new Lazy<IChannelManager>(GetService<IChannelManager>);
+            messageDispatcher = new Lazy<IMessageDispatcher>(GetService<IMessageDispatcher>);
+        }
 
         protected IChannelManager ChannelManager
         {
-            get { return channelManager; }
+            get { return channelManager.Value; }
         }
 
         protected IMessageChannel DefaultChannel
@@ -20,7 +26,7 @@ namespace Redcat.Core
 
         protected IMessageDispatcher MessageDispatcher
         {
-            get { return messageDispatcher; }
+            get { return messageDispatcher.Value; }
         }
 
         public void Connect(ConnectionSettings settings)
@@ -35,16 +41,23 @@ namespace Redcat.Core
             throw new NotImplementedException();
         }
 
-        protected override void OnAfterInit()
-        {
-            base.OnAfterInit();            
-        }
-
         public void Send(Message message)
         {
             if (message == null) throw new ArgumentNullException("message");
             if (DefaultChannel == null) throw new InvalidOperationException("No active connections");
             throw new NotImplementedException();
+        }
+
+        protected override void OnBeforeInit()
+        {
+            base.OnBeforeInit();
+            AddExtension("Redcat.Communicator", CommunicatorExtension);
+        }
+
+        private void CommunicatorExtension(IServiceContainer container)
+        {
+            IChannelManager channelManager = new ChannelManager(GetServices<IChannelFactory>);
+            container.Add<IChannelManager>(channelManager);
         }
     }
 }

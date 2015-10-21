@@ -2,6 +2,11 @@
 {
     public class ConnectionSettings : PropertySet
     {
+        public string ChannelType
+        {
+            get { return GetString("ChannelType"); }
+            set { Set("ChannelType", value); }
+        }
         public string Domain
         {
             get { return GetString("Domain"); }
@@ -30,6 +35,6 @@
         {
             get { return GetInt32("Port"); }
             set { Set("Port", value); }
-        }        
+        }
     }
 }
