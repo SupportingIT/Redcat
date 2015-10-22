@@ -11,13 +11,13 @@ namespace Redcat.Xmpp.Services
 
         public XmppChannelFactory(Func<ISocket> socketFactory)
         {
-            if (socketFactory == null) throw new ArgumentNullException("socketFactory");
+            if (socketFactory == null) throw new ArgumentNullException(nameof(socketFactory));
             this.socketFactory = socketFactory;
         }
 
         public IMessageChannel CreateChannel(ConnectionSettings settings)
         {
-            return new XmppChannel(socketFactory(), settings);
+            return new XmppChannel(socketFactory.Invoke(), settings);
         }
     }
 }
