@@ -50,6 +50,7 @@
     <Compile Include="ServiceProviderTests.cs" />
     <Compile Include="Services\ChannelManagerTests.cs" />
     <Compile Include="Services\EventHubTests.cs" />
+    <Compile Include="Services\MessageDispatcherTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -32,7 +32,7 @@ namespace Redcat.Core
         public void Connect(ConnectionSettings settings)
         {
             if (settings == null) throw new ArgumentNullException("settings");
-            if (!IsRunning) throw new InvalidOperationException();
+            if (!IsRunning) throw new InvalidOperationException("Run method must be called before opening any channels");
             ChannelManager.OpenChannel(settings);
         }
 
@@ -56,8 +56,15 @@ namespace Redcat.Core
 
         private void CommunicatorExtension(IServiceContainer container)
         {
-            IChannelManager channelManager = new ChannelManager(GetServices<IChannelFactory>);
+            IChannelManager channelManager = new ChannelManager(GetServices<IChannelFactory>);            
             container.Add<IChannelManager>(channelManager);
+            IMessageDispatcher messageDispatcher = new MessageDispatcher { OutgoingMessageHandlers = { SendMessageToChannel } };
+            container.Add<IMessageDispatcher>(messageDispatcher);
+        }
+
+        private void SendMessageToChannel(Message message)
+        {
+            throw new NotImplementedException();
         }
     }
 }

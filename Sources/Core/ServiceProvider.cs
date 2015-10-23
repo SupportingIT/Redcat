@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Redcat.Core
 {
@@ -16,29 +17,43 @@ namespace Redcat.Core
 
         public void Add<T>(T service)
         {
-            serviceInstances[typeof(T)] = service;
+            if (serviceInstances.ContainsKey(typeof(T))) AddToExistedValue<T>(service);
+            else serviceInstances[typeof(T)] = service;
+        }
+
+        private void AddToExistedValue<T>(T service)
+        {
+            T value = (T)serviceInstances[typeof(T)];
+            if (value is ICollection<T>) ((ICollection<T>)value).Add(service);
+            else serviceInstances[typeof(T)] = new List<T> { value, service };            
         }
 
         public void AddFactory<T>(Func<T> factory)
-        {
+        {            
             serviceFactories[typeof(T)] = () => factory();
         }
 
         public object GetService(Type serviceType)
         {
             if (serviceInstances.ContainsKey(serviceType)) return serviceInstances[serviceType];
-            if (serviceFactories.ContainsKey(serviceType)) return serviceFactories[serviceType]();
+            if (serviceFactories.ContainsKey(serviceType)) return serviceFactories[serviceType].Invoke();
             return null;
         }
 
         public T GetService<T>()
         {
-            return (T)GetService(typeof(T));
+            if (!serviceInstances.ContainsKey(typeof(T))) return default(T);
+            object value = serviceInstances[typeof(T)];
+            if (value is ICollection<T>) return ((ICollection<T>)value).First();            
+            return (T)value;
         }
 
         public IEnumerable<T> GetServices<T>()
         {
-            throw new NotImplementedException();
+            if (!serviceInstances.ContainsKey(typeof(T))) return Enumerable.Empty<T>();
+            object value = serviceInstances[typeof(T)];
+            if (value is IEnumerable<T>) return (IEnumerable<T>)value;
+            return new T[1] { (T)value };
         }
     }
 }
