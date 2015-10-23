@@ -67,12 +67,10 @@ namespace Redcat.Core.Services
 
         protected virtual IChannelFactory SelectFactory(IEnumerable<IChannelFactory> factories, ConnectionSettings settings)
         {
-            string channelTypeId = settings.GetString("ChannelTypeId");
-
             foreach (var factory in factories)
             {
                 string id = GetFactoryId(factory);
-                if (channelTypeId == id) return factory;
+                if (settings.ChannelType == id) return factory;
             }
 
             return null;

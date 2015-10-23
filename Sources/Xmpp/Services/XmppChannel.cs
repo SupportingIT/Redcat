@@ -20,7 +20,8 @@ namespace Redcat.Xmpp.Services
 
         protected virtual IXmppStream OpenXmppStream()
         {
-            throw new NotImplementedException();
+            SocketStream stream = new SocketStream(Socket);
+            return new XmppStream(stream);
         }
 
         private void InitializeStream(IXmppStream stream)
@@ -29,9 +30,9 @@ namespace Redcat.Xmpp.Services
             initializer.Start(stream);
         }
 
-        protected virtual IStreamInitializer CreateStreamInitializer(ConnectionSettings Settings)
+        protected virtual IStreamInitializer CreateStreamInitializer(ConnectionSettings settings)
         {
-            throw new NotImplementedException();
+            return new StreamInitializer(settings);
         }
 
         public override Message Receive()

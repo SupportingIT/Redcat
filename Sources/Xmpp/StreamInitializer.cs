@@ -69,7 +69,8 @@ namespace Redcat.Xmpp
             //var fromJid = response.GetAttributeValue<string>("from");
             if (response.Name != "stream:stream") throw new ProtocolViolationException();
             if (response.Xmlns != Namespaces.JabberClient) throw new ProtocolViolationException("Invalid xmlns for client header");
-            if (response.GetAttributeValue<string>("xmlns:stream") != Namespaces.Streams) throw new ProtocolViolationException();
+            //ejabbert doesn't set xmlns:stream attribute
+            //if (response.GetAttributeValue<string>("xmlns:stream") != Namespaces.Streams) throw new ProtocolViolationException();
         }
 
         private void HandleFeatures(IXmppStream stream, ICollection<XmlElement> features)
