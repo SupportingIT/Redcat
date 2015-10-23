@@ -7,7 +7,7 @@ namespace Redcat.Xmpp.Xml
     {
         private string xmlns;
 
-        public IqQuery(string xmlns) : base("query")
+        public IqQuery(string xmlns) : base("query", xmlns)
         {
             if (string.IsNullOrEmpty(xmlns)) throw new ArgumentNullException("xmlns");
             this.xmlns = xmlns;

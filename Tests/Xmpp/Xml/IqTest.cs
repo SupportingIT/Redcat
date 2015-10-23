@@ -112,8 +112,9 @@ namespace Redcat.Xmpp.Tests.Xml
         {
             IqStanza iqStanza = new IqStanza();
             IqQuery queryElement = new IqQuery(xmlns);
+            iqStanza.Childs.Add(queryElement);
             
-            IqQuery actualElement = iqStanza.Query();
+            IqQuery actualElement = iqStanza.GetQuery();
 
             Assert.AreEqual(queryElement, actualElement);
         }
@@ -123,7 +124,7 @@ namespace Redcat.Xmpp.Tests.Xml
         {
             IqStanza iqStanza = new IqStanza();
 
-            IqQuery actualElement = iqStanza.Query();
+            IqQuery actualElement = iqStanza.GetQuery();
 
             Assert.That(actualElement, Is.Null);
         }
@@ -132,33 +133,31 @@ namespace Redcat.Xmpp.Tests.Xml
         public void QueryXmlns_IqStanza_AddsQueryElementWithGivenXmlns()
         {
             IqStanza stanza = new IqStanza().Query(xmlns);
-            IqQuery query = null;//stanza.Find<IqQuery>("query");
+            IqQuery query = (IqQuery)stanza.Childs.Single();
 
             Assert.That(query.Xmlns, Is.EqualTo(xmlns));
         }
 
         [Test]
-        public void QueryXmlns_()
+        public void QueryXmlns_Adds_Childs_To_Query_Element()
         {
             RosterItem[] childItems = CreateChildItems();
 
             IqStanza stanza = new IqStanza().Query(xmlns, childItems);
 
-            IqQuery query = stanza.Query();
-            Assert.Fail();
-            //CollectionAssert.AreEquivalent(query.Items, childItems);
+            IqQuery query = stanza.GetQuery();            
+            CollectionAssert.AreEquivalent(query.Childs, childItems);
         }
 
         [Test]
-        public void QueryXmlns__()
+        public void QueryXmlns_Invokes_Action_At_Query_Element()
         {
             RosterItem[] childItems = CreateChildItems();
 
-            //IqStanza stanza = new IqStanza().Query(xmlns, q => q.AddItems(childItems));
+            IqStanza stanza = new IqStanza().Query(xmlns, q => { foreach (var c in childItems) q.Childs.Add(c); });
 
-            //IqQuery query = stanza.Query();
-            //CollectionAssert.AreEquivalent(query.Items, childItems);
-            Assert.Fail();
+            IqQuery query = stanza.GetQuery();
+            CollectionAssert.AreEquivalent(query.Childs, childItems);            
         }
 
         #endregion
@@ -169,9 +168,9 @@ namespace Redcat.Xmpp.Tests.Xml
         public void RosterQuery_AddsQueryElementWithRosterXmlns()
         {
             IqStanza stanza = new IqStanza().RosterQuery();
-            IqQuery query = stanza.Query();
+            IqQuery query = stanza.GetQuery();
 
-            //Assert.That(query.Xmlns, Is.EqualTo(XmppNamespaces.Roster));
+            Assert.That(query.Xmlns, Is.EqualTo(Namespaces.Roster));
         }
 
         [Test]
@@ -179,11 +178,10 @@ namespace Redcat.Xmpp.Tests.Xml
         {
             RosterItem[] childItems = CreateChildItems();
 
-            IqStanza stanza = null;//new IqStanza().RosterQuery(q => q.AddItems(childItems));
+            IqStanza stanza = new IqStanza().RosterQuery(iq => { });
 
-            IqQuery query = stanza.Query();
-            //CollectionAssert.AreEquivalent(query.Items, childItems);
-            Assert.Fail();
+            IqQuery query = stanza.GetQuery();
+            CollectionAssert.AreEquivalent(query.Childs, childItems);            
         }
 
         public void RosterQuery_AddsQueryElementAndCallsInitFunc()
@@ -192,9 +190,8 @@ namespace Redcat.Xmpp.Tests.Xml
 
             IqStanza stanza = new IqStanza().RosterQuery(childItems);
 
-            IqQuery query = stanza.Query();
-            //CollectionAssert.AreEquivalent(query.Items, childItems);
-            Assert.Fail();
+            IqQuery query = stanza.GetQuery();
+            CollectionAssert.AreEquivalent(query.Childs, childItems);
         }
 
         private RosterItem[] CreateChildItems(int count = 3)
@@ -212,7 +209,7 @@ namespace Redcat.Xmpp.Tests.Xml
         public void HasQuery_QueryElementXmlnsEqualsToGivenParameter_ReturnTrue()
         {
             IqStanza iq = new IqStanza();
-            //iq.AddItem(new IqQuery(xmlns));
+            iq.Childs.Add(new IqQuery(xmlns));
 
             Assert.That(iq.HasQuery(xmlns), Is.True);
         }
@@ -296,7 +293,7 @@ namespace Redcat.Xmpp.Tests.Xml
             RosterItem[] items = new[] {new RosterItem("item1"), new RosterItem("item2") };
             IqStanza iqStanza = CreateRosterResultIq(items);
 
-            ICollection<RosterItem> actualItems = iqStanza.RosterItems();
+            IEnumerable<RosterItem> actualItems = iqStanza.RosterItems();
 
             CollectionAssert.AreEquivalent(items, actualItems);
         }
@@ -306,7 +303,7 @@ namespace Redcat.Xmpp.Tests.Xml
         {
             IqStanza iqStanza = new IqStanza();
 
-            ICollection<RosterItem> actualItems = iqStanza.RosterItems();
+            IEnumerable<RosterItem> actualItems = iqStanza.RosterItems();
 
             CollectionAssert.IsEmpty(actualItems);
         }
@@ -314,11 +311,8 @@ namespace Redcat.Xmpp.Tests.Xml
         public IqStanza CreateRosterResultIq(IEnumerable<RosterItem> items)
         {
             IqStanza result = CreateIq(Iq.Type.Result, Namespaces.Roster);
-            IqQuery queryElement = result.Query();
-            foreach (RosterItem item in items)
-            {
-                //queryElement.AddItem(item);
-            }
+            IqQuery queryElement = result.GetQuery();
+            foreach (RosterItem item in items) queryElement.Childs.Add(item);            
             return result;
         }
 
