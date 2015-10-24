@@ -68,6 +68,7 @@
     <Compile Include="Xml\IqTest.cs" />
     <Compile Include="Xml\PresenceTests.cs" />
     <Compile Include="Xml\StanzaTests.cs" />
+    <Compile Include="Xml\StreamFeatureExtensionTests.cs" />
     <Compile Include="Xml\StreamHeaderTests.cs" />
     <Compile Include="Xml\XmlElementExtensionsTests.cs" />
     <Compile Include="Xml\XmlElementTests.cs" />
