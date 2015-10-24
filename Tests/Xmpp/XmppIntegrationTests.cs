@@ -9,7 +9,7 @@ namespace Redcat.Xmpp.Tests
     [TestFixture]
     public class XmppIntegrationTests
     {
-        [Test, Ignore]
+        [Test]
         public void Client_Connection()
         {
             Communicator communicator = new Communicator();

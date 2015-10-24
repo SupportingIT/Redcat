@@ -87,10 +87,10 @@ namespace Redcat.Core.Tests.Services
             return new ChannelManager(() => factories);
         }        
 
-        private ConnectionSettings CreateSettings(string channelTypeId)
+        private ConnectionSettings CreateSettings(string channelType)
         {
             ConnectionSettings settings = new ConnectionSettings();
-            settings.Set("ChannelTypeId", channelTypeId);
+            settings.ChannelType = channelType;
             return settings;
         }
 

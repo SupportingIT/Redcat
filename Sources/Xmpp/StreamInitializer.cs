@@ -75,9 +75,18 @@ namespace Redcat.Xmpp
 
         private void HandleFeatures(IXmppStream stream, ICollection<XmlElement> features)
         {
-            var feature = features.First();
-            var negotiator = negotiators.First(n => n.CanNeogatiate(feature));
-            negotiator.Neogatiate(stream, feature);
+            var feature = SelectFeature(features);
+            if (negotiators.Any(n => n.CanNeogatiate(feature)))
+            {
+                var negotiator = negotiators.First(n => n.CanNeogatiate(feature));
+                negotiator.Neogatiate(stream, feature);
+            }
+        }
+        
+        private XmlElement SelectFeature(IEnumerable<XmlElement> features)
+        {
+            //if ()
+            return features.First();
         }
 
         private void VerifyStreamFeatures(XmlElement response)

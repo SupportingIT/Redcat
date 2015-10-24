@@ -97,6 +97,36 @@ namespace Redcat.Xmpp.Tests
         }
 
         [Test]
+        public void Does_Nothing_If_No_Negotiators_For_Received_Features()
+        {
+            IFeatureNegatiator negotiator = A.Fake<IFeatureNegatiator>();
+            initializer.Negotiators.Add(negotiator);
+            EnqueueResponse(new XmlElement("f1"), new XmlElement("f2"));
+
+            RunInitializer();
+
+            A.CallTo(() => negotiator.Neogatiate(stream, A<XmlElement>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Negoatiates_Tls_Feature_First()
+        {
+            var tlsFeature = Tls.Start;
+            IFeatureNegatiator tlsNegotiator = A.Fake<IFeatureNegatiator>();
+            A.CallTo(() => tlsNegotiator.CanNeogatiate(tlsFeature)).Returns(true);
+            IFeatureNegatiator negotiator = A.Fake<IFeatureNegatiator>();
+            A.CallTo(() => negotiator.CanNeogatiate(tlsFeature)).Returns(false);
+            A.CallTo(() => negotiator.CanNeogatiate(A<XmlElement>._)).Returns(true);
+            initializer.AddNegotiators(new[] { negotiator, tlsNegotiator });
+            EnqueueResponse(new XmlElement("feature1"), tlsFeature, new XmlElement("feature2"));
+
+            RunInitializer();
+
+            A.CallTo(() => tlsNegotiator.Neogatiate(stream, tlsFeature)).MustHaveHappened();
+            A.CallTo(() => negotiator.Neogatiate(stream, A<XmlElement>._)).MustNotHaveHappened();
+        }
+
+        [Test]
         [ExpectedException(typeof(InvalidOperationException))]
         public void Throws_Exception_If_IterationLimit_Exceed()
         {
@@ -113,7 +143,7 @@ namespace Redcat.Xmpp.Tests
         private string[] invalidHeaders =
         {
             "<stream:stream from='test-domain' xmlns='invalid-xmlns' xmlns:stream='http://etherx.jabber.org/streams'>",
-            "<stream:stream from='test-domain' xmlns='jabber:client' xmlns:stream='invalid-xmlns-stream'>",
+            //"<stream:stream from='test-domain' xmlns='jabber:client' xmlns:stream='invalid-xmlns-stream'>",
             "<invalid:name from='test-domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'/>",
             //"<stream:stream from='invalid-domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'>"
         };

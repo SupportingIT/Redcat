@@ -64,9 +64,11 @@
     <Compile Include="Xml\PresenceStanza.cs" />
     <Compile Include="Xml\RosterItem.cs" />
     <Compile Include="Xml\Stanza.cs" />
+    <Compile Include="Xml\Tls.cs" />
     <Compile Include="Xml\XmlElement.cs" />
     <Compile Include="Xml\Namespaces.cs" />
     <Compile Include="Xml\StreamHeader.cs" />
+    <Compile Include="Xml\XmlElementExtensions.cs" />
     <Compile Include="XmppProtocolExtensions.cs" />
     <Compile Include="XmppStream.cs" />
     <Compile Include="XmppStreamReader.cs" />
