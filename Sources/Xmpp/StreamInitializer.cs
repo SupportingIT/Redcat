@@ -42,16 +42,19 @@ namespace Redcat.Xmpp
 
         public void Start(IXmppStream stream)
         {
+            bool sendHeader = true;
+
             for (int i = 0; i < iterationLimit; i++)
             {
-                ExchangeHeaders(stream);
+                if (sendHeader) ExchangeHeaders(stream);
 
                 var response = stream.Read();
                 VerifyStreamFeatures(response);
 
                 if (response.Childs.Count == 0) return;
+                if (!HasNegotiatorForFeatures(response.Childs)) return;
 
-                HandleFeatures(stream, response.Childs);
+                sendHeader = HandleFeatures(stream, response.Childs);
             }
             throw new InvalidOperationException();
         }
@@ -73,19 +76,25 @@ namespace Redcat.Xmpp
             //if (response.GetAttributeValue<string>("xmlns:stream") != Namespaces.Streams) throw new ProtocolViolationException();
         }
 
-        private void HandleFeatures(IXmppStream stream, ICollection<XmlElement> features)
+        private bool HasNegotiatorForFeatures(IEnumerable<XmlElement> features)
+        {
+            return features.Any(f => negotiators.Any(n => n.CanNeogatiate(f)));
+        }
+
+        private bool HandleFeatures(IXmppStream stream, ICollection<XmlElement> features)
         {
             var feature = SelectFeature(features);
             if (negotiators.Any(n => n.CanNeogatiate(feature)))
             {
                 var negotiator = negotiators.First(n => n.CanNeogatiate(feature));
-                negotiator.Neogatiate(stream, feature);
+                return negotiator.Neogatiate(stream, feature);
             }
+            return false;
         }
         
         private XmlElement SelectFeature(IEnumerable<XmlElement> features)
         {
-            //if ()
+            if (features.HasTlsFeature()) return features.TlsFeature();
             return features.First();
         }
 
