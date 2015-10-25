@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JidTests.cs" />
+    <Compile Include="Negotiators\TlsNegotiatorTests.cs" />
     <Compile Include="Parsing\DelegateBuilderTests.cs" />
     <Compile Include="Parsing\XmlElementBuilderBaseTests.cs" />
     <Compile Include="Parsing\XmlElementBuilderTests.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Services\XmppChannelTests.cs" />
     <Compile Include="SocketAdapter.cs" />
     <Compile Include="StreamInitializerTests.cs" />
+    <Compile Include="TestXmppStream.cs" />
     <Compile Include="Xml\DatagramElementTests.cs" />
     <Compile Include="Xml\IqTest.cs" />
     <Compile Include="Xml\PresenceTests.cs" />
@@ -93,6 +95,7 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

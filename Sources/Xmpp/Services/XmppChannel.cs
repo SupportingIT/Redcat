@@ -1,6 +1,7 @@
 ﻿using System;
 using Redcat.Core;
 using Redcat.Core.Net;
+using Redcat.Xmpp.Negotiators;
 
 namespace Redcat.Xmpp.Services
 {
@@ -31,8 +32,11 @@ namespace Redcat.Xmpp.Services
         }
 
         protected virtual IStreamInitializer CreateStreamInitializer(ConnectionSettings settings)
-        {
-            return new StreamInitializer(settings);
+        {            
+            var initializer = new StreamInitializer(settings);
+            TlsNegotiator tls = new TlsNegotiator(null);
+            initializer.Negotiators.Add(tls);
+            return initializer;
         }
 
         public override Message Receive()
