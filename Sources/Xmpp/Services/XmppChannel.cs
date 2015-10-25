@@ -34,7 +34,7 @@ namespace Redcat.Xmpp.Services
         protected virtual IStreamInitializer CreateStreamInitializer(ConnectionSettings settings)
         {            
             var initializer = new StreamInitializer(settings);
-            TlsNegotiator tls = new TlsNegotiator(null);
+            TlsNegotiator tls = new TlsNegotiator(SetTlsContext);
             initializer.Negotiators.Add(tls);
             return initializer;
         }

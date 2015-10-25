@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 
 namespace Redcat.Core.Net
@@ -12,6 +13,8 @@ namespace Redcat.Core.Net
         {
             this.socket = socket;
         }
+
+        public Func<Stream, Stream> TlsContextFactory { get; set; }
 
         protected ISocket Socket
         {
@@ -38,6 +41,13 @@ namespace Redcat.Core.Net
         protected void Send(byte[] buffer, int offset, int count)
         {
             Socket.Send(buffer, offset, count);
+        }
+
+        protected void SetTlsContext()
+        {
+            if (TlsContextFactory == null) throw new InvalidOperationException();
+            SocketStream stream = new SocketStream(socket);
+            Stream tlsStream = TlsContextFactory.Invoke(stream);
         }
     }
 }

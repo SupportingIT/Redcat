@@ -1,7 +1,10 @@
 ﻿using NUnit.Framework;
 using Redcat.Core;
 using Redcat.Core.Net;
+using System;
 using System.Configuration;
+using System.IO;
+using System.Net.Security;
 using System.Net.Sockets;
 
 namespace Redcat.Xmpp.Tests
@@ -13,7 +16,7 @@ namespace Redcat.Xmpp.Tests
         public void Client_Connection()
         {
             Communicator communicator = new Communicator();
-            communicator.AddXmppExtension(CreateSocket);
+            communicator.AddXmppExtension(CreateSocket, CreateTlsStream);
             communicator.Run();
 
             ConnectionSettings settings = CreateConnectionSettings();
@@ -26,6 +29,13 @@ namespace Redcat.Xmpp.Tests
             return new SocketAdapter(socket);
         }
 
+        private Stream CreateTlsStream(Stream stream)
+        {
+            SslStream sslStream = new SslStream(stream);
+            sslStream.AuthenticateAsClient("localhost");
+            throw new NotImplementedException();
+        }
+
         private ConnectionSettings CreateConnectionSettings()
         {
             ConnectionSettings settings = new ConnectionSettings();
@@ -34,6 +44,6 @@ namespace Redcat.Xmpp.Tests
             settings.Host = ConfigurationManager.AppSettings["Host"];
             settings.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
             return settings;
-        }
+        }        
     }
 }
