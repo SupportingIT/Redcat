@@ -35,11 +35,24 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandProcessor.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="ConnectionSettings.cs" />
+    <Compile Include="DI\ActivatorUtilities.cs" />
+    <Compile Include="DI\IServiceCollection.cs" />
+    <Compile Include="DI\IServiceScope.cs" />
+    <Compile Include="DI\IServiceScopeFactory.cs" />
+    <Compile Include="DI\ObjectFactory.cs" />
+    <Compile Include="DI\ServiceCollectionExtensions.cs" />
+    <Compile Include="DI\ServiceDescriptor.cs" />
+    <Compile Include="DI\ServiceLifetime.cs" />
+    <Compile Include="DI\ServiceProviderExtensions.cs" />
     <Compile Include="InitializationException.cs" />
     <Compile Include="IRunable.cs" />
     <Compile Include="IServiceContainer.cs" />
@@ -49,6 +62,11 @@
     <Compile Include="Net\SocketStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySet.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ServiceProvider.cs" />
     <Compile Include="Services\ChannelManager.cs" />
     <Compile Include="Services\EventHub.cs" />
