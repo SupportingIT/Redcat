@@ -1,6 +1,6 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
-using Redcat.Core.Services;
+using Redcat.Core.Communication;
 using System;
 
 namespace Redcat.Core.Tests

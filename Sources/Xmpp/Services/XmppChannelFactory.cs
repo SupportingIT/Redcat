@@ -1,8 +1,8 @@
 ﻿using System;
 using Redcat.Core;
-using Redcat.Core.Services;
 using Redcat.Core.Net;
 using System.IO;
+using Redcat.Core.Communication;
 
 namespace Redcat.Xmpp.Services
 {

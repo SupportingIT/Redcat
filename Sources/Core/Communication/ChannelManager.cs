@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Redcat.Core.Services
+namespace Redcat.Core.Communication
 {
     public class ChannelManager : IChannelManager
     {
@@ -11,7 +11,7 @@ namespace Redcat.Core.Services
         private Func<IEnumerable<IChannelFactory>> GetChannelFactories;
 
         public ChannelManager(Func<IEnumerable<IChannelFactory>> factoryProvider)
-        {            
+        {
             activeChannels = new List<IMessageChannel>();
             defaultChannel = null;
             GetChannelFactories = factoryProvider;

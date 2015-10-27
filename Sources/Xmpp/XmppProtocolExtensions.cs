@@ -1,6 +1,5 @@
 ﻿using Redcat.Core;
 using Redcat.Core.Net;
-using Redcat.Core.Services;
 using Redcat.Xmpp.Services;
 using System;
 using System.IO;

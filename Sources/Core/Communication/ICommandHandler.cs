@@ -1,4 +1,4 @@
-﻿namespace Redcat.Core.Services
+﻿namespace Redcat.Core.Communication
 {
     public interface ICommandHandler<T>
     {

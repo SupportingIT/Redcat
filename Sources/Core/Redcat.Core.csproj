@@ -67,8 +67,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Communication\ChannelManager.cs" />
-    <Compile Include="Communication\EventHub.cs" />
-    <Compile Include="Communication\IEventHub.cs" />
     <Compile Include="Communication\IMessageDispatcher.cs" />
     <Compile Include="Communication\MessageChannelBase.cs" />
     <Compile Include="Communication\IChannelFactory.cs" />

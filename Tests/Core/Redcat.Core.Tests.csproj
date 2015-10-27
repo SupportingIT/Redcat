@@ -47,9 +47,8 @@
     <Compile Include="CommunicatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySetTests.cs" />
-    <Compile Include="Services\ChannelManagerTests.cs" />
-    <Compile Include="Services\EventHubTests.cs" />
-    <Compile Include="Services\MessageDispatcherTests.cs" />
+    <Compile Include="Communication\ChannelManagerTests.cs" />
+    <Compile Include="Communication\MessageDispatcherTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

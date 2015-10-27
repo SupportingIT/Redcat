@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Redcat.Core.Services
+namespace Redcat.Core.Communication
 {
     public interface IChannelManager
     {

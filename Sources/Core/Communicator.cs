@@ -1,5 +1,5 @@
-﻿using Redcat.Core.Service;
-using Redcat.Core.Services;
+﻿using Redcat.Core.Communication;
+using Redcat.Core.Service;
 using System;
 
 namespace Redcat.Core
