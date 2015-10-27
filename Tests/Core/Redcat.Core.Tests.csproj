@@ -47,7 +47,6 @@
     <Compile Include="CommunicatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySetTests.cs" />
-    <Compile Include="ServiceProviderTests.cs" />
     <Compile Include="Services\ChannelManagerTests.cs" />
     <Compile Include="Services\EventHubTests.cs" />
     <Compile Include="Services\MessageDispatcherTests.cs" />

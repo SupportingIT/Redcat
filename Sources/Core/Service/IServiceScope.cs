@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Redcat.Core.Service
 {
     /// <summary>
     /// The <see cref="System.IDisposable.Dispose"/> method ends the scope lifetime. Once Dispose

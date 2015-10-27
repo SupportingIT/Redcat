@@ -44,18 +44,17 @@
     <Compile Include="CommandProcessor.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="ConnectionSettings.cs" />
-    <Compile Include="DI\ActivatorUtilities.cs" />
-    <Compile Include="DI\IServiceCollection.cs" />
-    <Compile Include="DI\IServiceScope.cs" />
-    <Compile Include="DI\IServiceScopeFactory.cs" />
-    <Compile Include="DI\ObjectFactory.cs" />
-    <Compile Include="DI\ServiceCollectionExtensions.cs" />
-    <Compile Include="DI\ServiceDescriptor.cs" />
-    <Compile Include="DI\ServiceLifetime.cs" />
-    <Compile Include="DI\ServiceProviderExtensions.cs" />
+    <Compile Include="Service\ActivatorUtilities.cs" />
+    <Compile Include="Service\IServiceCollection.cs" />
+    <Compile Include="Service\IServiceScope.cs" />
+    <Compile Include="Service\IServiceScopeFactory.cs" />
+    <Compile Include="Service\ObjectFactory.cs" />
+    <Compile Include="Service\ServiceCollectionExtensions.cs" />
+    <Compile Include="Service\ServiceDescriptor.cs" />
+    <Compile Include="Service\ServiceLifetime.cs" />
+    <Compile Include="Service\ServiceProviderExtensions.cs" />
     <Compile Include="InitializationException.cs" />
     <Compile Include="IRunable.cs" />
-    <Compile Include="IServiceContainer.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Net\ISocket.cs" />
     <Compile Include="Net\NetworkChannel.cs" />
@@ -67,17 +66,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ServiceProvider.cs" />
-    <Compile Include="Services\ChannelManager.cs" />
-    <Compile Include="Services\EventHub.cs" />
-    <Compile Include="Services\IEventHub.cs" />
-    <Compile Include="Services\IMessageDispatcher.cs" />
-    <Compile Include="Services\MessageChannelBase.cs" />
-    <Compile Include="Services\IChannelFactory.cs" />
-    <Compile Include="Services\IChannelManager.cs" />
-    <Compile Include="Services\ICommandHandler.cs" />
-    <Compile Include="Services\IMessageChannel.cs" />
-    <Compile Include="Services\MessageDispatcher.cs" />
+    <Compile Include="Communication\ChannelManager.cs" />
+    <Compile Include="Communication\EventHub.cs" />
+    <Compile Include="Communication\IEventHub.cs" />
+    <Compile Include="Communication\IMessageDispatcher.cs" />
+    <Compile Include="Communication\MessageChannelBase.cs" />
+    <Compile Include="Communication\IChannelFactory.cs" />
+    <Compile Include="Communication\IChannelManager.cs" />
+    <Compile Include="Communication\ICommandHandler.cs" />
+    <Compile Include="Communication\IMessageChannel.cs" />
+    <Compile Include="Communication\MessageDispatcher.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

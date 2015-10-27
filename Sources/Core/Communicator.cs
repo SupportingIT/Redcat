@@ -1,4 +1,5 @@
-﻿using Redcat.Core.Services;
+﻿using Redcat.Core.Service;
+using Redcat.Core.Services;
 using System;
 
 namespace Redcat.Core
@@ -54,12 +55,12 @@ namespace Redcat.Core
             AddExtension("Redcat.Communicator", CommunicatorExtension);
         }
 
-        private void CommunicatorExtension(IServiceContainer container)
+        private void CommunicatorExtension(IServiceCollection collection)
         {
             IChannelManager channelManager = new ChannelManager(GetServices<IChannelFactory>);            
-            container.Add<IChannelManager>(channelManager);
+            //container.Add<IChannelManager>(channelManager);
             IMessageDispatcher messageDispatcher = new MessageDispatcher { OutgoingMessageHandlers = { SendMessageToChannel } };
-            container.Add<IMessageDispatcher>(messageDispatcher);
+            //container.Add<IMessageDispatcher>(messageDispatcher);
         }
 
         private void SendMessageToChannel(Message message)

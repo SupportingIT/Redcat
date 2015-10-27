@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Redcat.Core.Service
 {
     /// <summary>
     /// Specifies the contract for a collection of service descriptors.

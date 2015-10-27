@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Redcat.Core.Service
 {
     /// <summary>
     /// Helper code for the various activator services.

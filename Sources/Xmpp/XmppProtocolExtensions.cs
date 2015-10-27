@@ -13,7 +13,7 @@ namespace Redcat.Xmpp
         {
             communicator.AddExtension("xmpp", c => {
                 var factory = new XmppChannelFactory(socketFactory, tlsContextFactory);
-                c.Add<IChannelFactory>(factory);
+                //c.Add<IChannelFactory>(factory);
             });
         }
     }

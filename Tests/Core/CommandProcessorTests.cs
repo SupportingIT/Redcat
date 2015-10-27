@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
+using Redcat.Core.Service;
 using Redcat.Core.Services;
 using System;
 
@@ -35,9 +36,9 @@ namespace Redcat.Core.Tests
         [Test]
         public void Run_Adds_Extensions()
         {
-            IServiceContainer container = A.Fake<IServiceContainer>();
+            IServiceCollection container = A.Fake<IServiceCollection>();
             CommandProcessor processor = new TestCommandProcessor(container);
-            Action<IServiceContainer> extension = A.Fake<Action<IServiceContainer>>();
+            Action<IServiceCollection> extension = A.Fake<Action<IServiceCollection>>();
             processor.AddExtension("test", extension);
 
             A.CallTo(() => extension.Invoke(container)).MustNotHaveHappened();
@@ -49,15 +50,10 @@ namespace Redcat.Core.Tests
 
     class TestCommandProcessor : CommandProcessor
     {
-        private IServiceContainer container;
-        public TestCommandProcessor(IServiceContainer container)
+        private IServiceCollection container;
+        public TestCommandProcessor(IServiceCollection container)
         {
             this.container = container;
-        }
-
-        protected override IServiceContainer CreateServiceContainer()
-        {
-            return container;
         }
     }
 }

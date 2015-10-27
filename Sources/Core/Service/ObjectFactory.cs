@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Redcat.Core.Service
 {
     /// <summary>
     /// The result of <see cref="ActivatorUtilities.CreateFactory(Type, Type[])"/>.

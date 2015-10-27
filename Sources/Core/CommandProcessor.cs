@@ -1,4 +1,5 @@
-﻿using Redcat.Core.Services;
+﻿using Redcat.Core.Service;
+using Redcat.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -8,13 +9,13 @@ namespace Redcat.Core
 {
     public class CommandProcessor : IRunable, IDisposable
     {
-        private IDictionary<string, Action<IServiceContainer>> extensions;
-        private IServiceContainer serviceContainer;
+        private IDictionary<string, Action<IServiceCollection>> extensions;
+        private IServiceProvider serviceProvider;
         private bool initialized = false;
 
         public CommandProcessor()
         {
-            extensions = new Dictionary<string, Action<IServiceContainer>>();
+            extensions = new Dictionary<string, Action<IServiceCollection>>();
         }
 
         protected bool IsRunning
@@ -35,12 +36,12 @@ namespace Redcat.Core
 
         protected T GetService<T>()
         {
-            return serviceContainer.GetService<T>();
+            throw new NotImplementedException();
         } 
 
         protected IEnumerable<T> GetServices<T>()
         {
-            return serviceContainer.GetServices<T>();
+            throw new NotImplementedException();
         }
 
         public void AddCommandHandler<T>(ICommandHandler<T> handler)
@@ -48,7 +49,7 @@ namespace Redcat.Core
             //Contract.Requires<ArgumentNullException>(handler != null);            
         }
 
-        public void AddExtension(string name, Action<IServiceContainer> extension)
+        public void AddExtension(string name, Action<IServiceCollection> extension)
         {
             //Contract.Requires<ArgumentNullException>(name != null);
             //Contract.Requires<ArgumentNullException>(extension != null);
@@ -57,25 +58,30 @@ namespace Redcat.Core
 
         public void Run()
         {
-            if (initialized) return;
-            serviceContainer = CreateServiceContainer();
+            if (initialized) return;            
             OnBeforeInit();
             OnInit();
             OnAfterInit();
             initialized = true;
         }
 
-        protected virtual IServiceContainer CreateServiceContainer()
+        protected virtual void OnBeforeInit()
         {
-            return new ServiceProvider();
         }
 
-        protected virtual void OnBeforeInit()
-        { }
+        private IServiceCollection CreateServiceCollection()
+        {
+            throw new NotImplementedException();
+        }
+
+        private IServiceProvider CreateServiceProvider(IServiceCollection collection)
+        {
+            throw new NotImplementedException();
+        }
 
         protected virtual void OnInit()
         {
-            foreach (var extension in extensions.Values) extension(serviceContainer);
+            //foreach (var extension in extensions.Values) extension(serviceContainer);
         }
 
         protected virtual void OnAfterInit()
