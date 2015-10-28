@@ -34,17 +34,37 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <EmbeddedResource Include="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
+	<Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="CommandProcessor.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="ConnectionSettings.cs" />
     <Compile Include="Service\ActivatorUtilities.cs" />
+    <Compile Include="Service\DI\Internal\ConcurrentDictionaryExtensions.cs" />
+    <Compile Include="Service\DI\ServiceCollection.cs" />
+    <Compile Include="Service\DI\ServiceCollectionExtensions.cs" />
+    <Compile Include="Service\DI\ServiceLookup\ClosedIEnumerableService.cs" />
+    <Compile Include="Service\DI\ServiceLookup\ConstantCallSite.cs" />
+    <Compile Include="Service\DI\ServiceLookup\ConstructorCallSite.cs" />
+    <Compile Include="Service\DI\ServiceLookup\CreateInstanceCallSite.cs" />
+    <Compile Include="Service\DI\ServiceLookup\FactoryService.cs" />
+    <Compile Include="Service\DI\ServiceLookup\GenericService.cs" />
+    <Compile Include="Service\DI\ServiceLookup\IGenericService.cs" />
+    <Compile Include="Service\DI\ServiceLookup\InstanceService.cs" />
+    <Compile Include="Service\DI\ServiceLookup\IService.cs" />
+    <Compile Include="Service\DI\ServiceLookup\IServiceCallSite.cs" />
+    <Compile Include="Service\DI\ServiceLookup\OpenIEnumerableService.cs" />
+    <Compile Include="Service\DI\ServiceLookup\Service.cs" />
+    <Compile Include="Service\DI\ServiceLookup\ServiceEntry.cs" />
+    <Compile Include="Service\DI\ServiceLookup\ServiceProviderService.cs" />
+    <Compile Include="Service\DI\ServiceLookup\ServiceScope.cs" />
+    <Compile Include="Service\DI\ServiceLookup\ServiceScopeFactory.cs" />
+    <Compile Include="Service\DI\ServiceLookup\ServiceScopeService.cs" />
+    <Compile Include="Service\DI\ServiceLookup\ServiceTable.cs" />
+    <Compile Include="Service\DI\ServiceProvider.cs" />
     <Compile Include="Service\IServiceCollection.cs" />
     <Compile Include="Service\IServiceScope.cs" />
     <Compile Include="Service\IServiceScopeFactory.cs" />
@@ -61,11 +81,6 @@
     <Compile Include="Net\SocketStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySet.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Communication\ChannelManager.cs" />
     <Compile Include="Communication\IMessageDispatcher.cs" />
     <Compile Include="Communication\MessageChannelBase.cs" />
@@ -74,6 +89,12 @@
     <Compile Include="Communication\ICommandHandler.cs" />
     <Compile Include="Communication\IMessageChannel.cs" />
     <Compile Include="Communication\MessageDispatcher.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

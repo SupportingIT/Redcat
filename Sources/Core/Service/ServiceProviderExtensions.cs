@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection.Abstractions;
 
 namespace Redcat.Core.Service
 {
