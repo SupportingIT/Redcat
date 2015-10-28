@@ -1,7 +1,9 @@
-﻿using Redcat.Core.Communication;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Redcat.Core.Communication;
 using Redcat.Core.Service;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Redcat.Core
 {
@@ -21,42 +23,39 @@ namespace Redcat.Core
             get { return initialized; }
         }
 
+        protected T GetService<T>()
+        {
+            return serviceProvider.GetService<T>();
+        }
+
+        protected IEnumerable<T> GetServices<T>()
+        {
+            return serviceProvider.GetServices<T>();
+        }
+
         public void Execute<T>(T command)
         {
-            //Contract.Requires<ArgumentNullException>(command != null);
-            foreach (var handler in GetHandlersForCommand<T>()) handler.Handle(command);
+            if (command == null) throw new ArgumentNullException(nameof(command));
+            var handlers = GetHandlersForCommand<T>();
+            if (handlers.Count() == 0) throw new InvalidOperationException();
+            foreach (var handler in handlers) handler.Handle(command);
         }
 
         private IEnumerable<ICommandHandler<T>> GetHandlersForCommand<T>()
         {
-            throw new NotImplementedException();
-        }
-
-        protected T GetService<T>()
-        {
-            throw new NotImplementedException();
-        } 
-
-        protected IEnumerable<T> GetServices<T>()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddCommandHandler<T>(ICommandHandler<T> handler)
-        {
-            //Contract.Requires<ArgumentNullException>(handler != null);            
+            return serviceProvider.GetServices<ICommandHandler<T>>();
         }
 
         public void AddExtension(string name, Action<IServiceCollection> extension)
         {
-            //Contract.Requires<ArgumentNullException>(name != null);
-            //Contract.Requires<ArgumentNullException>(extension != null);
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
+            if (extension == null) throw new ArgumentNullException(nameof(extension));
             extensions.Add(name, extension);
         }
 
         public void Run()
         {
-            if (initialized) return;            
+            if (initialized) return;
             OnBeforeInit();
             OnInit();
             OnAfterInit();
@@ -65,21 +64,23 @@ namespace Redcat.Core
 
         protected virtual void OnBeforeInit()
         {
+        }        
+
+        protected virtual void OnInit()
+        {
+            var services = CreateServiceCollection();            
+            foreach (var extension in extensions.Values) extension(services);
+            serviceProvider = CreateServiceProvider(services);
         }
 
         private IServiceCollection CreateServiceCollection()
         {
-            throw new NotImplementedException();
+            return new ServiceCollection();
         }
 
         private IServiceProvider CreateServiceProvider(IServiceCollection collection)
         {
-            throw new NotImplementedException();
-        }
-
-        protected virtual void OnInit()
-        {
-            //foreach (var extension in extensions.Values) extension(serviceContainer);
+            return new ServiceProvider(collection);
         }
 
         protected virtual void OnAfterInit()

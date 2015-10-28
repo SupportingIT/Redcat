@@ -17,12 +17,13 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
 
         private readonly Dictionary<Type, ServiceEntry> _services;
         private readonly Dictionary<Type, List<IGenericService>> _genericServices;
-        private readonly Dictionary<Type, Func<ServiceProvider, object>> _realizedServices = null;// new ConcurrentDictionary<Type, Func<ServiceProvider, object>>();
+        private readonly Dictionary<Type, Func<ServiceProvider, object>> _realizedServices;// new ConcurrentDictionary<Type, Func<ServiceProvider, object>>();
 
         public ServiceTable(IEnumerable<ServiceDescriptor> descriptors)
         {
             _services = new Dictionary<Type, ServiceEntry>();
             _genericServices = new Dictionary<Type, List<IGenericService>>();
+            _realizedServices = new Dictionary<Type, Func<ServiceProvider, object>>();
 
             foreach (var descriptor in descriptors)
             {

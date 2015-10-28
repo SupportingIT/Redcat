@@ -30,9 +30,18 @@ namespace System.Collections.Concurrent
             }
         }
 
-        internal static bool TryAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        internal static bool TryAdd<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {
-            throw new NotImplementedException();
+            lock (dictionary)
+            {
+                TValue _value;
+                if (!dictionary.TryGetValue(key, out _value))
+                {
+                    dictionary.Add(key, value);
+                    return true;
+                }
+                return false;
+            }
         }
     }
 }

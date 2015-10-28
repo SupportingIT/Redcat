@@ -32,7 +32,7 @@ namespace Redcat.Core
 
         public void Connect(ConnectionSettings settings)
         {
-            if (settings == null) throw new ArgumentNullException("settings");
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
             if (!IsRunning) throw new InvalidOperationException("Run method must be called before opening any channels");
             ChannelManager.OpenChannel(settings);
         }
@@ -44,9 +44,8 @@ namespace Redcat.Core
 
         public void Send(Message message)
         {
-            if (message == null) throw new ArgumentNullException("message");
-            if (DefaultChannel == null) throw new InvalidOperationException("No active connections");
-            throw new NotImplementedException();
+            if (message == null) throw new ArgumentNullException(nameof(message));
+            MessageDispatcher.DispatchOutgoing(message);
         }
 
         protected override void OnBeforeInit()
@@ -58,7 +57,7 @@ namespace Redcat.Core
         private void CommunicatorExtension(IServiceCollection collection)
         {
             IChannelManager channelManager = new ChannelManager(GetServices<IChannelFactory>);            
-            //container.Add<IChannelManager>(channelManager);
+            collection.TryAddSingleton(channelManager);
             IMessageDispatcher messageDispatcher = new MessageDispatcher { OutgoingMessageHandlers = { SendMessageToChannel } };
             //container.Add<IMessageDispatcher>(messageDispatcher);
         }

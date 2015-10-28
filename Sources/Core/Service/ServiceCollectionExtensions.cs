@@ -380,6 +380,24 @@ namespace Redcat.Core.Service
             TryAddSingleton(collection, typeof(TService), typeof(TImplementation));
         }
 
+        public static void TryAddSingleton<TService>(this IServiceCollection collection, TService implementation)
+            where TService : class
+            //where TImplementation : class, TService
+        {
+            if (collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }           
+
+            if (implementation == null)
+            {
+                throw new ArgumentNullException(nameof(implementation));
+            }
+
+            var descriptor = ServiceDescriptor.Instance<TService>(implementation);
+            collection.TryAdd(descriptor);
+        }
+
         /// <summary>
         /// Adds a <see cref="ServiceDescriptor"/> if an existing descriptor with the same
         /// <see cref="ServiceDescriptor.ServiceType"/> and an implementation that does not already exist

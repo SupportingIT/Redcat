@@ -15,10 +15,13 @@ namespace Redcat.Core.Tests
             CommandProcessor processor = new CommandProcessor();
             ICommandHandler<Guid> guidHandler = A.Fake<ICommandHandler<Guid>>();
             ICommandHandler<string> strHandler = A.Fake<ICommandHandler<string>>();
-            processor.AddCommandHandler(guidHandler);
-            processor.AddCommandHandler(strHandler);
+            processor.AddExtension("test", c => {
+                c.TryAddSingleton(guidHandler);
+                c.TryAddSingleton(strHandler);
+            });
             Guid command = Guid.NewGuid();
 
+            processor.Run();
             processor.Execute(command);
 
             A.CallTo(() => guidHandler.Handle(command)).MustHaveHappened();
@@ -30,30 +33,21 @@ namespace Redcat.Core.Tests
         public void Execute_Throws_Exception_If_No_Handlers_For_Command()
         {
             CommandProcessor processor = new CommandProcessor();
+            processor.Run();
             processor.Execute<string>("some-str");
         }
 
         [Test]
         public void Run_Adds_Extensions()
         {
-            IServiceCollection container = A.Fake<IServiceCollection>();
-            CommandProcessor processor = new TestCommandProcessor(container);
+            CommandProcessor processor = new CommandProcessor();
             Action<IServiceCollection> extension = A.Fake<Action<IServiceCollection>>();
             processor.AddExtension("test", extension);
 
-            A.CallTo(() => extension.Invoke(container)).MustNotHaveHappened();
+            A.CallTo(() => extension.Invoke(A<IServiceCollection>._)).MustNotHaveHappened();
             processor.Run();
 
-            A.CallTo(() => extension.Invoke(container)).MustHaveHappened();
-        }
-    }
-
-    class TestCommandProcessor : CommandProcessor
-    {
-        private IServiceCollection container;
-        public TestCommandProcessor(IServiceCollection container)
-        {
-            this.container = container;
+            A.CallTo(() => extension.Invoke(A<IServiceCollection>._)).MustHaveHappened();
         }
     }
 }

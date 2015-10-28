@@ -1,5 +1,6 @@
 ﻿using Redcat.Core;
-using Redcat.Core.Net;
+using Redcat.Core.Communication;
+using Redcat.Core.Service;
 using Redcat.Xmpp.Services;
 using System;
 using System.IO;
@@ -8,11 +9,10 @@ namespace Redcat.Xmpp
 {
     public static class XmppProtocolExtensions
     {
-        public static void AddXmppExtension(this Communicator communicator, Func<ISocket> socketFactory, Func<Stream, Stream> tlsContextFactory)
+        public static void AddXmppExtension(this Communicator communicator)
         {
             communicator.AddExtension("xmpp", c => {
-                var factory = new XmppChannelFactory(socketFactory, tlsContextFactory);
-                //c.Add<IChannelFactory>(factory);
+                c.TryAddSingleton<IChannelFactory, XmppChannelFactory>();
             });
         }
     }
