@@ -49,5 +49,18 @@ namespace Redcat.Core.Tests
 
             A.CallTo(() => extension.Invoke(A<IServiceCollection>._)).MustHaveHappened();
         }
+
+        [Test]
+        public void Run_Initializes_Extensions_Only_Once()
+        {
+            CommandProcessor processor = new CommandProcessor();
+            Action<IServiceCollection> extension = A.Fake<Action<IServiceCollection>>();
+            processor.AddExtension("test", extension);
+
+            processor.Run();
+            processor.Run();
+
+            A.CallTo(() => extension.Invoke(A<IServiceCollection>._)).MustHaveHappened(Repeated.Exactly.Once);
+        }
     }
 }

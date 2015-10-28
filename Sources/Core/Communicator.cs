@@ -45,6 +45,7 @@ namespace Redcat.Core
         public void Send(Message message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
+            if (!IsRunning) throw new InvalidOperationException("Run method must be called before sending any messages");
             MessageDispatcher.DispatchOutgoing(message);
         }
 

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using Redcat.Core.Communication;
 using Redcat.Core.Service;
 using System;
+using System.Linq;
 
 namespace Redcat.Core.Tests
 {
@@ -49,6 +50,14 @@ namespace Redcat.Core.Tests
         {
             Communicator communicator = new Communicator();
             communicator.Send(null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Send_Throws_Exception_If_Run_Method_Was_Not_Called()
+        {
+            Communicator communicator = new Communicator();
+            communicator.Send(new Message());
         }
 
         [Test]
