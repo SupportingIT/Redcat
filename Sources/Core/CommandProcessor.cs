@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Redcat.Core.Communication;
+﻿using Redcat.Core.Communication;
 using Redcat.Core.Service;
+using Redcat.Core.Service.DI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace Redcat.Core
     public class CommandProcessor : IRunable, IDisposable
     {
         private IDictionary<string, Action<IServiceCollection>> extensions;
-        private IServiceProvider serviceProvider;
+        private IServiceLocator serviceLocator;
         private bool initialized = false;
 
         public CommandProcessor()
@@ -25,12 +25,12 @@ namespace Redcat.Core
 
         protected T GetService<T>()
         {
-            return serviceProvider.GetService<T>();
+            return default(T);// serviceProvider.GetService<T>();
         }
 
         protected IEnumerable<T> GetServices<T>()
         {
-            return serviceProvider.GetServices<T>();
+            return null;// serviceProvider.GetServices<T>();
         }
 
         public void Execute<T>(T command)
@@ -43,7 +43,7 @@ namespace Redcat.Core
 
         private IEnumerable<ICommandHandler<T>> GetHandlersForCommand<T>()
         {
-            return serviceProvider.GetServices<ICommandHandler<T>>();
+            return null;// serviceProvider.GetServices<ICommandHandler<T>>();
         }
 
         public void AddExtension(string name, Action<IServiceCollection> extension)
@@ -70,7 +70,7 @@ namespace Redcat.Core
         {
             var services = CreateServiceCollection();            
             foreach (var extension in extensions.Values) extension(services);
-            serviceProvider = CreateServiceProvider(services);
+            serviceLocator = CreateServiceLocator(services);
         }
 
         private IServiceCollection CreateServiceCollection()
@@ -78,9 +78,9 @@ namespace Redcat.Core
             return new ServiceCollection();
         }
 
-        private IServiceProvider CreateServiceProvider(IServiceCollection collection)
+        private IServiceLocator CreateServiceLocator(IServiceCollection collection)
         {
-            return new ServiceProvider(collection);
+            return null;
         }
 
         protected virtual void OnAfterInit()
