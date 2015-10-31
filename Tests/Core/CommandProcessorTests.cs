@@ -29,7 +29,7 @@ namespace Redcat.Core.Tests
         }
 
         [Test]
-        public void Execute_Calls_All_Registered_Handlers_For_Specified_COmmand()
+        public void Execute_Calls_All_Registered_Handlers_For_Specified_Command()
         {
             CommandProcessor processor = new CommandProcessor();
             var handlers = A.CollectionOfFake<ICommandHandler<string>>(2);
