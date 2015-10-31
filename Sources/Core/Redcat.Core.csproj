@@ -44,7 +44,6 @@
     <Compile Include="CommandProcessor.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="ConnectionSettings.cs" />
-    <Compile Include="Service\ActivatorUtilities.cs" />
     <Compile Include="Service\DI\Internal\ConcurrentDictionaryExtensions.cs" />
     <Compile Include="Service\DI\ServiceCollection.cs" />
     <Compile Include="Service\DI\ServiceCollectionExtensions.cs" />
@@ -68,9 +67,9 @@
     <Compile Include="Service\DI\ServiceLookup\ServiceTable.cs" />
     <Compile Include="Service\DI\ServiceProvider.cs" />
     <Compile Include="Service\IServiceCollection.cs" />
+    <Compile Include="Service\IServiceLocator.cs" />
     <Compile Include="Service\IServiceScope.cs" />
     <Compile Include="Service\IServiceScopeFactory.cs" />
-    <Compile Include="Service\ObjectFactory.cs" />
     <Compile Include="Service\ServiceCollectionExtensions.cs" />
     <Compile Include="Service\ServiceDescriptor.cs" />
     <Compile Include="Service\ServiceLifetime.cs" />
@@ -88,7 +87,7 @@
     <Compile Include="Communication\MessageChannelBase.cs" />
     <Compile Include="Communication\IChannelFactory.cs" />
     <Compile Include="Communication\IChannelManager.cs" />
-    <Compile Include="Communication\ICommandHandler.cs" />
+    <Compile Include="ICommandHandler.cs" />
     <Compile Include="Communication\IMessageChannel.cs" />
     <Compile Include="Communication\MessageDispatcher.cs" />
   </ItemGroup>

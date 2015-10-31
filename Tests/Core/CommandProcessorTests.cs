@@ -29,6 +29,25 @@ namespace Redcat.Core.Tests
         }
 
         [Test]
+        public void Execute_Calls_All_Registered_Handlers_For_Specified_COmmand()
+        {
+            CommandProcessor processor = new CommandProcessor();
+            var handlers = A.CollectionOfFake<ICommandHandler<string>>(2);
+            processor.AddExtension("test", c =>
+            {
+                c.TryAddSingleton(handlers[0]);
+                c.TryAddSingleton(handlers[1]);
+            });
+            string command = "Command";
+            processor.Run();
+
+            processor.Execute(command);
+
+            A.CallTo(() => handlers[0].Handle(command)).MustHaveHappened();
+            A.CallTo(() => handlers[1].Handle(command)).MustHaveHappened();
+        }
+
+        [Test]
         [ExpectedException(typeof(InvalidOperationException))]
         public void Execute_Throws_Exception_If_No_Handlers_For_Command()
         {

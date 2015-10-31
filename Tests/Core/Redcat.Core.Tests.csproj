@@ -65,79 +65,6 @@
     <Compile Include="PropertySetTests.cs" />
     <Compile Include="Communication\ChannelManagerTests.cs" />
     <Compile Include="Communication\MessageDispatcherTests.cs" />
-    <Compile Include="Service\ActivatorUtilitiesTests.cs" />
-    <Compile Include="Service\AllContainerTestsBase.cs" />
-    <Compile Include="Service\AutofacContainerTests.cs" />
-    <Compile Include="Service\CallSiteTests.cs" />
-    <Compile Include="Service\CircularDependencyTests.cs" />
-    <Compile Include="Service\Fakes\AbstractClass.cs" />
-    <Compile Include="Service\Fakes\AnotherClass.cs" />
-    <Compile Include="Service\Fakes\AnotherClassAcceptingData.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\CircularDependencyGeneric.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\DirectCircularDependencyA.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\DirectCircularDependencyB.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\IndirectCircularDependencyA.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\IndirectCircularDependencyB.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\IndirectCircularDependencyC.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\ISelfCircularDependencyWithInterface.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\NoCircularDependencySameTypeMultipleTimesA.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\NoCircularDependencySameTypeMultipleTimesB.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\NoCircularDependencySameTypeMultipleTimesC.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\SelfCircularDependency.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\SelfCircularDependencyGeneric.cs" />
-    <Compile Include="Service\Fakes\CircularReferences\SelfCircularDependencyWithInterface.cs" />
-    <Compile Include="Service\Fakes\ClassWithAmbiguousCtors.cs" />
-    <Compile Include="Service\Fakes\ClassWithInternalConstructor.cs" />
-    <Compile Include="Service\Fakes\ClassWithNestedReferencesToProvider.cs" />
-    <Compile Include="Service\Fakes\ClassWithOptionalArgsCtor.cs" />
-    <Compile Include="Service\Fakes\ClassWithPrivateCtor.cs" />
-    <Compile Include="Service\Fakes\ClassWithProtectedConstructor.cs" />
-    <Compile Include="Service\Fakes\ClassWithStaticCtor.cs" />
-    <Compile Include="Service\Fakes\ClassWithThrowingCtor.cs" />
-    <Compile Include="Service\Fakes\ClassWithThrowingEmptyCtor.cs" />
-    <Compile Include="Service\Fakes\CreationCountFakeService.cs" />
-    <Compile Include="Service\Fakes\DependOnNonexistentService.cs" />
-    <Compile Include="Service\Fakes\DependsOnServiceWithoutImplementation.cs" />
-    <Compile Include="Service\Fakes\FakeOpenGenericService.cs" />
-    <Compile Include="Service\Fakes\FakeOuterService.cs" />
-    <Compile Include="Service\Fakes\FakeService.cs" />
-    <Compile Include="Service\Fakes\IDependOnNonexistentService.cs" />
-    <Compile Include="Service\Fakes\IFactoryService.cs" />
-    <Compile Include="Service\Fakes\IFakeEveryService.cs" />
-    <Compile Include="Service\Fakes\IFakeMultipleService.cs" />
-    <Compile Include="Service\Fakes\IFakeOpenGenericService.cs" />
-    <Compile Include="Service\Fakes\IFakeOuterService.cs" />
-    <Compile Include="Service\Fakes\IFakeScopedService.cs" />
-    <Compile Include="Service\Fakes\IFakeService.cs" />
-    <Compile Include="Service\Fakes\IFakeServiceInstance.cs" />
-    <Compile Include="Service\Fakes\IFakeSingletonService.cs" />
-    <Compile Include="Service\Fakes\INonexistentService.cs" />
-    <Compile Include="Service\Fakes\IServiceWithoutImplementation.cs" />
-    <Compile Include="Service\Fakes\ScopedFactoryService.cs" />
-    <Compile Include="Service\Fakes\ServiceAcceptingFactoryService.cs" />
-    <Compile Include="Service\Fakes\TestServices.cs" />
-    <Compile Include="Service\Fakes\TransientFactoryService.cs" />
-    <Compile Include="Service\ScopingContainerTestBase.cs" />
-    <Compile Include="Service\ServiceCollectionExtensionTest.cs" />
-    <Compile Include="Service\ServiceCollectionTests.cs" />
-    <Compile Include="Service\ServiceLookup\ServiceTest.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithDefaultConstructorParameters.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithEnumerableConstructors.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithGenericServices.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithMultipleParameterizedConstructors.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithNoConstructors.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithNonOverlappedConstructors.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithNoPublicConstructors.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithParameterizedAndNullaryConstructor.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithParameterizedConstructor.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithParameterlessConstructor.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithParameterlessPublicConstructor.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithSupersetConstructors.cs" />
-    <Compile Include="Service\ServiceLookup\Types\TypeWithUnresolvableEnumerableConstructors.cs" />
-    <Compile Include="Service\ServiceProviderContainerTests.cs" />
-    <Compile Include="Service\ServiceProviderExtensionsTest.cs" />
-    <Compile Include="Service\ServiceTableTest.cs" />
-    <Compile Include="Service\Utils\MultiServiceHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -150,6 +77,9 @@
       <Project>{5ea90f4a-92f4-4b98-b669-866460de26a0}</Project>
       <Name>Redcat.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Service\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
