@@ -1,4 +1,5 @@
-﻿using Redcat.Core.Communication;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Redcat.Core.Communication;
 using Redcat.Core.Service;
 using Redcat.Core.Service.DI;
 using System;
@@ -10,7 +11,7 @@ namespace Redcat.Core
     public class CommandProcessor : IRunable, IDisposable
     {
         private IDictionary<string, Action<IServiceCollection>> extensions;
-        private IServiceLocator serviceLocator;
+        private IServiceProvider serviceProvider;
         private bool initialized = false;
 
         public CommandProcessor()
@@ -25,25 +26,25 @@ namespace Redcat.Core
 
         protected T GetService<T>()
         {
-            return default(T);// serviceProvider.GetService<T>();
+            return serviceProvider.GetService<T>();
         }
 
         protected IEnumerable<T> GetServices<T>()
         {
-            return null;// serviceProvider.GetServices<T>();
+            return serviceProvider.GetServices<T>();
         }
 
         public void Execute<T>(T command)
         {
             if (command == null) throw new ArgumentNullException(nameof(command));
-            var handlers = GetHandlersForCommand<T>();
-            if (handlers.Count() == 0) throw new InvalidOperationException();
-            foreach (var handler in handlers) handler.Handle(command);
+            var handler = GetHandlerForCommand<T>();
+            if (handler == null) throw new InvalidOperationException();
+            handler.Handle(command);
         }
 
-        private IEnumerable<ICommandHandler<T>> GetHandlersForCommand<T>()
+        private ICommandHandler<T> GetHandlerForCommand<T>()
         {
-            return null;// serviceProvider.GetServices<ICommandHandler<T>>();
+            return serviceProvider.GetService<ICommandHandler<T>>();
         }
 
         public void AddExtension(string name, Action<IServiceCollection> extension)
@@ -70,7 +71,7 @@ namespace Redcat.Core
         {
             var services = CreateServiceCollection();            
             foreach (var extension in extensions.Values) extension(services);
-            serviceLocator = CreateServiceLocator(services);
+            serviceProvider = CreateServiceProvider(services);
         }
 
         private IServiceCollection CreateServiceCollection()
@@ -78,9 +79,9 @@ namespace Redcat.Core
             return new ServiceCollection();
         }
 
-        private IServiceLocator CreateServiceLocator(IServiceCollection collection)
+        private IServiceProvider CreateServiceProvider(IServiceCollection collection)
         {
-            return null;
+            return new ServiceProvider(collection);
         }
 
         protected virtual void OnAfterInit()
