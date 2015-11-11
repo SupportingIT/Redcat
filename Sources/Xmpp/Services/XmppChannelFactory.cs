@@ -20,7 +20,7 @@ namespace Redcat.Xmpp.Services
 
         public IMessageChannel CreateChannel(ConnectionSettings settings)
         {
-            return new XmppChannel(socketFactory.Invoke(), settings) { TlsContextFactory = tlsContextFactory };
+            throw new NotImplementedException();
         }
     }
 }

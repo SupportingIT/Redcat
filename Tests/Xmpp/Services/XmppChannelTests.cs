@@ -15,7 +15,7 @@ namespace Redcat.Xmpp.Tests.Services
             ConnectionSettings settings = new ConnectionSettings { Domain = "redcat" };
             IStreamInitializer initializer = A.Fake<IStreamInitializer>();
             IXmppStream stream = A.Fake<IXmppStream>();
-            TestXmppChannel channel = new TestXmppChannel(A.Fake<ISocket>(), settings) { Initializer = initializer, Stream = stream };
+            TestXmppChannel channel = new TestXmppChannel(A.Fake<INetworkStreamFactory>(), settings) { Initializer = initializer, Stream = stream };
 
             channel.Open();
 
@@ -26,7 +26,7 @@ namespace Redcat.Xmpp.Tests.Services
         {
             private IXmppStream stream;
             
-            public TestXmppChannel(ISocket socket, ConnectionSettings settings) : base(socket, settings)
+            public TestXmppChannel(INetworkStreamFactory factory, ConnectionSettings settings) : base(factory, settings)
             {
             }
 

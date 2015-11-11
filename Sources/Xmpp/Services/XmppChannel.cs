@@ -9,7 +9,7 @@ namespace Redcat.Xmpp.Services
     {
         private IXmppStream stream;
 
-        public XmppChannel(ISocket socket, ConnectionSettings settings) : base(socket, settings)
+        public XmppChannel(INetworkStreamFactory factory, ConnectionSettings settings) : base(factory, settings)
         { }
 
         protected override void OnOpening()
@@ -21,8 +21,7 @@ namespace Redcat.Xmpp.Services
 
         protected virtual IXmppStream OpenXmppStream()
         {
-            SocketStream stream = new SocketStream(Socket);
-            return new XmppStream(stream);
+            throw new NotImplementedException();
         }
 
         private void InitializeStream(IXmppStream stream)
@@ -34,7 +33,7 @@ namespace Redcat.Xmpp.Services
         protected virtual IStreamInitializer CreateStreamInitializer(ConnectionSettings settings)
         {            
             var initializer = new StreamInitializer(settings);
-            TlsNegotiator tls = new TlsNegotiator(SetTlsContext);
+            TlsNegotiator tls = new TlsNegotiator(SetSecuredStream);
             initializer.Negotiators.Add(tls);
             return initializer;
         }

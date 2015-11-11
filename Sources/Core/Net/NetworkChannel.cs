@@ -6,25 +6,20 @@ namespace Redcat.Core.Net
 {
     public abstract class NetworkChannel : MessageChannelBase
     {
+        private INetworkStreamFactory factory;
         private Encoding encoding;
-        private ISocket socket;
-
-        protected NetworkChannel(ISocket socket, ConnectionSettings settings) : base(settings)
+        private Stream stream;
+        
+        public NetworkChannel(INetworkStreamFactory factory, ConnectionSettings settings) : base(settings)
         {
-            this.socket = socket;
-        }
-
-        public Func<Stream, Stream> TlsContextFactory { get; set; }
-
-        protected ISocket Socket
-        {
-            get { return socket; }
+            if (factory == null) throw new ArgumentNullException(nameof(factory));
+            this.factory = factory;
         }
 
         protected override void OnOpening()
         {
             base.OnOpening();
-            Socket.Connect(Settings);
+            stream = factory.CreateStream(Settings);
         }
 
         protected void Send(string data)
@@ -33,21 +28,20 @@ namespace Redcat.Core.Net
             Send(buffer);
         }
 
-        protected void Send(byte[] buffer)
+        public void Send(byte[] buffer)
         {                      
             Send(buffer, 0, buffer.Length);
         }
 
-        protected void Send(byte[] buffer, int offset, int count)
+        public void Send(byte[] buffer, int offset, int count)
         {
-            Socket.Send(buffer, offset, count);
+            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
+            if (stream == null) throw new InvalidOperationException();
+            stream.Write(buffer, offset, count);
         }
 
-        protected void SetTlsContext()
-        {
-            if (TlsContextFactory == null) throw new InvalidOperationException();
-            SocketStream stream = new SocketStream(socket);
-            Stream tlsStream = TlsContextFactory.Invoke(stream);
+        protected void SetSecuredStream()
+        {            
         }
     }
 }
