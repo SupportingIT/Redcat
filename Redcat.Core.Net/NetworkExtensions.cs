@@ -10,8 +10,7 @@ namespace Redcat.Core.Net
         }
 
         private static void AddExtensions(IServiceCollection services)
-        {
-            services.TryAddSingleton<ISocketFactory, SocketFactory>();
+        {            
             services.TryAddSingleton<INetworkStreamFactory, NetworkStreamFactory>();
         }
     }

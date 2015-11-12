@@ -61,7 +61,7 @@ namespace Redcat.Xmpp
 
         private void ExchangeHeaders(IXmppStream stream)
         {
-            StreamHeader header = StreamHeader.CreateClientHeader(settings.Domain);
+            StreamHeader header = StreamHeader.CreateClientHeader(settings.Domain);            
             stream.Write(header);
             var response = stream.Read();
             VerifyResponseHeader(response);

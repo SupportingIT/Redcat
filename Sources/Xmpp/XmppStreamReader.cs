@@ -11,13 +11,15 @@ namespace Redcat.Xmpp
     public class XmppStreamReader
     {
         private static readonly Encoding defaultEncoding = Encoding.UTF8;
-        private IXmlParser parser;
-        private TextReader reader;
         private Queue<XmlElement> elementQueue = new Queue<XmlElement>();
+        private char[] buffer;
+        private IXmlParser parser;
+        private TextReader reader;        
 
         public XmppStreamReader(Stream stream)
         {
-            if (stream == null) throw new ArgumentNullException("stream");
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
+            buffer = new char[10000];
             reader = new StreamReader(stream, defaultEncoding);
         }
 
@@ -40,7 +42,9 @@ namespace Redcat.Xmpp
 
         public XmlElement Read()
         {
-            string xml = reader.ReadToEnd();
+            if (elementQueue.Count > 0) return elementQueue.Dequeue();            
+            int readed = reader.Read(buffer, 0, buffer.Length);
+            string xml = new string(buffer, 0, readed);
             foreach (var element in Parser.Parse(xml))
             {
                 elementQueue.Enqueue(element);

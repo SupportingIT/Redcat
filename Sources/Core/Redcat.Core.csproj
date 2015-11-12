@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Net\INetworkStreamFactory.cs" />
-    <Compile Include="Net\ISocketFactory.cs" />
+    <Compile Include="Net\NetworkChannel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -77,9 +77,6 @@
     <Compile Include="InitializationException.cs" />
     <Compile Include="IRunable.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="Net\ISocket.cs" />
-    <Compile Include="Net\NetworkChannel.cs" />
-    <Compile Include="Net\SocketStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySet.cs" />
     <Compile Include="Communication\ChannelManager.cs" />

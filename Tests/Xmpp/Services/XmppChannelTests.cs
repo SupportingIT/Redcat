@@ -39,9 +39,9 @@ namespace Redcat.Xmpp.Tests.Services
                 return Initializer ?? base.CreateStreamInitializer(settings);
             }
 
-            protected override IXmppStream OpenXmppStream()
+            protected override IXmppStream CreateXmppStream()
             {
-                return Stream ?? base.OpenXmppStream();
+                return Stream ?? base.CreateXmppStream();
             }
         }
     }

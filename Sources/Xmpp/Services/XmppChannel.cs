@@ -15,13 +15,18 @@ namespace Redcat.Xmpp.Services
         protected override void OnOpening()
         {
             base.OnOpening();
-            stream = OpenXmppStream();
+            stream = CreateXmppStream();
             InitializeStream(stream);
         }
 
-        protected virtual IXmppStream OpenXmppStream()
+        protected virtual IXmppStream CreateXmppStream()
         {
             return new XmppStream(Stream);
+        }
+
+        private void ResetXmppStream()
+        {
+            stream = CreateXmppStream();
         }
 
         private void InitializeStream(IXmppStream stream)

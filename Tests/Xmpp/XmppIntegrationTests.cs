@@ -11,6 +11,7 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void Client_Connection()
         {
+            string processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
             Communicator communicator = new Communicator();
             communicator.AddXmppExtension();
             communicator.AddNetworkExtension();
