@@ -21,7 +21,7 @@ namespace Redcat.Xmpp.Services
 
         protected virtual IXmppStream OpenXmppStream()
         {
-            throw new NotImplementedException();
+            return new XmppStream(Stream);
         }
 
         private void InitializeStream(IXmppStream stream)

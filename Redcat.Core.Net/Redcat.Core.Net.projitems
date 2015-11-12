@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>18ba6fa0-2351-4bd7-80b3-db93e4a71fd6</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Redcat.Core.Net</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkStreamFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SocketAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SocketFactory.cs" />
+  </ItemGroup>
+</Project>

@@ -1,26 +1,23 @@
 ﻿using System;
 using Redcat.Core;
 using Redcat.Core.Net;
-using System.IO;
 using Redcat.Core.Communication;
 
 namespace Redcat.Xmpp.Services
 {
     public class XmppChannelFactory : IChannelFactory
     {
-        private Func<ISocket> socketFactory;
-        private Func<Stream, Stream> tlsContextFactory;
+        private INetworkStreamFactory streamFactory;
 
-        public XmppChannelFactory(Func<ISocket> socketFactory, Func<Stream, Stream> tlsContextFactory)
+        public XmppChannelFactory(INetworkStreamFactory streamFactory)
         {
-            if (socketFactory == null) throw new ArgumentNullException(nameof(socketFactory));
-            this.socketFactory = socketFactory;
-            this.tlsContextFactory = tlsContextFactory;
+            if (streamFactory == null) throw new ArgumentNullException(nameof(streamFactory));
+            this.streamFactory = streamFactory;
         }
 
         public IMessageChannel CreateChannel(ConnectionSettings settings)
         {
-            throw new NotImplementedException();
+            return new XmppChannel(streamFactory, settings);
         }
     }
 }

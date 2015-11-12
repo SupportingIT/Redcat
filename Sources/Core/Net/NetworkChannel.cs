@@ -16,6 +16,11 @@ namespace Redcat.Core.Net
             this.factory = factory;
         }
 
+        protected Stream Stream
+        {
+            get { return stream; }
+        }
+
         protected override void OnOpening()
         {
             base.OnOpening();

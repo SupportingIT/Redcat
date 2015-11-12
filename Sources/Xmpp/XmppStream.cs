@@ -1,5 +1,4 @@
-﻿using System;
-using Redcat.Xmpp.Xml;
+﻿using Redcat.Xmpp.Xml;
 using System.IO;
 
 namespace Redcat.Xmpp
