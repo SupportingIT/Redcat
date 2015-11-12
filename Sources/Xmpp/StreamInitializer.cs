@@ -42,11 +42,11 @@ namespace Redcat.Xmpp
 
         public void Start(IXmppStream stream)
         {
-            bool sendHeader = true;
+            bool restartRequired = true;
 
             for (int i = 0; i < iterationLimit; i++)
             {
-                if (sendHeader) ExchangeHeaders(stream);
+                if (restartRequired) RestartStream(stream);
 
                 var response = stream.Read();
                 VerifyStreamFeatures(response);
@@ -54,12 +54,12 @@ namespace Redcat.Xmpp
                 if (response.Childs.Count == 0) return;
                 if (!HasNegotiatorForFeatures(response.Childs)) return;
 
-                sendHeader = HandleFeatures(stream, response.Childs);
+                restartRequired = HandleFeatures(stream, response.Childs);
             }
             throw new InvalidOperationException();
         }
 
-        private void ExchangeHeaders(IXmppStream stream)
+        private void RestartStream(IXmppStream stream)
         {
             StreamHeader header = StreamHeader.CreateClientHeader(settings.Domain);            
             stream.Write(header);
