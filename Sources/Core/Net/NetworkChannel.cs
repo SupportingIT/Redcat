@@ -22,6 +22,12 @@ namespace Redcat.Core.Net
             stream = factory.CreateStream(Settings);
         }
 
+        protected override void OnClosing()
+        {
+            base.OnClosing();
+            stream.Dispose();
+        }
+
         protected void Send(string data)
         {
             byte[] buffer = encoding.GetBytes(data);
@@ -40,8 +46,10 @@ namespace Redcat.Core.Net
             stream.Write(buffer, offset, count);
         }
 
-        protected void SetSecuredStream()
-        {            
+        public void SetSecuredStream()
+        {
+            if (stream == null) throw new InvalidOperationException();
+            stream = factory.CreateSecuredStream(stream, Settings);
         }
     }
 }
