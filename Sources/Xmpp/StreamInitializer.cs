@@ -61,9 +61,10 @@ namespace Redcat.Xmpp
 
         private void RestartStream(IXmppStream stream)
         {
-            StreamHeader header = StreamHeader.CreateClientHeader(settings.Domain);            
+            StreamHeader header = StreamHeader.CreateClientHeader(settings.Domain);
+            header.Id = Guid.NewGuid();
             stream.Write(header);
-            var response = stream.Read();
+            XmlElement response = stream.Read();
             VerifyResponseHeader(response);
         }
 
@@ -95,6 +96,7 @@ namespace Redcat.Xmpp
         private XmlElement SelectFeature(IEnumerable<XmlElement> features)
         {
             if (features.HasTlsFeature()) return features.TlsFeature();
+            if (features.HasSaslFeature()) return features.SaslFeature();
             return features.First();
         }
 

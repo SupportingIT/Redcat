@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JidTests.cs" />
+    <Compile Include="Negotiators\SaslNegotiatorTests.cs" />
     <Compile Include="Negotiators\TlsNegotiatorTests.cs" />
     <Compile Include="Parsing\DelegateBuilderTests.cs" />
     <Compile Include="Parsing\XmlElementBuilderBaseTests.cs" />

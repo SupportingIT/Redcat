@@ -39,7 +39,9 @@ namespace Redcat.Xmpp.Services
         {            
             var initializer = new StreamInitializer(settings);
             TlsNegotiator tls = new TlsNegotiator(SetSecuredStream);
-            initializer.Negotiators.Add(tls);
+            //initializer.Negotiators.Add(tls);
+            //SaslNegotiator sasl = new SaslNegotiator(settings);
+            //initializer.Negotiators.Add(sasl);
             return initializer;
         }
 

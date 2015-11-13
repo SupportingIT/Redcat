@@ -28,6 +28,8 @@ namespace Redcat.Xmpp.Tests
             settings.Domain = ConfigurationManager.AppSettings["Domain"];
             settings.Host = ConfigurationManager.AppSettings["Host"];
             settings.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
+            settings.Username = ConfigurationManager.AppSettings["Username"];
+            settings.Password = ConfigurationManager.AppSettings["Password"];
             return settings;
         }        
     }

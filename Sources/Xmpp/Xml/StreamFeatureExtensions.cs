@@ -23,5 +23,25 @@ namespace Redcat.Xmpp.Xml
         {
             return TlsFeature(element.Childs);
         }
+
+        public static bool HasSaslFeature(this IEnumerable<XmlElement> features)
+        {
+            return features.HasElement("mechanisms");
+        }
+
+        public static bool HasSaslFeature(this XmlElement element)
+        {
+            return HasSaslFeature(element.Childs);
+        }
+
+        public static XmlElement SaslFeature(this IEnumerable<XmlElement> features)
+        {
+            return features.Element("mechanisms");
+        }
+
+        public static XmlElement SaslFeature(this XmlElement element)
+        {
+            return SaslFeature(element.Childs);
+        }
     }
 }
