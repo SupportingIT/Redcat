@@ -8,7 +8,7 @@ namespace Redcat.Core.Net
     {
         private INetworkStreamFactory factory;
         private Encoding encoding;
-        private Stream stream;
+        private StreamProxy stream;
         
         public NetworkChannel(INetworkStreamFactory factory, ConnectionSettings settings) : base(settings)
         {
@@ -24,7 +24,7 @@ namespace Redcat.Core.Net
         protected override void OnOpening()
         {
             base.OnOpening();
-            stream = factory.CreateStream(Settings);
+            stream = new StreamProxy(factory.CreateStream(Settings));
         }
 
         protected override void OnClosing()
@@ -54,7 +54,7 @@ namespace Redcat.Core.Net
         public void SetSecuredStream()
         {
             if (stream == null) throw new InvalidOperationException();
-            stream = factory.CreateSecuredStream(stream, Settings);
+            stream.OriginStream = factory.CreateSecuredStream(stream.OriginStream, Settings);
         }
     }
 }

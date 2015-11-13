@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="Net\INetworkStreamFactory.cs" />
     <Compile Include="Net\NetworkChannel.cs" />
+    <Compile Include="Net\StreamProxy.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
