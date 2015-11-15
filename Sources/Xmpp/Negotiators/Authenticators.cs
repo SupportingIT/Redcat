@@ -3,7 +3,7 @@ using Redcat.Xmpp.Xml;
 using System;
 using System.Text;
 
-namespace Redcat.Xmpp.Tests.Negotiators
+namespace Redcat.Xmpp.Negotiators
 {
     public static class Authenticators
     {

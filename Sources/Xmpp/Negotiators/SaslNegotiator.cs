@@ -39,8 +39,10 @@ namespace Redcat.Xmpp.Negotiators
         private SaslAuthenticator FindAuthenticator(ICollection<XmlElement> childs)
         {
             foreach (var mechanism in childs)
-            {                
-                string authName =  mechanism.Value.ToString();
+            {
+                if (mechanism.Name != "mechanism") continue;                
+                string authName =  mechanism.Value?.ToString();
+                if (string.IsNullOrEmpty(authName)) continue;
                 if (authenticators.ContainsKey(authName)) return authenticators[authName];
             }
             throw new InvalidOperationException();

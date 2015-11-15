@@ -7,16 +7,20 @@ namespace Redcat.Xmpp.Services
 {
     public class XmppChannel : NetworkChannel
     {
+        private IStreamInitializer streamInitializer;
         private IXmppStream stream;
 
-        public XmppChannel(INetworkStreamFactory factory, ConnectionSettings settings) : base(factory, settings)
-        { }
+        public XmppChannel(IStreamInitializer streamInitializer, INetworkStreamFactory factory, ConnectionSettings settings) : base(factory, settings)
+        {
+            if (streamInitializer == null) throw new ArgumentNullException(nameof(streamInitializer));
+            this.streamInitializer = streamInitializer;
+        }
 
         protected override void OnOpening()
         {
             base.OnOpening();
             stream = CreateXmppStream();
-            InitializeStream(stream);
+            streamInitializer.Init(stream);
         }
 
         protected virtual IXmppStream CreateXmppStream()
@@ -27,22 +31,6 @@ namespace Redcat.Xmpp.Services
         private void ResetXmppStream()
         {
             stream = CreateXmppStream();
-        }
-
-        private void InitializeStream(IXmppStream stream)
-        {
-            var initializer = CreateStreamInitializer(Settings);
-            initializer.Start(stream);
-        }
-
-        protected virtual IStreamInitializer CreateStreamInitializer(ConnectionSettings settings)
-        {            
-            var initializer = new StreamInitializer(settings);
-            TlsNegotiator tls = new TlsNegotiator(SetSecuredStream);
-            //initializer.Negotiators.Add(tls);
-            //SaslNegotiator sasl = new SaslNegotiator(settings);
-            //initializer.Negotiators.Add(sasl);
-            return initializer;
         }
 
         public override Message Receive()

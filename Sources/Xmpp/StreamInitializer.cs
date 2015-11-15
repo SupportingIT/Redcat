@@ -15,8 +15,9 @@ namespace Redcat.Xmpp
 
         public StreamInitializer(ConnectionSettings settings)
         {
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
             this.settings = settings;
-            negotiators = new List<IFeatureNegatiator>();
+            negotiators = new List<IFeatureNegatiator>();            
             iterationLimit = 100;
         }
 
@@ -40,13 +41,13 @@ namespace Redcat.Xmpp
             foreach (var negatiator in negatiators) this.negotiators.Add(negatiator);
         }
 
-        public void Start(IXmppStream stream)
+        public void Init(IXmppStream stream)
         {
-            bool restartRequired = true;
+            bool initRequired = true;
 
             for (int i = 0; i < iterationLimit; i++)
             {
-                if (restartRequired) RestartStream(stream);
+                if (initRequired) InitStream(stream);
 
                 var response = stream.Read();
                 VerifyStreamFeatures(response);
@@ -54,12 +55,12 @@ namespace Redcat.Xmpp
                 if (response.Childs.Count == 0) return;
                 if (!HasNegotiatorForFeatures(response.Childs)) return;
 
-                restartRequired = HandleFeatures(stream, response.Childs);
+                initRequired = HandleFeatures(stream, response.Childs);
             }
             throw new InvalidOperationException();
         }
 
-        private void RestartStream(IXmppStream stream)
+        private void InitStream(IXmppStream stream)
         {
             StreamHeader header = StreamHeader.CreateClientHeader(settings.Domain);
             header.Id = Guid.NewGuid();

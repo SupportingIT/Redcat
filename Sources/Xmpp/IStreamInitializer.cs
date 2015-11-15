@@ -1,7 +1,9 @@
-﻿namespace Redcat.Xmpp
+﻿using Redcat.Core;
+
+namespace Redcat.Xmpp
 {
     public interface IStreamInitializer
     {
-        void Start(IXmppStream stream);
+        void Init(IXmppStream stream);
     }
 }

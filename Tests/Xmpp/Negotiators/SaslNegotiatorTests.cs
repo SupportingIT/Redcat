@@ -53,7 +53,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         }
 
         [Test]
-        public void Negoatiate_Correct_Authenticator()
+        public void Negoatiate_Uses_Correct_Authenticator()
         {
             SaslNegotiator negotiator = new SaslNegotiator();
             XmlElement element = CreateSaslFeature("m0", "m2", "m1", "m3");
@@ -62,7 +62,42 @@ namespace Redcat.Xmpp.Tests.Negotiators
 
             negotiator.Neogatiate(A.Fake<IXmppStream>(), element);
 
-            A.CallTo(() => authenticator.Invoke(A<IXmppStream>._, A<ConnectionSettings>._));
+            A.CallTo(() => authenticator.Invoke(A<IXmppStream>._, A<ConnectionSettings>._)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Negoatiate_Ignores_Mechanisms_With_Empty_Values()
+        {
+            SaslNegotiator negoatiator = new SaslNegotiator();
+            XmlElement element = new XmlElement("mechanisms");
+            element.Childs.Add(new XmlElement("mechanism") { Value = null });
+            element.Childs.Add(new XmlElement("mechanism") { Value = "" });
+            element.Childs.Add(new XmlElement("mechanism") { Value = "auth0" });
+            SaslAuthenticator auth = A.Fake<SaslAuthenticator>();
+            negoatiator.AddAuthenticator("auth0", auth);
+
+            negoatiator.Neogatiate(A.Fake<IXmppStream>(), element);
+
+            A.CallTo(() => auth.Invoke(A<IXmppStream>._, A<ConnectionSettings>._)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Neogatiate_Ignores_Non_Mechanism_Elements()
+        {
+            SaslNegotiator negoatiator = new SaslNegotiator();
+            XmlElement element = new XmlElement("mechanisms");
+            element.Childs.Add(new XmlElement("mechanism") { Value = "auth3" });
+            element.Childs.Add(new XmlElement("non-mechanism") { Value = "auth0" });
+            element.Childs.Add(new XmlElement("mechanism") { Value = "auth1" });
+            SaslAuthenticator auth = A.Fake<SaslAuthenticator>();
+            SaslAuthenticator auth1 = A.Fake<SaslAuthenticator>();
+            negoatiator.AddAuthenticator("auth0", auth);
+            negoatiator.AddAuthenticator("auth1", auth1);
+
+            negoatiator.Neogatiate(A.Fake<IXmppStream>(), element);
+
+            A.CallTo(() => auth.Invoke(A<IXmppStream>._, A<ConnectionSettings>._)).MustNotHaveHappened();
+            A.CallTo(() => auth1.Invoke(A<IXmppStream>._, A<ConnectionSettings>._)).MustHaveHappened();
         }
 
         private XmlElement CreateSaslFeature(params string[] mechanisms)

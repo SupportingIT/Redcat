@@ -43,8 +43,10 @@
   <ItemGroup>
     <Compile Include="IFeatureNegatiator.cs" />
     <Compile Include="IStreamInitializer.cs" />
+    <Compile Include="IStreamInitializerFactory.cs" />
     <Compile Include="IXmppStream.cs" />
     <Compile Include="JID.cs" />
+    <Compile Include="Negotiators\Authenticators.cs" />
     <Compile Include="Negotiators\SaslAuthentificator.cs" />
     <Compile Include="Negotiators\SaslNegotiator.cs" />
     <Compile Include="Negotiators\TlsNegotiator.cs" />
@@ -59,6 +61,7 @@
     <Compile Include="Services\XmppChannelFactory.cs" />
     <Compile Include="Services\XmppChannel.cs" />
     <Compile Include="StreamInitializer.cs" />
+    <Compile Include="StreamInitializerFactory.cs" />
     <Compile Include="Xml\DatagramElement.cs" />
     <Compile Include="Xml\Iq.cs" />
     <Compile Include="Xml\IqQuery.cs" />

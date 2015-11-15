@@ -19,25 +19,20 @@ namespace Redcat.Xmpp.Tests.Services
 
             channel.Open();
 
-            A.CallTo(() => initializer.Start(stream)).MustHaveHappened();
+            A.CallTo(() => initializer.Init(stream)).MustHaveHappened();
         }
 
         internal class TestXmppChannel : XmppChannel
         {
             private IXmppStream stream;
             
-            public TestXmppChannel(INetworkStreamFactory factory, ConnectionSettings settings) : base(factory, settings)
+            public TestXmppChannel(INetworkStreamFactory factory, ConnectionSettings settings) : base(A.Fake<IStreamInitializer>(), factory, settings)
             {
             }
 
             public IStreamInitializer Initializer { get; set; }
 
             public IXmppStream Stream { get; set; }
-
-            protected override IStreamInitializer CreateStreamInitializer(ConnectionSettings settings)
-            {
-                return Initializer ?? base.CreateStreamInitializer(settings);
-            }
 
             protected override IXmppStream CreateXmppStream()
             {
