@@ -20,7 +20,7 @@ namespace Redcat.Core
             get { return channelManager.Value; }
         }
 
-        protected IMessageChannel DefaultChannel
+        protected IChannel DefaultChannel
         {
             get { return ChannelManager.DefaultChannel; }
         }

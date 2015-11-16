@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Redcat.Core
+namespace Redcat.Core.Communication
 {
     public abstract class MessageChannelBase : IMessageChannel
     {

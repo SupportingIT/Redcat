@@ -2,24 +2,35 @@
 using Redcat.Core;
 using Redcat.Core.Net;
 using Redcat.Core.Communication;
+using Redcat.Xmpp.Negotiators;
 
 namespace Redcat.Xmpp.Services
 {
     public class XmppChannelFactory : IChannelFactory
-    {
-        private IStreamInitializerFactory initializerFactory;
+    {        
         private INetworkStreamFactory streamFactory;
 
-        public XmppChannelFactory(INetworkStreamFactory streamFactory, IStreamInitializerFactory initializerFactory)
+        public XmppChannelFactory(INetworkStreamFactory streamFactory)
         {
-            if (streamFactory == null) throw new ArgumentNullException(nameof(streamFactory));
-            this.initializerFactory = initializerFactory;
+            if (streamFactory == null) throw new ArgumentNullException(nameof(streamFactory));            
             this.streamFactory = streamFactory;
         }
 
         public IMessageChannel CreateChannel(ConnectionSettings settings)
         {
-            return new XmppChannel(initializerFactory.CreateInitializer(settings), streamFactory, settings);
+            StreamInitializer initializer = new StreamInitializer(settings);
+            initializer.Negotiators.Add(CreateSaslNegotiator());
+            var channel = new XmppChannel(initializer, streamFactory, settings);
+            initializer.Negotiators.Add(new TlsNegotiator(channel.SetSecuredStream));
+            
+            return channel;
+        }
+
+        private SaslNegotiator CreateSaslNegotiator()
+        {
+            SaslNegotiator sasl = new SaslNegotiator();
+            sasl.AddAuthenticator("PLAIN", Authenticators.Plain);
+            return sasl;
         }
     }    
 }

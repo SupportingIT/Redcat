@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Redcat.Core.Communication;
+using System;
 using System.IO;
 using System.Text;
 

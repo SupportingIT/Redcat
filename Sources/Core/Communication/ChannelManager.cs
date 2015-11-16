@@ -6,28 +6,28 @@ namespace Redcat.Core.Communication
 {
     public class ChannelManager : IChannelManager
     {
-        private ICollection<IMessageChannel> activeChannels;
-        private IMessageChannel defaultChannel;
+        private ICollection<IChannel> activeChannels;
+        private IChannel defaultChannel;
         private Func<IEnumerable<IChannelFactory>> GetChannelFactories;
 
         public ChannelManager(Func<IEnumerable<IChannelFactory>> factoryProvider)
         {
-            activeChannels = new List<IMessageChannel>();
+            activeChannels = new List<IChannel>();
             defaultChannel = null;
             GetChannelFactories = factoryProvider;
         }
 
-        public IEnumerable<IMessageChannel> ActiveChannels
+        public IEnumerable<IChannel> ActiveChannels
         {
             get { return activeChannels; }
         }
 
-        public IMessageChannel DefaultChannel
+        public IChannel DefaultChannel
         {
             get { return defaultChannel; }
         }
 
-        public IMessageChannel OpenChannel(ConnectionSettings settings)
+        public IChannel OpenChannel(ConnectionSettings settings)
         {
             var factories = GetChannelFactories();
             IChannelFactory factory = SelectFactory(factories, settings);
@@ -40,7 +40,7 @@ namespace Redcat.Core.Communication
             return channel;
         }
 
-        private void RegisterChannel(IMessageChannel channel)
+        private void RegisterChannel(IChannel channel)
         {
             channel.StateChanged += OnChannelStateChanged;
             channel.Open();
@@ -60,7 +60,7 @@ namespace Redcat.Core.Communication
             defaultChannel = SelectDefaultChannel(activeChannels);
         }
 
-        protected virtual IMessageChannel SelectDefaultChannel(IEnumerable<IMessageChannel> activeChannels)
+        protected virtual IChannel SelectDefaultChannel(IEnumerable<IChannel> activeChannels)
         {
             return activeChannels.LastOrDefault();
         }

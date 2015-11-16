@@ -10,7 +10,8 @@ namespace Redcat.Xmpp
         public static void AddXmppExtension(this Communicator communicator)
         {
             communicator.AddExtension("xmpp", c => {
-                c.TryAddSingleton<IChannelFactory, XmppChannelFactory>();                
+                c.TryAddSingleton<IChannelFactory, XmppChannelFactory>();
+                c.TryAddSingleton<IStreamInitializerFactory, StreamInitializerFactory>();
             });
         }
     }
