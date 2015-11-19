@@ -77,7 +77,7 @@ namespace Redcat.Core.Tests
 
             communicator.Send(message);
 
-            A.CallTo(() => dispatcher.DispatchOutgoing(message)).MustHaveHappened();
+            A.CallTo(() => dispatcher.Dispatch(message)).MustHaveHappened();
         }
     }
 

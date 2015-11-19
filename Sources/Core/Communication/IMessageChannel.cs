@@ -2,6 +2,6 @@
 
 namespace Redcat.Core.Communication
 {
-    public interface IMessageChannel : IChannel<Message>
+    public interface IMessageChannel : IDuplexChannel<Message>
     {    }    
 }

@@ -46,7 +46,7 @@ namespace Redcat.Core
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
             if (!IsRunning) throw new InvalidOperationException("Run method must be called before sending any messages");
-            MessageDispatcher.DispatchOutgoing(message);
+            MessageDispatcher.Dispatch(message);
         }
 
         protected override void OnBeforeInit()
@@ -59,13 +59,7 @@ namespace Redcat.Core
         {
             IChannelManager channelManager = new ChannelManager(GetServices<IChannelFactory>);            
             collection.TryAddSingleton(channelManager);
-            IMessageDispatcher messageDispatcher = new MessageDispatcher { OutgoingMessageHandlers = { SendMessageToChannel } };
-            //container.Add<IMessageDispatcher>(messageDispatcher);
-        }
-
-        private void SendMessageToChannel(Message message)
-        {
-            throw new NotImplementedException();
+            collection.TryAddSingleton<IMessageDispatcher, MessageDispatcher>();
         }
     }
 }

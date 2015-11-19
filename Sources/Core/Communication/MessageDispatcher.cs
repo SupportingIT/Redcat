@@ -1,28 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Redcat.Core.Communication
 {
     public class MessageDispatcher : IMessageDispatcher
     {
-        public ICollection<Action<Message>> IncomingMessageHandlers { get; } = new List<Action<Message>>();
+        private IChannelManager channelManager;
 
-        public ICollection<Action<Message>> OutgoingMessageHandlers { get; } = new List<Action<Message>>();
-
-        public void DispatchIncoming(Message message)
+        public MessageDispatcher(IChannelManager channelManager)
         {
-            foreach (var handler in IncomingMessageHandlers)
-            {
-                handler.Invoke(message);
-            }
+            if (channelManager == null) throw new ArgumentNullException(nameof(channelManager));
+            this.channelManager = channelManager;
         }
 
-        public void DispatchOutgoing(Message message)
+        public void Dispatch<T>(T message)
         {
-            foreach (var handler in OutgoingMessageHandlers)
-            {
-                handler.Invoke(message);
-            }
+            if (channelManager.ActiveChannels.Count() == 0) throw new InvalidOperationException("No active channels");            
+            var channel = SelectChannel(channelManager, message);
+            if (channel == null) throw new InvalidOperationException("No approriate output channels");
+            SendMessage(channel, message);
+        }
+
+        private IOutputChannel<T> SelectChannel<T>(IChannelManager channelManager, T message)
+        {
+            if (channelManager.DefaultChannel is IOutputChannel<T>) return (IOutputChannel<T>)channelManager.DefaultChannel;
+            var channels = channelManager.ActiveChannels.OfType<IOutputChannel<T>>();
+            return channels.FirstOrDefault();
+        }
+
+        private void SendMessage<T>(IOutputChannel<T> channel, T message)
+        {
+            channel.Send(message);
         }
     }
 }

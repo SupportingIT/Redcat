@@ -2,7 +2,6 @@
 {
     public interface IMessageDispatcher
     {
-        void DispatchIncoming(Message message);
-        void DispatchOutgoing(Message message);
+        void Dispatch<T>(T message);
     }
 }

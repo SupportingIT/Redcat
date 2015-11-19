@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using Redcat.Core.Communication;
 using System;
+using System.Linq;
 
 namespace Redcat.Core.Tests.Communication
 {
@@ -9,32 +10,68 @@ namespace Redcat.Core.Tests.Communication
     public class MessageDispatcherTests
     {
         [Test]
-        public void DispatchIncoming_Calls_All_Handlers()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Constructor_Throws_Exception_If_Argument_Is_Null()
         {
-            VerifyDispatcher(true);
+            MessageDispatcher dispatcher = new MessageDispatcher(null);
         }
 
         [Test]
-        public void DispatchOutgoing_Calls_All_Handlers()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Dispatch_Throws_Exception_If_No_ActiveChannels()
         {
-            VerifyDispatcher(false);
+            IChannelManager manager = A.Fake<IChannelManager>();            
+            MessageDispatcher dispatcher = new MessageDispatcher(manager);
+
+            dispatcher.Dispatch("some-string");
         }
 
-        private void VerifyDispatcher(bool isIncoming)
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Dispatch_Throws_Exception_If_No_Output_Channels_For_Aproriate_Massage()
+        {            
+            IOutputChannel<int> channel = A.Fake<IOutputChannel<int>>();
+            IChannelManager manager = CreateChannelManager(channel);
+            MessageDispatcher dispatcher = new MessageDispatcher(manager);
+
+            dispatcher.Dispatch("some-string");
+        }
+
+        [Test]
+        public void Dispatch_Sends_Message_Via_Approriate_Output_Channel()
+        {            
+            IOutputChannel<Guid> guidChannel = A.Fake<IOutputChannel<Guid>>();
+            IOutputChannel<string> stringChannel = A.Fake<IOutputChannel<string>>();
+            IChannelManager manager = CreateChannelManager(guidChannel, stringChannel);
+            MessageDispatcher dispatcher = new MessageDispatcher(manager);
+            Guid message = Guid.NewGuid();
+
+            dispatcher.Dispatch(message);
+
+            A.CallTo(() => guidChannel.Send(message)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Dispatch_Sends_Message_Via_Default_Channel()
         {
-            var handlers = A.CollectionOfFake<Action<Message>>(2);
-            MessageDispatcher dispatcher = new MessageDispatcher();
-            foreach(var handler in handlers)
-            {
-                if (isIncoming) dispatcher.IncomingMessageHandlers.Add(handler);
-                else dispatcher.OutgoingMessageHandlers.Add(handler);
-            }
-            Message message = new Message();
+            IOutputChannel<int> defaultChannel = A.Fake<IOutputChannel<int>>();
+            IOutputChannel<int> activeChannel = A.Fake<IOutputChannel<int>>();
+            IChannelManager manager = CreateChannelManager(activeChannel);
+            A.CallTo(() => manager.DefaultChannel).Returns(defaultChannel);
+            MessageDispatcher dispatcher = new MessageDispatcher(manager);
+            int message = 8;
 
-            if (isIncoming) dispatcher.DispatchIncoming(message);
-            else dispatcher.DispatchOutgoing(message);
+            dispatcher.Dispatch(message);
 
-            foreach (var handler in handlers) A.CallTo(() => handler.Invoke(message)).MustHaveHappened();
+            A.CallTo(() => defaultChannel.Send(message)).MustHaveHappened();
+            A.CallTo(() => activeChannel.Send(message)).MustNotHaveHappened();
+        }
+
+        private IChannelManager CreateChannelManager(params IChannel[] activeChannels)
+        {
+            IChannelManager manager = A.Fake<IChannelManager>();
+            if (activeChannels.Length > 0) A.CallTo(() => manager.ActiveChannels).Returns(activeChannels);
+            return manager;
         }
     }
 }
