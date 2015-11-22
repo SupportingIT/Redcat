@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Redcat.Core.Net
 {
-    public abstract class NetworkChannel : MessageChannelBase
+    public abstract class NetworkChannel : ChannelBase
     {
         private INetworkStreamFactory factory;
         private Encoding encoding;

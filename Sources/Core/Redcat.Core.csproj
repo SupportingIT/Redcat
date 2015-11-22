@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Communication\IChannel.cs" />
+    <Compile Include="Communication\IStreamChannel.cs" />
     <Compile Include="Net\INetworkStreamFactory.cs" />
     <Compile Include="Net\NetworkChannel.cs" />
     <Compile Include="Net\StreamProxy.cs" />
@@ -83,7 +84,7 @@
     <Compile Include="PropertySet.cs" />
     <Compile Include="Communication\ChannelManager.cs" />
     <Compile Include="Communication\IMessageDispatcher.cs" />
-    <Compile Include="Communication\MessageChannelBase.cs" />
+    <Compile Include="Communication\ChannelBase.cs" />
     <Compile Include="Communication\IChannelFactory.cs" />
     <Compile Include="Communication\IChannelManager.cs" />
     <Compile Include="ICommandHandler.cs" />

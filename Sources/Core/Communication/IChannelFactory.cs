@@ -2,6 +2,6 @@
 {
     public interface IChannelFactory
     {
-        IMessageChannel CreateChannel(ConnectionSettings settings);
+        IChannel CreateChannel(ConnectionSettings settings);
     }
 }

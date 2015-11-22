@@ -2,17 +2,17 @@
 
 namespace Redcat.Core.Communication
 {
-    public abstract class MessageChannelBase : IMessageChannel
+    public abstract class ChannelBase : IChannel
     {
         private ConnectionSettings settings;
         private ChannelState state;
 
-        protected MessageChannelBase(ConnectionSettings settings)
+        protected ChannelBase(ConnectionSettings settings)
         {
             this.settings = settings;
         }
 
-        protected MessageChannelBase()
+        protected ChannelBase()
         {
             state = ChannelState.Close;
         }
@@ -69,10 +69,6 @@ namespace Redcat.Core.Communication
         {
             if (StateChanged != null) StateChanged(this, new StateChangedEventArgs(state));
         }
-
-        public abstract void Send(Message message);
-
-        public abstract Message Receive();
 
         public event EventHandler<StateChangedEventArgs> StateChanged;
     }

@@ -11,5 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)NetworkExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkStreamFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TcpChannel.cs" />
   </ItemGroup>
 </Project>

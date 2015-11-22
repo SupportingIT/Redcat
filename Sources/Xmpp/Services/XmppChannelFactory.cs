@@ -16,12 +16,12 @@ namespace Redcat.Xmpp.Services
             this.streamFactory = streamFactory;
         }
 
-        public IMessageChannel CreateChannel(ConnectionSettings settings)
+        public IChannel CreateChannel(ConnectionSettings settings)
         {
             StreamInitializer initializer = new StreamInitializer(settings);
             initializer.Negotiators.Add(CreateSaslNegotiator());
-            var channel = new XmppChannel(initializer, streamFactory, settings);
-            initializer.Negotiators.Add(new TlsNegotiator(channel.SetSecuredStream));
+            XmppChannel channel = null;
+            initializer.Negotiators.Add(new TlsNegotiator(channel.SetTlsStream));
             
             return channel;
         }

@@ -96,10 +96,10 @@ namespace Redcat.Core.Tests.Communication
 
         class TestChannelFactory : IChannelFactory
         {
-            public IMessageChannel CreateChannel(ConnectionSettings settings)
+            public IChannel CreateChannel(ConnectionSettings settings)
             {
                 ChannelCreated = true;
-                return A.Fake<IMessageChannel>();
+                return A.Fake<IChannel>();
             }
 
             public bool ChannelCreated { get; private set; }

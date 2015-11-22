@@ -130,15 +130,5 @@ namespace Redcat.Core.Tests.Net
     {
         internal NetworkChannelStub(INetworkStreamFactory factory, ConnectionSettings settings) : base(factory, settings)
         { }
-
-        public override Message Receive()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Send(Message message)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -34,7 +34,7 @@ namespace Redcat.Core.Communication
 
             if (factory == null) throw new InvalidOperationException("Unable to find channel factory");
 
-            IMessageChannel channel = factory.CreateChannel(settings);
+            IChannel channel = factory.CreateChannel(settings);
             RegisterChannel(channel);
             UpdateDefaultChannel();
             return channel;
@@ -50,7 +50,7 @@ namespace Redcat.Core.Communication
         private void OnChannelStateChanged(object sender, StateChangedEventArgs args)
         {
             if (args.NewState != ChannelState.Close) return;
-            var channel = (IMessageChannel)sender;
+            var channel = (IChannel)sender;
             activeChannels.Remove(channel);
             UpdateDefaultChannel();
         }

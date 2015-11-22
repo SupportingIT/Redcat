@@ -83,7 +83,7 @@ namespace Redcat.Core.Tests
 
     public class TestChannelFactory : IChannelFactory
     {
-        public virtual IMessageChannel CreateChannel(ConnectionSettings settings)
+        public virtual IChannel CreateChannel(ConnectionSettings settings)
         {
             throw new NotImplementedException();
         }
