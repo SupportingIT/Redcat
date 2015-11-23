@@ -17,16 +17,16 @@ namespace Redcat.Xmpp.Services
         public IChannel CreateChannel(ConnectionSettings settings)
         {
             StreamInitializer initializer = new StreamInitializer(settings);
-            initializer.Negotiators.Add(CreateSaslNegotiator());
+            initializer.Negotiators.Add(CreateSaslNegotiator(settings));
             XmppChannel channel = new XmppChannel(initializer, streamChannelFactory.CreateChannel(settings), settings);
-            initializer.Negotiators.Add(new TlsNegotiator(channel.SetTlsContext));
+            //initializer.Negotiators.Add(new TlsNegotiator(channel.SetTlsContext));
             
             return channel;
         }
 
-        private SaslNegotiator CreateSaslNegotiator()
+        private SaslNegotiator CreateSaslNegotiator(ConnectionSettings settings)
         {
-            SaslNegotiator sasl = new SaslNegotiator();
+            SaslNegotiator sasl = new SaslNegotiator(settings);
             sasl.AddAuthenticator("PLAIN", Authenticators.Plain);
             return sasl;
         }

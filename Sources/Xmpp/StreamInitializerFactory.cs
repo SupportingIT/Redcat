@@ -18,7 +18,7 @@ namespace Redcat.Xmpp
         {
             StreamInitializer initializer = new StreamInitializer(settings);
             TlsNegotiator tls = new TlsNegotiator(setTlsContext);
-            SaslNegotiator sasl = new SaslNegotiator();
+            SaslNegotiator sasl = new SaslNegotiator(settings);
             sasl.AddAuthenticator("PLAIN", Authenticators.Plain);
             initializer.Negotiators.Add(tls);
             initializer.Negotiators.Add(sasl);

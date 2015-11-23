@@ -10,9 +10,11 @@ namespace Redcat.Xmpp.Negotiators
         private IDictionary<string, SaslAuthenticator> authenticators;
         private ConnectionSettings settings;
 
-        public SaslNegotiator()
+        public SaslNegotiator(ConnectionSettings settings)
         {
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
             authenticators = new Dictionary<string, SaslAuthenticator>();
+            this.settings = settings;
         }
 
         public void AddAuthenticator(string mechanismName, SaslAuthenticator authenticator)
@@ -31,7 +33,7 @@ namespace Redcat.Xmpp.Negotiators
             if (feature.Childs.Count == 0) throw new InvalidOperationException();
 
             SaslAuthenticator authenticator = FindAuthenticator(feature.Childs);
-            authenticator(stream, settings);
+            XmlElement result = authenticator.Invoke(stream, settings);
             
             return true;
         }

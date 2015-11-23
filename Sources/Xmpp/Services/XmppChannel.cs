@@ -27,6 +27,12 @@ namespace Redcat.Xmpp.Services
             streamInitializer.Init(xmppStream);
         }
 
+        protected override void OnClosing()
+        {
+            base.OnClosing();
+            streamChannel.Close();
+        }
+
         protected virtual IXmppStream CreateXmppStream()
         {
             streamProxy = new StreamProxy(streamChannel.GetStream());

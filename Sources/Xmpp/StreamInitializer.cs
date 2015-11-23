@@ -96,7 +96,7 @@ namespace Redcat.Xmpp
         
         private XmlElement SelectFeature(IEnumerable<XmlElement> features)
         {
-            if (features.HasTlsFeature()) return features.TlsFeature();
+            //if (features.HasTlsFeature()) return features.TlsFeature();
             if (features.HasSaslFeature()) return features.SaslFeature();
             return features.First();
         }

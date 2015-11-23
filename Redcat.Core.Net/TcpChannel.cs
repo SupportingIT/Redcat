@@ -1,9 +1,9 @@
 ﻿using Redcat.Core.Communication;
 using System.IO;
 using System.Net.Sockets;
-using System;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System;
 
 namespace Redcat.Core.Net
 {
@@ -21,6 +21,12 @@ namespace Redcat.Core.Net
             tcpClient.Connect(Settings.Host, Settings.Port);
         }
 
+        protected override void OnClosing()
+        {
+            base.OnClosing();
+            tcpClient.Close();
+        }
+
         public Stream GetStream()
         {
             return tcpClient.GetStream();
@@ -33,9 +39,35 @@ namespace Redcat.Core.Net
             return secureStream;
         }
 
-        private static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {            
-            return true;
+        private bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (CertificateValidation != null)
+            {
+                CertificateValidationEventArgs args = new CertificateValidationEventArgs(certificate, chain, sslPolicyErrors);
+                CertificateValidation(this, args);
+                return args.ValidationResult;
+            }
+            return sslPolicyErrors == SslPolicyErrors.None;
         }
+
+        public event EventHandler<CertificateValidationEventArgs> CertificateValidation;
+    }
+
+    public class CertificateValidationEventArgs : EventArgs
+    {
+        public CertificateValidationEventArgs(X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        {
+            Certificate = certificate;
+            Chain = chain;
+            Errors = errors;
+        }
+
+        public X509Certificate Certificate { get; }
+
+        public X509Chain Chain { get; }
+
+        public SslPolicyErrors Errors { get; }
+
+        public bool ValidationResult { get; set; }
     }
 }
