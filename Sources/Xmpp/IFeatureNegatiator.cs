@@ -4,7 +4,7 @@ namespace Redcat.Xmpp
 {
     public interface IFeatureNegatiator
     {
-        bool CanNeogatiate(XmlElement feature);
-        bool Neogatiate(IXmppStream stream, XmlElement feature);
+        bool CanNegotiate(XmlElement feature);
+        bool Negotiate(IXmppStream stream, XmlElement feature);
     }
 }

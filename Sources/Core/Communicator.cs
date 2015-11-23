@@ -42,6 +42,11 @@ namespace Redcat.Core
             throw new NotImplementedException();
         }
 
+        public void Send<T>(T message)
+        {
+            MessageDispatcher.Dispatch(message);
+        }
+
         public void Send(Message message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));

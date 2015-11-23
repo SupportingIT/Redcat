@@ -3,7 +3,6 @@ using Redcat.Xmpp.Xml;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Redcat.Xmpp

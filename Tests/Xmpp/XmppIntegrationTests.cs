@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Redcat.Core;
 using Redcat.Core.Net;
+using Redcat.Xmpp.Xml;
 using System.Configuration;
 
 namespace Redcat.Xmpp.Tests
@@ -10,8 +11,9 @@ namespace Redcat.Xmpp.Tests
     {
         [Test]
         public void Client_Connection()
-        {
+        {            
             string processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+            int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
             Communicator communicator = new Communicator();
             communicator.AddXmppExtension();
             communicator.AddNetworkExtension();
@@ -19,6 +21,8 @@ namespace Redcat.Xmpp.Tests
 
             ConnectionSettings settings = CreateConnectionSettings();
             communicator.Connect(settings);
+
+            communicator.Send<Stanza>(Presence.Available());
         }        
 
         private ConnectionSettings CreateConnectionSettings()

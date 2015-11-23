@@ -49,13 +49,12 @@ namespace Redcat.Xmpp
             {
                 if (initRequired) InitStream(stream);
 
-                var response = stream.Read();
-                VerifyStreamFeatures(response);
+                var features = ReadFeatures(stream);
 
-                if (response.Childs.Count == 0) return;
-                if (!HasNegotiatorForFeatures(response.Childs)) return;
+                if (features.Childs.Count == 0) return;
+                if (!HasNegotiatorForFeatures(features.Childs)) return;                
 
-                initRequired = HandleFeatures(stream, response.Childs);
+                initRequired = HandleFeatures(stream, features.Childs);                
             }
             throw new InvalidOperationException();
         }
@@ -63,15 +62,22 @@ namespace Redcat.Xmpp
         private void InitStream(IXmppStream stream)
         {
             StreamHeader header = StreamHeader.CreateClientHeader(settings.Domain);
-            header.Id = Guid.NewGuid();
             stream.Write(header);
             XmlElement response = stream.Read();
+            //First response might be a result of previous feature negotiation
+            if (response.Name != "stream:stream") response = stream.Read();
             VerifyResponseHeader(response);
+        }
+
+        private XmlElement ReadFeatures(IXmppStream stream)
+        {
+            XmlElement features = stream.Read();
+            VerifyStreamFeatures(features);
+            return features;
         }
 
         private void VerifyResponseHeader(XmlElement response)
         {
-            //var fromJid = response.GetAttributeValue<string>("from");
             if (response.Name != "stream:stream") throw new ProtocolViolationException();
             if (response.Xmlns != Namespaces.JabberClient) throw new ProtocolViolationException("Invalid xmlns for client header");
             //ejabbert doesn't set xmlns:stream attribute
@@ -80,29 +86,30 @@ namespace Redcat.Xmpp
 
         private bool HasNegotiatorForFeatures(IEnumerable<XmlElement> features)
         {
-            return features.Any(f => negotiators.Any(n => n.CanNeogatiate(f)));
+            return features.Any(f => negotiators.Any(n => n.CanNegotiate(f)));
         }
 
         private bool HandleFeatures(IXmppStream stream, ICollection<XmlElement> features)
         {
             var feature = SelectFeature(features);
-            if (negotiators.Any(n => n.CanNeogatiate(feature)))
+            if (negotiators.Any(n => n.CanNegotiate(feature)))
             {
-                var negotiator = negotiators.First(n => n.CanNeogatiate(feature));
-                return negotiator.Neogatiate(stream, feature);
+                var negotiator = negotiators.First(n => n.CanNegotiate(feature));                
+                return negotiator.Negotiate(stream, feature);
             }
             return false;
         }
         
         private XmlElement SelectFeature(IEnumerable<XmlElement> features)
         {
-            //if (features.HasTlsFeature()) return features.TlsFeature();
+            if (features.HasTlsFeature()) return features.TlsFeature();
             if (features.HasSaslFeature()) return features.SaslFeature();
             return features.First();
         }
 
-        private void VerifyStreamFeatures(XmlElement response)
+        private void VerifyStreamFeatures(XmlElement features)
         {
+            if (features.Name != "stream:features") throw new ProtocolViolationException();
         }
     }
 }

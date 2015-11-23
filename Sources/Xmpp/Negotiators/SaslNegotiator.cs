@@ -22,18 +22,19 @@ namespace Redcat.Xmpp.Negotiators
             authenticators.Add(mechanismName, authenticator);
         }
 
-        public bool CanNeogatiate(XmlElement feature)
+        public bool CanNegotiate(XmlElement feature)
         {
             return IsSaslFeature(feature);
         }
 
-        public bool Neogatiate(IXmppStream stream, XmlElement feature)
+        public bool Negotiate(IXmppStream stream, XmlElement feature)
         {            
             if (!IsSaslFeature(feature)) throw new InvalidOperationException();
             if (feature.Childs.Count == 0) throw new InvalidOperationException();
 
             SaslAuthenticator authenticator = FindAuthenticator(feature.Childs);
             XmlElement result = authenticator.Invoke(stream, settings);
+            if (result.Name == "failure") throw new InvalidOperationException();
             
             return true;
         }

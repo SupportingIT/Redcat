@@ -21,7 +21,14 @@ namespace Redcat.Core.Net
     {
         public IStreamChannel CreateChannel(ConnectionSettings settings)
         {
-            return new TcpChannel(settings);
+            var channel = new TcpChannel(settings);
+            channel.CertificateValidation += Channel_CertificateValidation;
+            return channel;
+        }
+
+        private static void Channel_CertificateValidation(object sender, CertificateValidationEventArgs e)
+        {
+            e.ValidationResult = true;
         }
     }
 }

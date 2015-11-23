@@ -27,14 +27,14 @@ namespace Redcat.Xmpp.Tests.Negotiators
         public void CanNegotiate_Returns_True_For_Tls_Feature()
         {
             var feature = Tls.Start;
-            Assert.That(negotiator.CanNeogatiate(feature), Is.True);
+            Assert.That(negotiator.CanNegotiate(feature), Is.True);
         }
 
         [Test]
         public void CanNegotiate_Returns_False_For_Non_Tls_Feature()
         {
             var features = new[] { new XmlElement("feature1", Namespaces.Tls), new XmlElement("starttls", "ns") };                        
-            Assert.That(features.Any(f => negotiator.CanNeogatiate(f)), Is.False);
+            Assert.That(features.Any(f => negotiator.CanNegotiate(f)), Is.False);
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         {            
             stream.EnqueueResponse(Tls.Proceed);
          
-            negotiator.Neogatiate(stream, Tls.Start);
+            negotiator.Negotiate(stream, Tls.Start);
 
             var sended = stream.GetSentElement();
             Assert.That(sended, Is.EqualTo(Tls.Start));
@@ -60,7 +60,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         {
             stream.EnqueueResponse(response);
 
-            negotiator.Neogatiate(stream, Tls.Start);
+            negotiator.Negotiate(stream, Tls.Start);
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         {
             stream.EnqueueResponse(Tls.Proceed);
             
-            bool restartStream = negotiator.Neogatiate(stream, Tls.Start);
+            bool restartStream = negotiator.Negotiate(stream, Tls.Start);
 
             A.CallTo(() => setTlsContext.Invoke()).MustHaveHappened();
             Assert.That(restartStream, Is.True);
