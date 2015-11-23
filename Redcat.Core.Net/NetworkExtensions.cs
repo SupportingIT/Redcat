@@ -1,4 +1,6 @@
-﻿using Redcat.Core.Service;
+﻿using System;
+using Redcat.Core.Communication;
+using Redcat.Core.Service;
 
 namespace Redcat.Core.Net
 {
@@ -11,7 +13,15 @@ namespace Redcat.Core.Net
 
         private static void AddExtensions(IServiceCollection services)
         {            
-            services.TryAddSingleton<INetworkStreamFactory, NetworkStreamFactory>();
+            services.TryAddSingleton<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
+        }
+    }
+
+    public class TcpChannelFactory : IChannelFactory<IStreamChannel>
+    {
+        public IStreamChannel CreateChannel(ConnectionSettings settings)
+        {
+            return new TcpChannel(settings);
         }
     }
 }

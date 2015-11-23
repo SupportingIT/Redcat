@@ -7,29 +7,36 @@ namespace Redcat.Xmpp.Services
     public class XmppChannel : ChannelBase
     {
         private IStreamInitializer streamInitializer;
-        private IXmppStream stream;
+        private IStreamChannel streamChannel;
+        private IXmppStream xmppStream;
+        private StreamProxy streamProxy;
 
-        public XmppChannel(IStreamInitializer streamInitializer, IStreamChannel transportChannel, ConnectionSettings settings) : base(settings)
+        public XmppChannel(IStreamInitializer streamInitializer, IStreamChannel streamChannel, ConnectionSettings settings) : base(settings)
         {
             if (streamInitializer == null) throw new ArgumentNullException(nameof(streamInitializer));
+            if (streamChannel == null) throw new ArgumentNullException(nameof(streamChannel));
             this.streamInitializer = streamInitializer;
+            this.streamChannel = streamChannel;            
         }
 
         protected override void OnOpening()
         {
             base.OnOpening();
-            stream = CreateXmppStream();
-            streamInitializer.Init(stream);
+            streamChannel.Open();            
+            xmppStream = CreateXmppStream();
+            streamInitializer.Init(xmppStream);
         }
 
         protected virtual IXmppStream CreateXmppStream()
         {
-            throw new NotImplementedException();
+            streamProxy = new StreamProxy(streamChannel.GetStream());
+            return new XmppStream(streamProxy);
         }
 
-        internal void SetTlsStream()
+        internal void SetTlsContext()
         {
-            throw new NotImplementedException();
+            if (!(streamChannel is ISecureStreamChannel)) throw new InvalidOperationException();
+            streamProxy.OriginStream = ((ISecureStreamChannel)streamChannel).GetSecureStream();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Redcat.Core.Net
+namespace Redcat.Core
 {
     public class StreamProxy : Stream
     {

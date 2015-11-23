@@ -1,27 +1,25 @@
-﻿using System;
-using Redcat.Core;
-using Redcat.Core.Net;
+﻿using Redcat.Core;
 using Redcat.Core.Communication;
 using Redcat.Xmpp.Negotiators;
+using StreamChannelFactory = Redcat.Core.Communication.IChannelFactory<Redcat.Core.Communication.IStreamChannel>;
 
 namespace Redcat.Xmpp.Services
 {
     public class XmppChannelFactory : IChannelFactory
-    {        
-        private INetworkStreamFactory streamFactory;
+    {
+        private StreamChannelFactory streamChannelFactory;
 
-        public XmppChannelFactory(INetworkStreamFactory streamFactory)
+        public XmppChannelFactory(StreamChannelFactory streamChannelFactory)
         {
-            if (streamFactory == null) throw new ArgumentNullException(nameof(streamFactory));            
-            this.streamFactory = streamFactory;
+            this.streamChannelFactory = streamChannelFactory;
         }
 
         public IChannel CreateChannel(ConnectionSettings settings)
         {
             StreamInitializer initializer = new StreamInitializer(settings);
             initializer.Negotiators.Add(CreateSaslNegotiator());
-            XmppChannel channel = null;
-            initializer.Negotiators.Add(new TlsNegotiator(channel.SetTlsStream));
+            XmppChannel channel = new XmppChannel(initializer, streamChannelFactory.CreateChannel(settings), settings);
+            initializer.Negotiators.Add(new TlsNegotiator(channel.SetTlsContext));
             
             return channel;
         }
