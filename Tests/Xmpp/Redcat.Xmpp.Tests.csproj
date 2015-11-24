@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JidTests.cs" />
+    <Compile Include="Negotiators\BindNegotiatorTests.cs" />
     <Compile Include="Negotiators\SaslNegotiatorTests.cs" />
     <Compile Include="Negotiators\TlsNegotiatorTests.cs" />
     <Compile Include="Parsing\DelegateBuilderTests.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Services\XmppChannelTests.cs" />
     <Compile Include="StreamInitializerTests.cs" />
     <Compile Include="TestXmppStream.cs" />
+    <Compile Include="Xml\Bind.cs" />
     <Compile Include="Xml\DatagramElementTests.cs" />
     <Compile Include="Xml\IqTest.cs" />
     <Compile Include="Xml\PresenceTests.cs" />

@@ -17,7 +17,7 @@ namespace Redcat.Xmpp.Tests
             Communicator communicator = new Communicator();
             communicator.AddXmppExtension();
             communicator.AddNetworkExtension();
-            communicator.Run();
+            communicator.Start();
 
             ConnectionSettings settings = CreateConnectionSettings();
             communicator.Connect(settings);

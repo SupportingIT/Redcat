@@ -2,7 +2,8 @@
 using Redcat.Core;
 using Redcat.Xmpp.Services;
 using FakeItEasy;
-using Redcat.Core.Net;
+using Redcat.Core.Communication;
+using System.IO;
 
 namespace Redcat.Xmpp.Tests.Services
 {
@@ -14,30 +15,26 @@ namespace Redcat.Xmpp.Tests.Services
         {
             ConnectionSettings settings = new ConnectionSettings { Domain = "redcat" };
             IStreamInitializer initializer = A.Fake<IStreamInitializer>();
-            IXmppStream stream = A.Fake<IXmppStream>();
-            TestXmppChannel channel = new TestXmppChannel(settings) { Initializer = initializer, Stream = stream };
+            IXmppStream xmppStream = A.Fake<IXmppStream>();
+            IStreamChannel streamChannel = CreateStreamChannel();
+
+            XmppChannel channel = new XmppChannel(initializer, streamChannel, settings);
 
             channel.Open();
 
-            A.CallTo(() => initializer.Init(stream)).MustHaveHappened();
+            A.CallTo(() => initializer.Init(A<IXmppStream>._)).MustHaveHappened();
         }
 
-        internal class TestXmppChannel : XmppChannel
+        private IStreamChannel CreateStreamChannel()
         {
-            private IXmppStream stream;
-            
-            public TestXmppChannel(ConnectionSettings settings) : base(A.Fake<IStreamInitializer>(), null, settings)
-            {
-            }
+            IStreamChannel streamChannel = A.Fake<IStreamChannel>();
+            Stream stream = A.Fake<Stream>();
 
-            public IStreamInitializer Initializer { get; set; }
+            A.CallTo(() => stream.CanRead).Returns(true);
+            A.CallTo(() => stream.CanWrite).Returns(true);
+            A.CallTo(() => streamChannel.GetStream()).Returns(stream);
 
-            public IXmppStream Stream { get; set; }
-
-            protected override IXmppStream CreateXmppStream()
-            {
-                return Stream ?? base.CreateXmppStream();
-            }
+            return streamChannel;
         }
     }
 }

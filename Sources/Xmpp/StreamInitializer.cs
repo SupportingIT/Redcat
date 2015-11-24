@@ -90,21 +90,39 @@ namespace Redcat.Xmpp
         }
 
         private bool HandleFeatures(IXmppStream stream, ICollection<XmlElement> features)
-        {
-            var feature = SelectFeature(features);
-            if (negotiators.Any(n => n.CanNegotiate(feature)))
-            {
-                var negotiator = negotiators.First(n => n.CanNegotiate(feature));                
-                return negotiator.Negotiate(stream, feature);
-            }
-            return false;
+        {            
+            XmlElement feature = null;
+            IFeatureNegatiator negotiator = GetNegotiator(features, out feature);
+
+            return negotiator.Negotiate(stream, feature);
         }
-        
-        private XmlElement SelectFeature(IEnumerable<XmlElement> features)
+
+        private IFeatureNegatiator GetNegotiator(ICollection<XmlElement> features, out XmlElement feature)
         {
-            if (features.HasTlsFeature()) return features.TlsFeature();
-            if (features.HasSaslFeature()) return features.SaslFeature();
-            return features.First();
+            if (features.HasTlsFeature() && negotiators.Any(n => n.CanNegotiate(features.TlsFeature())))
+            {
+                feature = features.TlsFeature();
+                return negotiators.First(n => n.CanNegotiate(features.TlsFeature()));
+            }
+
+            if (features.HasSaslFeature() && negotiators.Any(n => n.CanNegotiate(features.SaslFeature())))
+            {
+                feature = features.SaslFeature();
+                return negotiators.First(n => n.CanNegotiate(features.SaslFeature()));
+            }
+
+            foreach (XmlElement f in features)
+            {
+                var negotiator = negotiators.FirstOrDefault(n => n.CanNegotiate(f));
+                if (negotiator != null)
+                {
+                    feature = f;
+                    return negotiator;
+                }
+            }
+
+            feature = null;
+            return null;
         }
 
         private void VerifyStreamFeatures(XmlElement features)

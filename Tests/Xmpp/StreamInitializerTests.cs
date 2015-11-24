@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using FakeItEasy;
 using NUnit.Framework;
 using Redcat.Core;
@@ -46,9 +44,9 @@ namespace Redcat.Xmpp.Tests
             A.CallTo(() => negotiators[1].CanNegotiate(A<XmlElement>._)).Returns(true);
             initializer.AddNegotiators(negotiators);            
             var feature = new XmlElement("feature1");
-            EnqueueResponse(feature);
+            EnqueueResponse(true, feature);
 
-            RunInitializer();
+            RunInitializer(false);
 
             A.CallTo(() => negotiators[0].Negotiate(stream, feature)).MustNotHaveHappened();
             A.CallTo(() => negotiators[1].Negotiate(stream, feature)).MustHaveHappened();
@@ -73,9 +71,9 @@ namespace Redcat.Xmpp.Tests
             IFeatureNegatiator negotiator = CreateNegotiator(true);
             var features = Enumerable.Range(0, 3).Select(i => new XmlElement("feature" + i)).ToArray();
             initializer.Negotiators.Add(negotiator);
-            EnqueueResponse(features);
+            EnqueueResponse(true, features);
 
-            RunInitializer();
+            RunInitializer(false);
 
             A.CallTo(() => negotiator.Negotiate(stream, A<XmlElement>._)).MustHaveHappened(Repeated.Exactly.Once);
         }
@@ -86,8 +84,8 @@ namespace Redcat.Xmpp.Tests
             IFeatureNegatiator negotiator = CreateNegotiator(true, true);
             initializer.Negotiators.Add(negotiator);            
                         
-            EnqueueResponse(new XmlElement("feature1"), new XmlElement("feature2"));            
-            EnqueueResponse(new XmlElement("feature3"));
+            EnqueueResponse(true, new XmlElement("feature1"), new XmlElement("feature2"));            
+            EnqueueResponse(true, new XmlElement("feature3"));
             RunInitializer();
 
             A.CallTo(() => negotiator.Negotiate(stream, A<XmlElement>._)).MustHaveHappened(Repeated.Exactly.Twice);
@@ -98,7 +96,7 @@ namespace Redcat.Xmpp.Tests
         {
             IFeatureNegatiator negotiator = A.Fake<IFeatureNegatiator>();
             initializer.Negotiators.Add(negotiator);
-            EnqueueResponse(new XmlElement("f1"), new XmlElement("f2"));
+            EnqueueResponse(true, new XmlElement("f1"), new XmlElement("f2"));
 
             RunInitializer(false);
 
@@ -110,7 +108,7 @@ namespace Redcat.Xmpp.Tests
         {
             IFeatureNegatiator negotiator = CreateNegotiator(true, true);
             initializer.Negotiators.Add(negotiator);
-            EnqueueResponse(new XmlElement("test-feature"));
+            EnqueueResponse(true, new XmlElement("test-feature"));
 
             RunInitializer();
 
@@ -126,7 +124,7 @@ namespace Redcat.Xmpp.Tests
             IFeatureNegatiator negotiator = CreateNegotiator(true);
             
             initializer.Negotiators.Add(negotiator);
-            EnqueueResponse(new XmlElement("test-feature"));
+            EnqueueResponse(false, new XmlElement("test-feature"));
 
             RunInitializer();
 
@@ -139,11 +137,12 @@ namespace Redcat.Xmpp.Tests
             var tlsFeature = Tls.Start;
             IFeatureNegatiator tlsNegotiator = A.Fake<IFeatureNegatiator>();
             A.CallTo(() => tlsNegotiator.CanNegotiate(tlsFeature)).Returns(true);
+            A.CallTo(() => tlsNegotiator.Negotiate(A<IXmppStream>._, tlsFeature)).Returns(true);
             IFeatureNegatiator negotiator = A.Fake<IFeatureNegatiator>();
             A.CallTo(() => negotiator.CanNegotiate(A<XmlElement>._)).Returns(true);
             A.CallTo(() => negotiator.CanNegotiate(tlsFeature)).Returns(false);            
             initializer.AddNegotiators(new[] { negotiator, tlsNegotiator });
-            EnqueueResponse(new XmlElement("feature1"), tlsFeature, new XmlElement("feature2"));
+            EnqueueResponse(true, new XmlElement("feature1"), tlsFeature, new XmlElement("feature2"));
 
             RunInitializer();
 
@@ -159,7 +158,7 @@ namespace Redcat.Xmpp.Tests
             initializer.IterationLimit = iterationCount - 1;
             IFeatureNegatiator negotiator = CreateNegotiator(true, true);
             initializer.Negotiators.Add(negotiator);
-            for (int i = 0; i < iterationCount; i++) EnqueueResponse(new []{ new XmlElement("element") });
+            for (int i = 0; i < iterationCount; i++) EnqueueResponse(true, new []{ new XmlElement("element") });
 
             RunInitializer(false);
         }
@@ -190,15 +189,16 @@ namespace Redcat.Xmpp.Tests
             return negotiator;
         }
 
-        private void RunInitializer(bool enqueueEmptyResponse = true)
+        private void RunInitializer(bool enqueueHeader = true, bool enqueueEmptyFeatures = true)
         {
-            if (enqueueEmptyResponse) EnqueueResponse();
+            if (enqueueHeader) EnqueueResponseHeader();
+            if (enqueueEmptyFeatures) EnqueueFeaturesResponse();
             initializer.Init(stream);
         }
 
-        private void EnqueueResponse(params XmlElement[] features)
+        private void EnqueueResponse(bool includeHeader, params XmlElement[] features)
         {
-            EnqueueResponseHeader();
+            if (includeHeader) EnqueueResponseHeader();
             EnqueueFeaturesResponse(features);
         }
 

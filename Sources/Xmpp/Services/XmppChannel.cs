@@ -48,8 +48,7 @@ namespace Redcat.Xmpp.Services
 
         public Stanza Receive()
         {
-            var response = xmppStream.Read();
-            return response as Stanza;
+            throw new NotImplementedException();
         }
 
         public void Send(Stanza message)

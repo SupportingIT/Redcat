@@ -9,22 +9,23 @@ namespace Redcat.Xmpp
 {
     public class XmppStreamReader
     {
+        private const int BufferSize = 10000;
         private static readonly Encoding defaultEncoding = Encoding.UTF8;
+
         private Queue<XmlElement> elementQueue = new Queue<XmlElement>();
-        private char[] buffer;
+        private char[] buffer = new char[BufferSize];
         private IXmlParser parser;
         private TextReader reader;        
 
         public XmppStreamReader(Stream stream)
         {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
-            buffer = new char[10000];
+            if (stream == null) throw new ArgumentNullException(nameof(stream));            
             reader = new StreamReader(stream, defaultEncoding);
         }
 
         public XmppStreamReader(TextReader reader)
         {
-            if (reader == null) throw new ArgumentNullException();
+            if (reader == null) throw new ArgumentNullException(nameof(reader));
             this.reader = reader;
         }
 

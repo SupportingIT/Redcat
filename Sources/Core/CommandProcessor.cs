@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Redcat.Core
 {
-    public class CommandProcessor : IRunable, IDisposable
+    public class CommandProcessor : IDisposable
     {
         private IDictionary<string, Action<IServiceCollection>> extensions;
         private IServiceProvider serviceProvider;
@@ -42,9 +42,9 @@ namespace Redcat.Core
             handler.Handle(command);
         }
 
-        private ICommandHandler<T> GetHandlerForCommand<T>()
+        private IHandler<T> GetHandlerForCommand<T>()
         {
-            return serviceProvider.GetService<ICommandHandler<T>>();
+            return serviceProvider.GetService<IHandler<T>>();
         }
 
         public void AddExtension(string name, Action<IServiceCollection> extension)
@@ -54,7 +54,7 @@ namespace Redcat.Core
             extensions.Add(name, extension);
         }
 
-        public void Run()
+        public void Start()
         {
             if (initialized) return;
             OnBeforeInit();

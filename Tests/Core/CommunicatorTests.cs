@@ -37,7 +37,7 @@ namespace Redcat.Core.Tests
             {
                 c.TryAddSingleton(factory);
             });
-            communicator.Run();
+            communicator.Start();
 
             communicator.Connect(settings);
 
@@ -71,7 +71,7 @@ namespace Redcat.Core.Tests
                 c.Replace(ServiceDescriptor.Instance(A.Fake<IChannelManager>()));
                 c.Replace(ServiceDescriptor.Instance(dispatcher));
             });
-            communicator.Run();
+            communicator.Start();
             communicator.Connect(settings);
             Message message = new Message();
 

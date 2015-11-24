@@ -20,6 +20,7 @@ namespace Redcat.Xmpp.Services
             initializer.Negotiators.Add(CreateSaslNegotiator(settings));
             XmppChannel channel = new XmppChannel(initializer, streamChannelFactory.CreateChannel(settings), settings);
             initializer.Negotiators.Add(new TlsNegotiator(channel.SetTlsContext));
+            initializer.Negotiators.Add(new BindNegotiator(settings));
             
             return channel;
         }
