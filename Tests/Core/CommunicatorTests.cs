@@ -3,13 +3,38 @@ using NUnit.Framework;
 using Redcat.Core.Communication;
 using Redcat.Core.Service;
 using System;
-using System.Linq;
 
 namespace Redcat.Core.Tests
 {
     [TestFixture]
     public class CommunicatorTests
     {
+        [Test]
+        public void Start_Adds_Extensions()
+        {
+            Communicator communicator = new Communicator();
+            Action<IServiceCollection> extension = A.Fake<Action<IServiceCollection>>();
+            communicator.AddExtension("test", extension);
+
+            A.CallTo(() => extension.Invoke(A<IServiceCollection>._)).MustNotHaveHappened();
+            communicator.Start();
+
+            A.CallTo(() => extension.Invoke(A<IServiceCollection>._)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Start_Initializes_Extensions_Only_Once()
+        {
+            Communicator communicator = new Communicator();
+            Action<IServiceCollection> extension = A.Fake<Action<IServiceCollection>>();
+            communicator.AddExtension("test", extension);
+
+            communicator.Start();
+            communicator.Start();
+
+            A.CallTo(() => extension.Invoke(A<IServiceCollection>._)).MustHaveHappened(Repeated.Exactly.Once);
+        }
+
         [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void Connect_Throws_Exception_If_Setting_Argument_Is_Null()

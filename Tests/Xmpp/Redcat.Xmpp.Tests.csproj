@@ -67,7 +67,6 @@
     <Compile Include="Services\XmppChannelTests.cs" />
     <Compile Include="StreamInitializerTests.cs" />
     <Compile Include="TestXmppStream.cs" />
-    <Compile Include="Xml\Bind.cs" />
     <Compile Include="Xml\DatagramElementTests.cs" />
     <Compile Include="Xml\IqTest.cs" />
     <Compile Include="Xml\PresenceTests.cs" />

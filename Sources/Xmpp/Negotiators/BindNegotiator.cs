@@ -21,7 +21,7 @@ namespace Redcat.Xmpp.Negotiators
 
         public bool Negotiate(IXmppStream stream, XmlElement feature)
         {
-            IqStanza bindIq = Iq.BindSet();
+            IqStanza bindIq = null;
             stream.Write(bindIq);
             var response = stream.Read();
             return false;

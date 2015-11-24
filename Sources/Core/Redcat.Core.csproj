@@ -42,7 +42,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="CommandProcessor.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="ConnectionSettings.cs" />
     <Compile Include="Service\DI\Internal\ConcurrentDictionaryExtensions.cs" />
@@ -83,7 +82,6 @@
     <Compile Include="Communication\ChannelBase.cs" />
     <Compile Include="Communication\IChannelFactory.cs" />
     <Compile Include="Communication\IChannelManager.cs" />
-    <Compile Include="IHandler.cs" />
     <Compile Include="Communication\IMessageChannel.cs" />
     <Compile Include="Communication\MessageDispatcher.cs" />
   </ItemGroup>
