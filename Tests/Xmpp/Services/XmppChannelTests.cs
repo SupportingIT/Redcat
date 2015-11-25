@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using Redcat.Core;
-using Redcat.Xmpp.Services;
+using Redcat.Xmpp.Communication;
 using FakeItEasy;
 using Redcat.Core.Communication;
 using System.IO;

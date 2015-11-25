@@ -1,7 +1,7 @@
 ﻿using Redcat.Core;
 using Redcat.Core.Communication;
 using Redcat.Core.Service;
-using Redcat.Xmpp.Services;
+using Redcat.Xmpp.Communication;
 
 namespace Redcat.Xmpp
 {

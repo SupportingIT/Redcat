@@ -34,6 +34,7 @@ namespace Redcat.Xmpp.Tests
             settings.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
             settings.Username = ConfigurationManager.AppSettings["Username"];
             settings.Password = ConfigurationManager.AppSettings["Password"];
+            settings.Resource(ConfigurationManager.AppSettings["Resource"]);
             return settings;
         }        
     }

@@ -3,9 +3,9 @@ using Redcat.Core;
 using Redcat.Core.Communication;
 using Redcat.Xmpp.Xml;
 
-namespace Redcat.Xmpp.Services
+namespace Redcat.Xmpp.Communication
 {
-    public class XmppChannel : ChannelBase, IDuplexChannel<Stanza>
+    public class XmppChannel : ChannelBase, IOutputChannel<Stanza>
     {
         private IStreamInitializer streamInitializer;
         private IStreamChannel streamChannel;
@@ -44,12 +44,7 @@ namespace Redcat.Xmpp.Services
         {
             if (!(streamChannel is ISecureStreamChannel)) throw new InvalidOperationException();
             streamProxy.OriginStream = ((ISecureStreamChannel)streamChannel).GetSecureStream();
-        }
-
-        public Stanza Receive()
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         public void Send(Stanza message)
         {

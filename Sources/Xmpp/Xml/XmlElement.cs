@@ -24,6 +24,11 @@ namespace Redcat.Xmpp.Xml
             SetAttributeValue("xmlns:"+prefix, prefixXmlns);
         }
 
+        public XmlElement(string name, params XmlElement[] childs)
+        {
+            AddChilds(childs);
+        }
+
         public IEnumerable<XmlAttribute> Attributes
         {
             get { return attributes.Select(kvp => new XmlAttribute(kvp.Key, kvp.Value));}
@@ -40,6 +45,16 @@ namespace Redcat.Xmpp.Xml
         }
 
         public object Value { get; set; }
+
+        public void AddChild(XmlElement element)
+        {
+            Childs.Add(element);
+        }
+
+        public void AddChilds(params XmlElement[] elements)
+        {
+            foreach (var element in elements) Childs.Add(element);
+        }
 
         public ICollection<XmlElement> Childs
         {

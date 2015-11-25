@@ -1,6 +1,7 @@
 ﻿using Redcat.Core;
 using Redcat.Xmpp.Xml;
 using System;
+using System.Net;
 
 namespace Redcat.Xmpp.Negotiators
 {
@@ -21,10 +22,34 @@ namespace Redcat.Xmpp.Negotiators
 
         public bool Negotiate(IXmppStream stream, XmlElement feature)
         {
-            IqStanza bindIq = null;
+            IqStanza bindIq = CreateBindRequest();
             stream.Write(bindIq);
-            var response = stream.Read();
-            return false;
+            JID response = ReadUserJid(stream);
+            settings.UserJid(response);
+            return true;
+        }
+
+        private IqStanza CreateBindRequest()
+        {
+            IqStanza stanza = Iq.Set();
+            string resource = settings.Resource();
+            if (string.IsNullOrEmpty(resource)) stanza.AddChild(Bind.New());
+            else stanza.AddChild(Bind.Resource(resource));
+            return stanza;
+        }
+
+        private JID ReadUserJid(IXmppStream stream)
+        {
+            XmlElement response = stream.Read();
+            VerifyBindResponse(response);
+            response = response.Child("bind").Child("jid");
+            return response.Value.ToString();
+        }
+
+        private void VerifyBindResponse(XmlElement response)
+        {
+            if (!response.HasChild("bind")) throw new ProtocolViolationException();
+            if (!response.Child("bind").HasChild("jid")) throw new ProtocolViolationException();
         }
     }
 }
