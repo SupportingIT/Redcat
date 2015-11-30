@@ -26,7 +26,7 @@ namespace Redcat.Xmpp.Negotiators
             stream.Write(bindIq);
             JID response = ReadUserJid(stream);
             settings.UserJid(response);
-            return true;
+            return false;
         }
 
         private IqStanza CreateBindRequest()

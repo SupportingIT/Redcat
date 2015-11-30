@@ -1,0 +1,17 @@
+﻿<Window x:Class="Redcat.Communicator.Views.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:rc="clr-namespace:Redcat.Communicator"
+        xmlns:prism="http://prismlibrary.com/"
+        Title="Redcat Communicator" Height="500" Width="700">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ContentControl prism:RegionManager.RegionName="{x:Static rc:RegionNames.MainMenu }" />
+        <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static rc:RegionNames.MainContent }" />
+        <ContentControl Grid.Row="2" prism:RegionManager.RegionName="{x:Static rc:RegionNames.StatusBar }" />
+    </Grid>
+</Window>

@@ -49,6 +49,7 @@
     <Compile Include="JID.cs" />
     <Compile Include="Negotiators\Authenticators.cs" />
     <Compile Include="Negotiators\BindNegotiator.cs" />
+    <Compile Include="Negotiators\RegistrationNegotiator.cs" />
     <Compile Include="Negotiators\SaslAuthentificator.cs" />
     <Compile Include="Negotiators\SaslNegotiator.cs" />
     <Compile Include="Negotiators\TlsNegotiator.cs" />
