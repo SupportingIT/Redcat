@@ -3,6 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Redcat.Communicator">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <Menu x:Key="{x:Static local:RegionNames.MainMenu }">
+                <MenuItem Header="Item1">
+                    <MenuItem Header="SubItem1" />
+                </MenuItem>
+            </Menu>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

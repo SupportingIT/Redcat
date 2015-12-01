@@ -23,8 +23,9 @@ namespace Redcat.Communicator
         private void RegisterRegions()
         {
             IRegionManager rm = (IRegionManager)Container.Resolve(typeof(IRegionManager), null);
-            rm.AddToRegion(RegionNames.MainMenu, new MainMenuView());
-            rm.AddToRegion(RegionNames.StatusBar, new StatusBarView());
+            rm.RegisterViewWithRegion(RegionNames.MainMenu, typeof(MainMenuView));
+            rm.RegisterViewWithRegion(RegionNames.MainContent, typeof(MainContentView));
+            rm.RegisterViewWithRegion(RegionNames.StatusBar, typeof(StatusBarView));
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Redcat.Communicator.Views
     {
         public StatusBarView()
         {
-            
+            AddChild("Status Bar");
         }
     }
 }
