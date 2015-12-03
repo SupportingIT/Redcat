@@ -1,7 +1,9 @@
 ﻿using NUnit.Framework;
 using Redcat.Core;
+using Redcat.Core.Communication;
 using Redcat.Core.Net;
-using Redcat.Xmpp.Xml;
+using Redcat.Xmpp.Communication;
+using SimpleInjector;
 using System.Configuration;
 
 namespace Redcat.Xmpp.Tests
@@ -14,16 +16,26 @@ namespace Redcat.Xmpp.Tests
         {            
             string processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
             int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
-            Communicator communicator = new Communicator();
-            communicator.AddXmppExtension();
-            communicator.AddNetworkExtension();
-            communicator.Start();
-
+            ICommunicator communicator = CreateCommunicator();
+            
             ConnectionSettings settings = CreateConnectionSettings();
             communicator.Connect(settings);
 
-            communicator.Send<Stanza>(Presence.Available());
-        }        
+            //communicator.Send<Stanza>(Presence.Available());
+        }
+
+        private ICommunicator CreateCommunicator()
+        {
+            Container container = new Container();
+
+            container.Register<ICommunicator, Communicator>();
+            container.Register<IChannelManager, ChannelManager>();
+            container.RegisterCollection<IChannelFactory>(new[] { typeof(XmppChannelFactory) });
+            container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
+            container.Register<IMessageDispatcher, MessageDispatcher>();
+
+            return container.GetInstance<ICommunicator>();
+        }
 
         private ConnectionSettings CreateConnectionSettings()
         {

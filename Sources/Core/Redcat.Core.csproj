@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="Communication\IChannel.cs" />
     <Compile Include="Communication\IStreamChannel.cs" />
+    <Compile Include="ICommunicator.cs" />
     <Compile Include="StreamProxy.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -44,36 +45,6 @@
     </Compile>
     <Compile Include="Communicator.cs" />
     <Compile Include="ConnectionSettings.cs" />
-    <Compile Include="Service\DI\Internal\ConcurrentDictionaryExtensions.cs" />
-    <Compile Include="Service\DI\ServiceCollection.cs" />
-    <Compile Include="Service\DI\ServiceCollectionExtensions.cs" />
-    <Compile Include="Service\DI\ServiceLookup\ClosedIEnumerableService.cs" />
-    <Compile Include="Service\DI\ServiceLookup\ConstantCallSite.cs" />
-    <Compile Include="Service\DI\ServiceLookup\ConstructorCallSite.cs" />
-    <Compile Include="Service\DI\ServiceLookup\CreateInstanceCallSite.cs" />
-    <Compile Include="Service\DI\ServiceLookup\FactoryService.cs" />
-    <Compile Include="Service\DI\ServiceLookup\GenericService.cs" />
-    <Compile Include="Service\DI\ServiceLookup\IGenericService.cs" />
-    <Compile Include="Service\DI\ServiceLookup\InstanceService.cs" />
-    <Compile Include="Service\DI\ServiceLookup\IService.cs" />
-    <Compile Include="Service\DI\ServiceLookup\IServiceCallSite.cs" />
-    <Compile Include="Service\DI\ServiceLookup\OpenIEnumerableService.cs" />
-    <Compile Include="Service\DI\ServiceLookup\Service.cs" />
-    <Compile Include="Service\DI\ServiceLookup\ServiceEntry.cs" />
-    <Compile Include="Service\DI\ServiceLookup\ServiceProviderService.cs" />
-    <Compile Include="Service\DI\ServiceLookup\ServiceScope.cs" />
-    <Compile Include="Service\DI\ServiceLookup\ServiceScopeFactory.cs" />
-    <Compile Include="Service\DI\ServiceLookup\ServiceScopeService.cs" />
-    <Compile Include="Service\DI\ServiceLookup\ServiceTable.cs" />
-    <Compile Include="Service\DI\ServiceProvider.cs" />
-    <Compile Include="Service\IServiceCollection.cs" />
-    <Compile Include="Service\IServiceLocator.cs" />
-    <Compile Include="Service\IServiceScope.cs" />
-    <Compile Include="Service\IServiceScopeFactory.cs" />
-    <Compile Include="Service\ServiceCollectionExtensions.cs" />
-    <Compile Include="Service\ServiceDescriptor.cs" />
-    <Compile Include="Service\ServiceLifetime.cs" />
-    <Compile Include="Service\ServiceProviderExtensions.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySet.cs" />

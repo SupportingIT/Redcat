@@ -80,7 +80,6 @@
     <Compile Include="Xml\Namespaces.cs" />
     <Compile Include="Xml\StreamHeader.cs" />
     <Compile Include="Xml\XmlElementExtensions.cs" />
-    <Compile Include="XmppProtocolExtensions.cs" />
     <Compile Include="XmppStream.cs" />
     <Compile Include="XmppStreamReader.cs" />
     <Compile Include="XmppStreamWriter.cs" />
