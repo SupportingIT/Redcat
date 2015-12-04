@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Redcat.Communicator.Views
 {
     /// <summary>
-    /// Interaction logic for ManageAccountsView.xaml
+    /// Interaction logic for AccountListView.xaml
     /// </summary>
-    public partial class ManageAccountsView : UserControl
+    public partial class AccountListView : UserControl
     {
-        public ManageAccountsView()
+        public AccountListView()
         {
             InitializeComponent();
         }

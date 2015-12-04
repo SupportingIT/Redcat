@@ -1,10 +1,9 @@
-﻿<UserControl x:Class="Redcat.Communicator.Views.ManageAccountsView"
+﻿<UserControl x:Class="Redcat.Communicator.Views.AccountListView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:local="clr-namespace:Redcat.Communicator.Views"
-             prism:ViewModelLocator.AutoWireViewModel="True"
-             Width="250" Height="250" x:Name="Root">
+             prism:ViewModelLocator.AutoWireViewModel="True" x:Name="Root">
     <UserControl.Resources>
         <DataTemplate x:Key="AccountItemView">
             <Grid>
@@ -28,10 +27,10 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ListBox Margin="2" ItemsSource="{Binding Accounts}" ItemTemplate="{StaticResource ResourceKey=AccountItemView}">            
+        <ListBox Margin="2" ItemsSource="{Binding Accounts}" ItemTemplate="{StaticResource ResourceKey=AccountItemView}">
         </ListBox>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Command="{Binding NewAccountCommand}">New account</Button>            
+            <Button Command="{Binding NewAccountCommand}">New account</Button>
             <Button Command="{Binding CloseCommand}">Close</Button>
         </StackPanel>
     </Grid>

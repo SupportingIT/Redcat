@@ -1,22 +1,26 @@
 ﻿using System;
-using Prism.Interactivity.InteractionRequest;
 using System.Windows.Input;
 using Prism.Commands;
 using System.Collections.Generic;
 using Redcat.Communicator.Models;
 using System.Collections.ObjectModel;
+using Prism.Regions;
+using Redcat.Communicator.Services;
 
 namespace Redcat.Communicator.ViewModels
 {
-    public class ManageAccountsViewModel : IInteractionRequestAware
+    public class AccountListViewModel
     {
-        public ManageAccountsViewModel()
+        private IRegionManager regionManager;
+
+        public AccountListViewModel(IRegionManager regionManager, IAccountService accountService)
         {
             NewAccountCommand = new DelegateCommand(NewAccount);
             EditAccountCommand = new DelegateCommand<Account>(EditAccount);
             DeleteAccountCommand = new DelegateCommand<Account>(DeleteAccount);
             CloseCommand = new DelegateCommand(Close);
-            Accounts = new ObservableCollection<Account>();
+            Accounts = new ObservableCollection<Account>(accountService.GetAccounts());
+            this.regionManager = regionManager;
         }
 
         public ICollection<Account> Accounts { get; }
@@ -27,15 +31,11 @@ namespace Redcat.Communicator.ViewModels
 
         public ICommand DeleteAccountCommand { get; }
 
-        public ICommand CloseCommand { get; }
-
-        public Action FinishInteraction { get; set; }
-
-        public INotification Notification { get; set; }
+        public ICommand CloseCommand { get; }        
 
         private void NewAccount()
         {
-            Accounts.Add(new Account() { Name = "account", Protocol = "Proto" });
+            regionManager.RequestNavigate(RegionNames.MainContent, ViewNames.NewAccount);
         }
 
         public void EditAccount(Account account)
@@ -50,7 +50,7 @@ namespace Redcat.Communicator.ViewModels
 
         private void Close()
         {
-            FinishInteraction();
+            
         }
     }
 }

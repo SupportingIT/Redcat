@@ -4,17 +4,9 @@
              xmlns:local="clr-namespace:Redcat.Communicator.Views"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             prism:ViewModelLocator.AutoWireViewModel="True">
-    <i:Interaction.Triggers>
-        <prism:InteractionRequestTrigger SourceObject="{Binding ManageAccountsRequest, Mode=OneWay}">
-            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
-                <prism:PopupWindowAction.WindowContent>
-                    <local:ManageAccountsView />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-    </i:Interaction.Triggers>
+             prism:ViewModelLocator.AutoWireViewModel="True">    
     <ToolBar>
+        <Button Content="Home" Command="{Binding HomeCommand}" />
         <Button Content="Manage accounts" Command="{Binding ManageAccountsCommand}" />
     </ToolBar>
 </UserControl>

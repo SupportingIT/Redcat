@@ -1,8 +1,8 @@
 ﻿namespace Redcat.Communicator.ViewModels
 {
-    public class MainContentViewModel
+    public class HomeViewModel
     {
-        public MainContentViewModel()
+        public HomeViewModel()
         {            
         }        
     }

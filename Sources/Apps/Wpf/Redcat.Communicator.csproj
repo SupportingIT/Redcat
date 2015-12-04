@@ -85,22 +85,30 @@
     </Compile>
     <Compile Include="Models\Account.cs" />
     <Compile Include="RegionNames.cs" />
-    <Compile Include="ViewModels\MainContentViewModel.cs" />
+    <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\IAccountService.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainMenuViewModel.cs" />
-    <Compile Include="ViewModels\ManageAccountsViewModel.cs" />
-    <Compile Include="Views\MainContentView.xaml.cs">
-      <DependentUpon>MainContentView.xaml</DependentUpon>
+    <Compile Include="ViewModels\AccountListViewModel.cs" />
+    <Compile Include="ViewModels\NewAccountViewModel.cs" />
+    <Compile Include="ViewNames.cs" />
+    <Compile Include="Views\AccountListView.xaml.cs">
+      <DependentUpon>AccountListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainMenuView.xaml.cs">
       <DependentUpon>MainMenuView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ManageAccountsView.xaml.cs">
-      <DependentUpon>ManageAccountsView.xaml</DependentUpon>
+    <Compile Include="Views\NewAccountView.xaml.cs">
+      <DependentUpon>NewAccountView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StatusBarView.cs" />
+    <Compile Include="XmppModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppBootstrapper.cs" />
@@ -132,7 +140,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\MainContentView.xaml">
+    <Page Include="Views\AccountListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HomeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -140,7 +152,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ManageAccountsView.xaml">
+    <Page Include="Views\NewAccountView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -149,7 +161,17 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Redcat.Core.csproj">
+      <Project>{5ea90f4a-92f4-4b98-b669-866460de26a0}</Project>
+      <Name>Redcat.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Xmpp\Redcat.Xmpp.csproj">
+      <Project>{26fa8d28-ecc2-40af-96c1-04a9400b8a36}</Project>
+      <Name>Redcat.Xmpp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\..\Redcat.Core.Net\Redcat.Core.Net.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

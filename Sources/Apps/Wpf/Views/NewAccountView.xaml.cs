@@ -3,13 +3,13 @@
 namespace Redcat.Communicator.Views
 {
     /// <summary>
-    /// Interaction logic for MainContent.xaml
+    /// Interaction logic for NewAccountView.xaml
     /// </summary>
-    public partial class MainContentView : UserControl
+    public partial class NewAccountView : UserControl
     {
-        public MainContentView()
+        public NewAccountView()
         {
             InitializeComponent();
-        }
+        }        
     }
 }

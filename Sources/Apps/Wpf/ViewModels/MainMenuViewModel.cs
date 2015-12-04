@@ -1,24 +1,32 @@
 ﻿using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
+using Prism.Regions;
 using System.Windows.Input;
 
 namespace Redcat.Communicator.ViewModels
 {
     public class MainMenuViewModel
     {
-        public MainMenuViewModel()
+        private IRegionManager regionManager;
+
+        public MainMenuViewModel(IRegionManager regionManager)
         {
-            ManageAccountsCommand = new DelegateCommand(RiseManageAccounts);
+            this.regionManager = regionManager;
+            HomeCommand = new DelegateCommand(Home);
+            ManageAccountsCommand = new DelegateCommand(ManageAccounts);
         }
 
-        public InteractionRequest<INotification> ManageAccountsRequest { get; } = new InteractionRequest<INotification>();
+        public ICommand HomeCommand { get; }
 
         public ICommand ManageAccountsCommand { get; }
 
-        private void RiseManageAccounts()
+        private void Home()
         {
-            Notification notification = new Notification { Title = "Title", Content = "Hello world" };
-            ManageAccountsRequest.Raise(notification);
+            regionManager.RequestNavigate(RegionNames.MainContent, ViewNames.Home);
+        }
+
+        private void ManageAccounts()
+        {
+            regionManager.RequestNavigate(RegionNames.MainContent, ViewNames.AccountList);
         }
     }
 }
