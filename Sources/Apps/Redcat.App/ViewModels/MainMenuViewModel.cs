@@ -2,10 +2,12 @@
 
 namespace Redcat.App.ViewModels
 {
-    public class MainMenuViewModel
+    public class MainMenuViewModel : MvxViewModel
     {
         public MainMenuViewModel()
-        {            
+        {
+            HomeCommand = new MvxCommand(Home);
+            ManageAccountsCommand = new MvxCommand(ManageAccounts);
         }
 
         public IMvxCommand HomeCommand { get; }
