@@ -1,6 +1,6 @@
 ﻿using Redcat.Core;
 
-namespace Redcat.Communicator.Services
+namespace Redcat.App.Services
 {
     public interface IProtocolUiService
     {

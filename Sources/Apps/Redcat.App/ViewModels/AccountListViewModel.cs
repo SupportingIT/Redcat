@@ -1,31 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Redcat.App.Services;
 using Redcat.App.Models;
 using Cirrious.MvvmCross.ViewModels;
+using Redcat.App.Services;
 
 namespace Redcat.App.ViewModels
 {
     public class AccountListViewModel : MvxViewModel
     {
-        public AccountListViewModel()
-        {            
-            Accounts = new ObservableCollection<Account>();            
+        private IAccountService accountService;
+        private ICollection<Account> accounts;
+
+        public AccountListViewModel(IAccountService accountService)
+        {
+            this.accountService = accountService;
+            NewAccountCommand = new MvxCommand(NewAccount);
+            EditAccountCommand = new MvxCommand<Account>(EditAccount);
+            DeleteAccountCommand = new MvxCommand<Account>(DeleteAccount);
         }
 
-        public ICollection<Account> Accounts { get; }
+        public ICollection<Account> Accounts => (accounts ?? (accounts = new ObservableCollection<Account>(accountService.GetAccounts())));
 
-        public object NewAccountCommand { get; }
+        public IMvxCommand NewAccountCommand { get; }
 
-        public object EditAccountCommand { get; }
+        public IMvxCommand EditAccountCommand { get; }
 
-        public object DeleteAccountCommand { get; }
-
-        public object CloseCommand { get; }        
+        public IMvxCommand DeleteAccountCommand { get; }
 
         private void NewAccount()
-        {            
+        {
+            ShowViewModel<NewAccountViewModel>();
         }
 
         public void EditAccount(Account account)
@@ -36,11 +41,6 @@ namespace Redcat.App.ViewModels
         private void DeleteAccount(Account account)
         {
             Accounts.Remove(account);
-        }
-
-        private void Close()
-        {
-            
         }
     }
 }

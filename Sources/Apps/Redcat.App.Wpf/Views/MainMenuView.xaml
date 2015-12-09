@@ -4,6 +4,6 @@
              xmlns:views="clr-namespace:Cirrious.MvvmCross.Wpf.Views;assembly=Cirrious.MvvmCross.Wpf">
     <ToolBar>
         <Button Command="{Binding HomeCommand}">Home</Button>
-        <Button>Manage accounts</Button>
+        <Button Command="{Binding ManageAccountsCommand}">Manage accounts</Button>
     </ToolBar>
 </views:MvxWpfView>

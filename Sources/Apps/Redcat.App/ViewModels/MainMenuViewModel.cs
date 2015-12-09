@@ -1,4 +1,5 @@
 ﻿using Cirrious.MvvmCross.ViewModels;
+using System;
 
 namespace Redcat.App.ViewModels
 {
@@ -10,16 +11,18 @@ namespace Redcat.App.ViewModels
             ManageAccountsCommand = new MvxCommand(ManageAccounts);
         }
 
-        public IMvxCommand HomeCommand { get; }
+        public IMvxCommand HomeCommand { get; } 
 
         public IMvxCommand ManageAccountsCommand { get; }
 
         private void Home()
-        {            
+        {
+            ShowViewModel<HomeViewModel>();
         }
 
         private void ManageAccounts()
-        {            
+        {
+            ShowViewModel<AccountListViewModel>();
         }
     }
 }

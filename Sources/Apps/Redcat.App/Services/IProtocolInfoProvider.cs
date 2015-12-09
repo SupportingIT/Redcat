@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Redcat.Communicator.Services
+namespace Redcat.App.Services
 {
     public interface IProtocolInfoProvider
     {

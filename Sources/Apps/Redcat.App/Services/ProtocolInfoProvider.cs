@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Redcat.Communicator.Services
+namespace Redcat.App.Services
 {
     public class ProtocolInfoProvider : IProtocolInfoProvider
     {

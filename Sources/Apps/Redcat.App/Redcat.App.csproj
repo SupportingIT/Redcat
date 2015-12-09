@@ -43,6 +43,9 @@
     <Compile Include="RedcatApp.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\IAccountService.cs" />
+    <Compile Include="Services\IProtocolInfoProvider.cs" />
+    <Compile Include="Services\IProtocolUiService.cs" />
+    <Compile Include="Services\ProtocolInfoProvider.cs" />
     <Compile Include="ViewModels\AccountListViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainMenuViewModel.cs" />
@@ -61,6 +64,12 @@
       <HintPath>..\..\..\packages\MvvmCross.HotTuna.CrossCore.3.5.0\lib\portable-win+net45+wp8+win8+wpa81\Cirrious.MvvmCross.Localization.dll</HintPath>
       <Private>True</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Redcat.Core.csproj">
+      <Project>{5ea90f4a-92f4-4b98-b669-866460de26a0}</Project>
+      <Name>Redcat.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
