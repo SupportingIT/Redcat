@@ -2,9 +2,9 @@
 
 namespace Redcat.App.Wpf
 {
-    public partial class MainWindow : Window
+    public partial class DialogWindow : Window
     {
-        public MainWindow()
+        public DialogWindow()
         {
             InitializeComponent();
         }

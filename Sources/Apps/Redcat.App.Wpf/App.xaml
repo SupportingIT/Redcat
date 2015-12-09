@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:Redcat.App.Wpf"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+         <local:DialogWindow x:Key="DialogWindow" />
     </Application.Resources>
 </Application>

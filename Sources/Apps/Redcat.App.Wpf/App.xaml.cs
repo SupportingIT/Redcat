@@ -5,6 +5,7 @@ using System.Windows;
 using System;
 using Redcat.App.ViewModels;
 using System.Windows.Controls;
+using Redcat.App.Wpf.Views;
 
 namespace Redcat.App.Wpf
 {
@@ -20,10 +21,7 @@ namespace Redcat.App.Wpf
 
         private void Initialize()
         {
-            
-            ContentControl mainContent = (ContentControl)MainWindow.FindName("MainContent");
-
-            IMvxWpfViewPresenter presenter = new MvxSimpleWpfViewPresenter(mainContent);
+            IMvxWpfViewPresenter presenter = CreatePresenter();
             Setup setup = new Setup(Dispatcher, presenter);
             setup.Initialize();
             InitializeMainMenu();
@@ -32,6 +30,17 @@ namespace Redcat.App.Wpf
             start.Start();
 
             isInitialized = true;
+        }
+
+        private IMvxWpfViewPresenter CreatePresenter()
+        {
+            ContentControl mainContent = (ContentControl)MainWindow.FindName("MainContent");
+            Window dialogWindow = Resources["DialogWindow"] as Window;
+            var presenter = new RedcatWpfViewPresenter(Dispatcher, mainContent, dialogWindow);
+            presenter.AddDialogView<AccountListView>();
+            presenter.AddDialogView<NewAccountView>();
+
+            return presenter;
         }
 
         private void InitializeMainMenu()
