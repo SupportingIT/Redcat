@@ -4,6 +4,8 @@ using System.Windows.Threading;
 using Cirrious.MvvmCross.Wpf.Views;
 using Cirrious.CrossCore;
 using Redcat.App.Services;
+using Redcat.App.Wpf.Views;
+using Redcat.App.ViewModels;
 
 namespace Redcat.App.Wpf
 {
@@ -21,7 +23,10 @@ namespace Redcat.App.Wpf
         {
             base.Initialize();
             Mvx.RegisterSingleton<IAccountService>(new AccountService());
-            Mvx.RegisterSingleton<IProtocolInfoProvider>(new ProtocolInfoProvider());
+
+            ProtocolInfoProvider protocolProvider = new ProtocolInfoProvider();
+            protocolProvider.RegisterProtocol("XMPP", typeof(XmppSettingsViewModel), typeof(XmppSettingsViewModel));
+            Mvx.RegisterSingleton<IProtocolInfoProvider>(protocolProvider);
         }
     }
 }

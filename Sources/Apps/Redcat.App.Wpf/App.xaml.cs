@@ -39,6 +39,7 @@ namespace Redcat.App.Wpf
             var presenter = new RedcatWpfViewPresenter(Dispatcher, mainContent, dialogWindow);
             presenter.AddDialogView<AccountListView>();
             presenter.AddDialogView<NewAccountView>();
+            presenter.AddProtocolSettingsView<XmppSettingsView>();
 
             return presenter;
         }

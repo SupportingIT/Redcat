@@ -17,7 +17,7 @@
         <TextBox Grid.Column="1" Text="{Binding AccountName}" />
         <TextBlock Grid.Row="1">Protocol</TextBlock>
         <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Protocols}" SelectedItem="{Binding SelectedProtocol}" />
-        <ContentControl Grid.Row="2" Grid.ColumnSpan="2" />
+        <ContentControl Grid.Row="2" Grid.ColumnSpan="2" x:Name="ProtocolSettings" />
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2">
             <Button Command="{Binding CreateAccountCommand}">OK</Button>
             <Button>Cancel</Button>

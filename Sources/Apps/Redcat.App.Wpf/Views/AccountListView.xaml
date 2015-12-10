@@ -27,6 +27,9 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <ListView ItemsSource="{Binding Accounts}" ItemTemplate="{StaticResource AccountItem}" />
-        <Button Grid.Column="1" Command="{Binding NewAccountCommand}">New Account</Button>
+        <StackPanel Grid.Column="1">
+            <Button IsDefault="True" Click="Button_Click">OK</Button>
+            <Button Command="{Binding NewAccountCommand}">New Account</Button>            
+        </StackPanel>
     </Grid>
 </views:MvxWpfView>

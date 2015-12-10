@@ -1,5 +1,6 @@
 ﻿using Cirrious.MvvmCross.ViewModels;
 using Redcat.App.Services;
+using Redcat.Core;
 using System;
 using System.Collections.Generic;
 
@@ -10,6 +11,8 @@ namespace Redcat.App.ViewModels
         private IAccountService accountService;
         private IProtocolInfoProvider protocolInfoProvider;
         private IEnumerable<string> protocols;
+        private string selectedProtocol;
+        private ConnectionSettings settings;
 
         public NewAccountViewModel(IAccountService accountService, IProtocolInfoProvider protocolInfoProvider)
         {
@@ -22,7 +25,18 @@ namespace Redcat.App.ViewModels
 
         public IEnumerable<string> Protocols => (protocols ?? (protocols = protocolInfoProvider.GetProtocolsName()));
 
-        public string SelectedProtocol { get; set; }
+        public string SelectedProtocol
+        {
+            get { return selectedProtocol; }
+            set
+            {
+                selectedProtocol = value;
+                Type viewModel = protocolInfoProvider.GetViewModelTypeForNewSettings(selectedProtocol);                
+                ShowViewModel(viewModel, ConnectionSettings);
+            }
+        }
+
+        public ConnectionSettings ConnectionSettings => (settings ?? (settings = new ConnectionSettings()));
 
         public IMvxCommand CreateAccountCommand { get; }
 

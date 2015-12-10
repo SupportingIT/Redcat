@@ -1,26 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Redcat.App.Services
 {
     public class ProtocolInfoProvider : IProtocolInfoProvider
     {
-        private IDictionary<string, IProtocolUiService> protocols = new Dictionary<string, IProtocolUiService>();
+        private IDictionary<string, Tuple<Type, Type>> protocols = new Dictionary<string, Tuple<Type, Type>>();
 
         public IEnumerable<string> GetProtocolsName()
         {
-            return Enumerable.Range(0, 10).Select(i => "Protocol " + i);
+            return protocols.Keys;
         }
 
-        public IProtocolUiService GetUiService(string protocolName)
+        public Type GetViewModelTypeForNewSettings(string protocolName)
         {
-            throw new NotImplementedException();
+            return protocols[protocolName].Item1;
         }
 
-        public void RegisterProtocolProvider(string protocolName, IProtocolUiService uiService)
+        public Type GetViewModelTypeForEditSettings(string protocolName)
         {
-            protocols.Add(protocolName, uiService);
+            return protocols[protocolName].Item2;
+        }
+
+        public void RegisterProtocol(string protocolName, Type newSettingsVmType, Type editSettingsVmType)
+        {            
+            protocols[protocolName] = new Tuple<Type, Type>(newSettingsVmType, editSettingsVmType);
         }
     }
 }
