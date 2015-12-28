@@ -7,5 +7,7 @@ namespace Redcat.App.Services
     {
         IEnumerable<Account> GetAccounts();
         void AddAccount(Account account);
+        void DeleteAccount(Account account);
+        void UpdateAccount(Account account);
     }
 }

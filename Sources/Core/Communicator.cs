@@ -55,11 +55,10 @@ namespace Redcat.Core
         }
 
         protected virtual void OnBeforeInit()
-        {            
-        }
+        { }
 
         protected virtual void OnInit()
-        { }        
+        { }
 
         protected virtual void OnAfterInit()
         { }

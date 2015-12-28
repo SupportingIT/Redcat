@@ -24,9 +24,8 @@ namespace Redcat.App.Wpf
             base.Initialize();
             Mvx.RegisterSingleton<IAccountService>(new AccountService());
 
-            ProtocolInfoProvider protocolProvider = new ProtocolInfoProvider();
-            protocolProvider.RegisterProtocol("XMPP", typeof(XmppSettingsViewModel), typeof(XmppSettingsViewModel));
-            Mvx.RegisterSingleton<IProtocolInfoProvider>(protocolProvider);
+            ProtocolService protocolProvider = new ProtocolService();            
+            Mvx.RegisterSingleton<IProtocolService>(protocolProvider);
         }
     }
 }

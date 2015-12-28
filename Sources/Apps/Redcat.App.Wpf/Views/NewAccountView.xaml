@@ -20,7 +20,7 @@
         <ContentControl Grid.Row="2" Grid.ColumnSpan="2" x:Name="ProtocolSettings" />
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2">
             <Button Command="{Binding CreateAccountCommand}">OK</Button>
-            <Button>Cancel</Button>
+            <Button Command="{Binding CloseCommand}">Cancel</Button>
         </StackPanel>
     </Grid>    
 </views:MvxWpfView>

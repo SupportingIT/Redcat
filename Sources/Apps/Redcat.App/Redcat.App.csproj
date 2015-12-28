@@ -43,10 +43,11 @@
     <Compile Include="RedcatApp.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\IAccountService.cs" />
-    <Compile Include="Services\IProtocolInfoProvider.cs" />
-    <Compile Include="Services\IProtocolUiService.cs" />
-    <Compile Include="Services\ProtocolInfoProvider.cs" />
+    <Compile Include="Services\IProtocolService.cs" />
+    <Compile Include="Services\ProtocolService.cs" />
+    <Compile Include="ViewModels\ShowProtocolSettingsHint.cs" />
     <Compile Include="ViewModels\AccountListViewModel.cs" />
+    <Compile Include="ViewModels\ProtocolSettingsViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainMenuViewModel.cs" />
     <Compile Include="ViewModels\NewAccountViewModel.cs" />

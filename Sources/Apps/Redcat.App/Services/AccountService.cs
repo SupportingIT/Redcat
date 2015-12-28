@@ -1,21 +1,29 @@
 ﻿using Redcat.App.Models;
 using System.Collections.Generic;
-using System.Linq;
+using System;
 
 namespace Redcat.App.Services
 {
     public class AccountService : IAccountService
     {
-        private List<Account> accounts = new List<Account>(Enumerable.Range(0, 3).Select(i => new Account { Name = $"Account {i}", Protocol = $"Protocol {i}" }));
+        public IEnumerable<Account> GetAccounts()
+        {
+            throw new NotImplementedException();
+        }
 
         public void AddAccount(Account account)
         {
-            accounts.Add(account);
+            throw new NotImplementedException();
         }
 
-        public IEnumerable<Account> GetAccounts()
+        public void DeleteAccount(Account account)
         {
-            return accounts;
+            throw new NotImplementedException();
+        }
+
+        public void UpdateAccount(Account account)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using Cirrious.MvvmCross.Views;
 using System.Windows.Threading;
 using Redcat.App.Wpf.Views;
+using Cirrious.MvvmCross.ViewModels;
+using Redcat.App.ViewModels;
+using Cirrious.CrossCore;
 
 namespace Redcat.App.Wpf
 {
@@ -13,7 +16,6 @@ namespace Redcat.App.Wpf
     {
         private ContentControl mainContent;
         private ICollection<Type> dialogViews;
-        private ICollection<Type> protocolSettingViews;
         private Dispatcher dispatcher;
         private Window dialogWindow;
 
@@ -22,8 +24,7 @@ namespace Redcat.App.Wpf
             this.dispatcher = dispatcher;
             this.mainContent = mainContent;
             this.dialogWindow = dialogWindow;
-            dialogViews = new List<Type>();
-            protocolSettingViews = new List<Type>();            
+            dialogViews = new List<Type>();            
         }        
 
         public void AddDialogView<T>() where T : IMvxView
@@ -31,22 +32,11 @@ namespace Redcat.App.Wpf
             dialogViews.Add(typeof(T));
         }
 
-        public void AddProtocolSettingsView<T>() where T : IMvxView
-        {
-            protocolSettingViews.Add(typeof(T));
-        }
-
         public override void Present(FrameworkElement frameworkElement)
         {
             if (IsDialogView(frameworkElement))
             {
                 ShowDialogView(frameworkElement);                
-                return;
-            }
-
-            if (IsProtocolSettingsView(frameworkElement))
-            {
-                ShowProtocolSettingsView(frameworkElement);
                 return;
             }
 
@@ -65,11 +55,21 @@ namespace Redcat.App.Wpf
                 if (!dialogWindow.IsVisible) dialogWindow.ShowDialog();
                 return;
             });
-        }
+        }        
 
-        private bool IsProtocolSettingsView(FrameworkElement view)
+        public override void ChangePresentation(MvxPresentationHint hint)
         {
-            return protocolSettingViews.Contains(view.GetType());
+            var showProtocolHint = hint as ShowProtocolSettingsHint;
+            if (showProtocolHint != null)
+            {
+                var  viewLoader = Mvx.Resolve<IMvxSimpleWpfViewLoader>();
+                FrameworkElement view = viewLoader.CreateView(new MvxViewModelRequest { ViewModelType = showProtocolHint.ViewModel.GetType() });
+                view.DataContext = showProtocolHint.ViewModel;
+                ShowProtocolSettingsView(view);
+                return;
+            }
+
+            base.ChangePresentation(hint);
         }
 
         private void ShowProtocolSettingsView(FrameworkElement view)
