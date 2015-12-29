@@ -9,10 +9,10 @@ namespace Redcat.App.ViewModels
 {
     public class AccountListViewModel : MvxViewModel
     {
-        private IAccountService accountService;
+        private IAccountRepository accountService;
         private ICollection<Account> accounts;
 
-        public AccountListViewModel(IAccountService accountService)
+        public AccountListViewModel(IAccountRepository accountService)
         {
             this.accountService = accountService;
             NewAccountCommand = new MvxCommand(NewAccount);

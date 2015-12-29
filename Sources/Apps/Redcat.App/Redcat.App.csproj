@@ -41,8 +41,8 @@
     <Compile Include="Models\Account.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedcatApp.cs" />
-    <Compile Include="Services\AccountService.cs" />
-    <Compile Include="Services\IAccountService.cs" />
+    <Compile Include="Services\AccountRepositoryBase.cs" />
+    <Compile Include="Services\IAccountRepository.cs" />
     <Compile Include="Services\IProtocolService.cs" />
     <Compile Include="Services\ProtocolService.cs" />
     <Compile Include="ViewModels\ShowProtocolSettingsHint.cs" />

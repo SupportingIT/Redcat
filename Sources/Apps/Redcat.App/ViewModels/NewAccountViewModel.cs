@@ -7,12 +7,12 @@ namespace Redcat.App.ViewModels
 {
     public class NewAccountViewModel : MvxViewModel
     {
-        private IAccountService accountService;
+        private IAccountRepository accountService;
         private IProtocolService protocolService;
         private IEnumerable<string> protocols;
         private string selectedProtocol;
 
-        public NewAccountViewModel(IAccountService accountService, IProtocolService protocolService)
+        public NewAccountViewModel(IAccountRepository accountService, IProtocolService protocolService)
         {
             this.accountService = accountService;
             this.protocolService = protocolService;
