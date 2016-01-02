@@ -1,4 +1,4 @@
-﻿namespace Redcat.Core.Communication
+﻿namespace Redcat.Core.Channels
 {
     public interface IChannelFactory
     {

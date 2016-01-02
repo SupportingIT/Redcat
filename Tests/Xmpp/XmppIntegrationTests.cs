@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using Redcat.Core;
-using Redcat.Core.Communication;
+using Redcat.Core.Channels;
 using Redcat.Core.Net;
-using Redcat.Xmpp.Communication;
+using Redcat.Xmpp.Channels;
 using SimpleInjector;
 using System.Configuration;
 

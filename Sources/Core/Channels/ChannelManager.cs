@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Redcat.Core.Communication
+namespace Redcat.Core.Channels
 {
     public class ChannelManager : IChannelManager
     {

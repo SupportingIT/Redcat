@@ -1,4 +1,4 @@
-﻿using Redcat.Core.Communication;
+﻿using Redcat.Core.Channels;
 using System;
 
 namespace Redcat.Core

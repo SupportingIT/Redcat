@@ -49,7 +49,7 @@ namespace Redcat.App.ViewModels
                 Name = AccountName,
                 Protocol = SelectedProtocol                
             };
-            accountService.AddAccount(account);
+            accountService.Add(account);
             Close();
         }
 

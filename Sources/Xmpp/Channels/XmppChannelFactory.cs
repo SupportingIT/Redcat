@@ -1,9 +1,9 @@
 ﻿using Redcat.Core;
-using Redcat.Core.Communication;
+using Redcat.Core.Channels;
 using Redcat.Xmpp.Negotiators;
-using StreamChannelFactory = Redcat.Core.Communication.IChannelFactory<Redcat.Core.Communication.IStreamChannel>;
+using StreamChannelFactory = Redcat.Core.Channels.IChannelFactory<Redcat.Core.Channels.IStreamChannel>;
 
-namespace Redcat.Xmpp.Communication
+namespace Redcat.Xmpp.Channels
 {
     public class XmppChannelFactory : IChannelFactory
     {

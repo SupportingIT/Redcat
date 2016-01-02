@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Redcat.Core.Channels;
+using System;
 using System.Linq;
 
-namespace Redcat.Core.Communication
+namespace Redcat.Core
 {
     public class MessageDispatcher : IMessageDispatcher
     {

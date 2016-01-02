@@ -22,7 +22,7 @@ namespace Redcat.App.Wpf
         public override void Initialize()
         {
             base.Initialize();
-            Mvx.RegisterSingleton<IAccountRepository>(new AccountRepositoryBase());
+            Mvx.RegisterSingleton<IAccountRepository>(new AccountStorage("accounts.json"));
 
             ProtocolService protocolProvider = new ProtocolService();            
             Mvx.RegisterSingleton<IProtocolService>(protocolProvider);

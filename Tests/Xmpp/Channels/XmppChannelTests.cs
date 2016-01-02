@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
 using Redcat.Core;
-using Redcat.Xmpp.Communication;
+using Redcat.Xmpp.Channels;
 using FakeItEasy;
-using Redcat.Core.Communication;
+using Redcat.Core.Channels;
 using System.IO;
 
-namespace Redcat.Xmpp.Tests.Services
+namespace Redcat.Xmpp.Tests.Channels
 {
     [TestFixture]
     public class XmppChannelTests

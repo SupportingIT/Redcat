@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Redcat.Core.Communication
+namespace Redcat.Core.Channels
 {
     public interface IStreamChannel : IChannel
     {

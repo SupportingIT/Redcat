@@ -1,4 +1,4 @@
-﻿using Redcat.Core.Communication;
+﻿using Redcat.Core.Channels;
 using System.IO;
 using System.Net.Sockets;
 using System.Net.Security;

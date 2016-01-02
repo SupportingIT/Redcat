@@ -1,9 +1,9 @@
 ﻿using System;
 using Redcat.Core;
-using Redcat.Core.Communication;
+using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
 
-namespace Redcat.Xmpp.Communication
+namespace Redcat.Xmpp.Channels
 {
     public class XmppChannel : ChannelBase, IOutputChannel<Stanza>
     {

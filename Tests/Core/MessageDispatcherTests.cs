@@ -1,10 +1,9 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
-using Redcat.Core.Communication;
+using Redcat.Core.Channels;
 using System;
-using System.Linq;
 
-namespace Redcat.Core.Tests.Communication
+namespace Redcat.Core.Tests
 {
     [TestFixture]
     public class MessageDispatcherTests
