@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Channels\CompositeChannelFactory.cs" />
     <Compile Include="Channels\IChannel.cs" />
     <Compile Include="Channels\IStreamChannel.cs" />
     <Compile Include="Connection.cs" />

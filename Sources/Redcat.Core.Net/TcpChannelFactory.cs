@@ -6,7 +6,7 @@ namespace Redcat.Core.Net
     {
         public IStreamChannel CreateChannel(ConnectionSettings settings)
         {
-            return new TcpChannel(settings);
+            return new TcpChannel(settings) { AcceptAllCertificates = true };
         }
     }
 }

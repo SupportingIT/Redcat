@@ -24,7 +24,8 @@ namespace Redcat.Core
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
             IChannel channel = channelFactory.CreateChannel(settings);
-            Connection conn = new Connection(settings.ConnectionName, channel);
+            channel.Open();
+            Connection conn = new Connection(settings.ConnectionName, channel);            
             activeConnections.Add(conn);
         }
 

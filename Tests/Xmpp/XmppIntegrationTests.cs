@@ -29,9 +29,8 @@ namespace Redcat.Xmpp.Tests
             Container container = new Container();
 
             container.Register<ICommunicator, Communicator>();            
-            container.RegisterCollection<IChannelFactory>(new[] { typeof(XmppChannelFactory) });
-            container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
-            //container.Register<IMessageDispatcher, MessageDispatcher>();
+            container.Register<IChannelFactory, XmppChannelFactory>();
+            container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();            
 
             return container.GetInstance<ICommunicator>();
         }

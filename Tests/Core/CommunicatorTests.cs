@@ -21,5 +21,18 @@ namespace Redcat.Core.Tests
 
             Assert.That(connection.Name, Is.EqualTo(connectionName));
         }
+
+        [Test]
+        public void Connect_Opens_Created_Channel()
+        {
+            IChannelFactory factory = A.Fake<IChannelFactory>();
+            IChannel channel = A.Fake<IChannel>();
+            A.CallTo(() => factory.CreateChannel(A<ConnectionSettings>._)).Returns(channel);
+            Communicator communicator = new Communicator(factory);
+
+            communicator.Connect(new ConnectionSettings());
+
+            A.CallTo(() => channel.Open()).MustHaveHappened();
+        }
     }
 }

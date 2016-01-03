@@ -14,6 +14,8 @@ namespace Redcat.Core.Net
         public TcpChannel(ConnectionSettings settings) : base(settings)
         { }
 
+        public bool AcceptAllCertificates { get; set; }
+
         protected override void OnOpening()
         {
             base.OnOpening();
@@ -47,6 +49,9 @@ namespace Redcat.Core.Net
                 CertificateValidation(this, args);
                 return args.ValidationResult;
             }
+
+            if (AcceptAllCertificates) return true;
+
             return sslPolicyErrors == SslPolicyErrors.None;
         }
 
