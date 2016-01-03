@@ -1,67 +1,43 @@
 ﻿using Redcat.Core.Channels;
 using System;
+using System.Collections.Generic;
 
 namespace Redcat.Core
 {
     public class Communicator : ICommunicator, IDisposable
     {
-        private bool initialized = false;
+        private IChannelFactory channelFactory;
+        private ICollection<Connection> activeConnections;
 
-        private IChannelManager channelManager;
-        private IMessageDispatcher messageDispatcher;
-
-        public Communicator(IChannelManager channelManager, IMessageDispatcher messageDispatcher)
+        public Communicator(IChannelFactory channelFactory)
         {
-            this.channelManager = channelManager;
-            this.messageDispatcher = messageDispatcher;
+            this.channelFactory = channelFactory;
+            activeConnections = new List<Connection>();
         }
 
-        protected bool IsRunning
+        public IEnumerable<Connection> ActiveConnections
         {
-            get { return initialized; }
-        }        
-
-        public void Start()
-        {
-            if (initialized) return;
-            OnBeforeInit();
-            OnInit();
-            OnAfterInit();
-            initialized = true;
+            get { return activeConnections; }
         }
 
         public void Connect(ConnectionSettings settings)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
-            //if (!IsRunning) throw new InvalidOperationException("Start method must be called before opening any channels");
-            channelManager.OpenChannel(settings);
-        }
-
-        public void Disconnect()
-        {
-            throw new NotImplementedException();
+            IChannel channel = channelFactory.CreateChannel(settings);
+            Connection conn = new Connection(settings.ConnectionName, channel);
+            activeConnections.Add(conn);
         }
 
         public void Send<T>(T message)
         {
-            messageDispatcher.Dispatch(message);
+            throw new NotImplementedException();
         }
 
         public void Send(Message message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
-            //if (!IsRunning) throw new InvalidOperationException("Run method must be called before sending any messages");
-            messageDispatcher.Dispatch(message);
+            throw new NotImplementedException();
         }
-
-        protected virtual void OnBeforeInit()
-        { }
-
-        protected virtual void OnInit()
-        { }
-
-        protected virtual void OnAfterInit()
-        { }
 
         public void Dispose()
         { }

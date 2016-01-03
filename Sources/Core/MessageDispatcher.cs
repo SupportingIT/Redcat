@@ -1,37 +1,32 @@
 ﻿using Redcat.Core.Channels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Redcat.Core
 {
-    public class MessageDispatcher : IMessageDispatcher
+    public class MessageDispatcher// : IMessageDispatcher
     {
-        private IChannelManager channelManager;
+        public Connection DefaultConnection { get; set; }
 
-        public MessageDispatcher(IChannelManager channelManager)
-        {
-            if (channelManager == null) throw new ArgumentNullException(nameof(channelManager));
-            this.channelManager = channelManager;
-        }
+        public IEnumerable<Connection>ActiveConnections { get; set; }
 
         public void Dispatch<T>(T message)
         {
-            if (channelManager.ActiveChannels.Count() == 0) throw new InvalidOperationException("No active channels");            
-            var channel = SelectChannel(channelManager, message);
-            if (channel == null) throw new InvalidOperationException("No approriate output channels");
-            SendMessage(channel, message);
+            if (ActiveConnections.Count() == 0) throw new InvalidOperationException("No active connections");            
+            var connection = SelectConnection(ActiveConnections, message);
+            if (connection == null) throw new InvalidOperationException("No connections to send message " + message);
+            SendMessage(connection, message);
         }
 
-        private IOutputChannel<T> SelectChannel<T>(IChannelManager channelManager, T message)
+        private Connection SelectConnection<T>(IEnumerable<Connection> connections, T message)
         {
-            if (channelManager.DefaultChannel is IOutputChannel<T>) return (IOutputChannel<T>)channelManager.DefaultChannel;
-            var channels = channelManager.ActiveChannels.OfType<IOutputChannel<T>>();
-            return channels.FirstOrDefault();
+            return null;
         }
 
-        private void SendMessage<T>(IOutputChannel<T> channel, T message)
+        private void SendMessage<T>(Connection connection, T message)
         {
-            channel.Send(message);
+            throw new NotImplementedException();
         }
     }
 }

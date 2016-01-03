@@ -28,11 +28,10 @@ namespace Redcat.Xmpp.Tests
         {
             Container container = new Container();
 
-            container.Register<ICommunicator, Communicator>();
-            container.Register<IChannelManager, ChannelManager>();
+            container.Register<ICommunicator, Communicator>();            
             container.RegisterCollection<IChannelFactory>(new[] { typeof(XmppChannelFactory) });
             container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
-            container.Register<IMessageDispatcher, MessageDispatcher>();
+            //container.Register<IMessageDispatcher, MessageDispatcher>();
 
             return container.GetInstance<ICommunicator>();
         }
