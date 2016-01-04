@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Redcat.Core;
 using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp.Channels
 {
-    public class XmppChannel : ChannelBase, IOutputChannel<Stanza>
+    public class XmppChannel : ChannelBase, IInputChannel<Stanza>, IAsyncInputChannel<Stanza>, IOutputChannel<Stanza>, IAsyncOutputChannel<Stanza>
     {
         private IStreamInitializer streamInitializer;
         private IStreamChannel streamChannel;
-        private IXmppStream xmppStream;
+        private XmppStream xmppStream;
         private StreamProxy streamProxy;
 
         public XmppChannel(IStreamInitializer streamInitializer, IStreamChannel streamChannel, ConnectionSettings settings) : base(settings)
@@ -34,7 +35,7 @@ namespace Redcat.Xmpp.Channels
             streamChannel.Close();
         }
 
-        protected virtual IXmppStream CreateXmppStream()
+        protected virtual XmppStream CreateXmppStream()
         {
             streamProxy = new StreamProxy(streamChannel.GetStream());
             return new XmppStream(streamProxy);
@@ -44,11 +45,26 @@ namespace Redcat.Xmpp.Channels
         {
             if (!(streamChannel is ISecureStreamChannel)) throw new InvalidOperationException();
             streamProxy.OriginStream = ((ISecureStreamChannel)streamChannel).GetSecureStream();
-        }        
+        }
 
-        public void Send(Stanza message)
+        public Stanza Receive()
         {
-            xmppStream.Write(message);
+            return xmppStream.Read() as Stanza;
+        }
+
+        public async Task<Stanza> ReceiveAsync()
+        {
+            return await xmppStream.ReadAsync() as Stanza;
+        }
+
+        public void Send(Stanza stanza)
+        {
+            xmppStream.Write(stanza);
+        }
+
+        public async Task SendAsync(Stanza stanza)
+        {
+            await xmppStream.WriteAsync(stanza);
         }
     }
 }

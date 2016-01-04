@@ -1,5 +1,7 @@
 ﻿using Redcat.Xmpp.Xml;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Redcat.Xmpp
 {
@@ -19,9 +21,19 @@ namespace Redcat.Xmpp
             return reader.Read();
         }
 
+        public async Task<XmlElement> ReadAsync()
+        {
+            return await reader.ReadAsync();
+        }
+
         public void Write(XmlElement element)
         {
             writer.Write(element);
+        }
+
+        public async Task WriteAsync(XmlElement element)
+        {
+            throw new NotImplementedException();
         }
     }
 }

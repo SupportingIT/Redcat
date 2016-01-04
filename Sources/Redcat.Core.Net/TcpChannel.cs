@@ -9,6 +9,7 @@ namespace Redcat.Core.Net
 {
     public class TcpChannel : ChannelBase, IStreamChannel, ISecureStreamChannel
     {
+        private SslStream secureStream;
         private TcpClient tcpClient;
 
         public TcpChannel(ConnectionSettings settings) : base(settings)
@@ -36,8 +37,11 @@ namespace Redcat.Core.Net
 
         public Stream GetSecureStream()
         {
-            SslStream secureStream = new SslStream(tcpClient.GetStream(), true, ValidateServerCertificate);
-            secureStream.AuthenticateAsClient(Settings.Host);
+            if (secureStream == null)
+            {
+                secureStream = new SslStream(tcpClient.GetStream(), true, ValidateServerCertificate);
+                secureStream.AuthenticateAsClient(Settings.Host);
+            }
             return secureStream;
         }
 

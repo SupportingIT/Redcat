@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Redcat.Xmpp
 {
@@ -15,7 +16,8 @@ namespace Redcat.Xmpp
         private Queue<XmlElement> elementQueue = new Queue<XmlElement>();
         private char[] buffer = new char[BufferSize];
         private IXmlParser parser;
-        private TextReader reader;        
+        private TextReader reader;
+        private object sync = new object();
 
         public XmppStreamReader(Stream stream)
         {
@@ -44,6 +46,18 @@ namespace Redcat.Xmpp
         {
             if (elementQueue.Count > 0) return elementQueue.Dequeue();            
             int readed = reader.Read(buffer, 0, buffer.Length);
+            return ReadElement(readed);
+        }
+
+        public async Task<XmlElement> ReadAsync()
+        {
+            lock (sync) if (elementQueue.Count > 0) return elementQueue.Dequeue();
+            int readed = await reader.ReadAsync(buffer, 0, buffer.Length);
+            lock(sync) return ReadElement(readed);            
+        }
+
+        private XmlElement ReadElement(int readed)
+        {
             string xml = new string(buffer, 0, readed);
             foreach (var element in Parser.Parse(xml))
             {
