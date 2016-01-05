@@ -2,12 +2,12 @@
 
 namespace Redcat.Core
 {
-    public class DataReceivedEventArgs : EventArgs
+    public class BinaryData
     {
-        public DataReceivedEventArgs(byte[] buffer) : this(buffer, 0, buffer.Length)
+        public BinaryData(byte[] buffer) : this(buffer, 0, buffer.Length)
         { }
 
-        public DataReceivedEventArgs(byte[] buffer, int offset, int count)
+        public BinaryData(byte[] buffer, int offset, int count)
         {
             Buffer = buffer;
             Offset = offset;

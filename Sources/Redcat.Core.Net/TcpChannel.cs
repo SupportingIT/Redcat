@@ -27,7 +27,7 @@ namespace Redcat.Core.Net
         protected override void OnClosing()
         {
             base.OnClosing();
-            tcpClient.Close();
+            tcpClient.Close();            
         }
 
         public Stream GetStream()

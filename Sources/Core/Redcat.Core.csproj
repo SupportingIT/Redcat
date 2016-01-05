@@ -37,9 +37,12 @@
     <Compile Include="Channels\CompositeChannelFactory.cs" />
     <Compile Include="Channels\IAsyncChannel.cs" />
     <Compile Include="Channels\IChannel.cs" />
+    <Compile Include="Channels\IReactiveChannel.cs" />
     <Compile Include="Channels\IStreamChannel.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="BinaryData.cs" />
     <Compile Include="ICommunicator.cs" />
+    <Compile Include="ObserverExtensions.cs" />
     <Compile Include="StreamProxy.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
