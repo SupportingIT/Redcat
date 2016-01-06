@@ -3,22 +3,44 @@ using System;
 
 namespace Redcat.Core
 {
-    public class Connection : IDisposable
+    public abstract class Connection : IDisposable
     {
-        private IChannel channel;
-
-        internal Connection(string name, IChannel channel)
+        protected Connection(string name)
         {
-            Name = name;
-            this.channel = channel;
+            Name = name;            
         }
 
         public string Name { get; }
 
-        public bool IsOpen { get; }
+        public abstract bool IsOpen { get; }
 
-        public void Close() { }
+        public void Close() => OnClosing();
 
-        public void Dispose() { }
+        public void Dispose() => Close();
+
+        protected virtual void OnClosing()
+        {
+            Closing?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal event EventHandler Closing;
+    }
+
+    internal class ChannelConnection : Connection
+    {
+        private IChannel channel;
+
+        internal ChannelConnection(string name, IChannel channel) : base(name)
+        {
+            this.channel = channel;
+        }
+
+        public override bool IsOpen => channel.State == ChannelState.Open;
+
+        protected override void OnClosing()
+        {
+            base.OnClosing();
+            channel.Close();
+        }
     }
 }

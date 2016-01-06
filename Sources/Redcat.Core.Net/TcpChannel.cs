@@ -7,7 +7,7 @@ using System;
 
 namespace Redcat.Core.Net
 {
-    public class TcpChannel : ChannelBase, IStreamChannel, ISecureStreamChannel
+    public class TcpChannel : AsyncChannelBase, IStreamChannel, ISecureStreamChannel
     {
         private SslStream secureStream;
         private TcpClient tcpClient;
