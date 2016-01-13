@@ -44,8 +44,6 @@
     <Compile Include="Channels\ReactiveXmppChannel.cs" />
     <Compile Include="ConnectionSettingExtension.cs" />
     <Compile Include="IFeatureNegatiator.cs" />
-    <Compile Include="IStreamInitializer.cs" />
-    <Compile Include="IStreamInitializerFactory.cs" />
     <Compile Include="IXmppStream.cs" />
     <Compile Include="JID.cs" />
     <Compile Include="Negotiators\Authenticators.cs" />
@@ -65,7 +63,6 @@
     <Compile Include="Channels\XmppChannelFactory.cs" />
     <Compile Include="Channels\XmppChannel.cs" />
     <Compile Include="StreamInitializer.cs" />
-    <Compile Include="StreamInitializerFactory.cs" />
     <Compile Include="Xml\Bind.cs" />
     <Compile Include="Xml\DatagramElement.cs" />
     <Compile Include="Xml\Iq.cs" />

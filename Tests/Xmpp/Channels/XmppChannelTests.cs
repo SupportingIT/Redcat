@@ -4,6 +4,7 @@ using Redcat.Xmpp.Channels;
 using FakeItEasy;
 using Redcat.Core.Channels;
 using System.IO;
+using System;
 
 namespace Redcat.Xmpp.Tests.Channels
 {
@@ -14,15 +15,16 @@ namespace Redcat.Xmpp.Tests.Channels
         public void Open_Initializes_Stream()
         {
             ConnectionSettings settings = new ConnectionSettings { Domain = "redcat" };
-            IStreamInitializer initializer = A.Fake<IStreamInitializer>();
             IXmppStream xmppStream = A.Fake<IXmppStream>();
             IStreamChannel streamChannel = CreateStreamChannel();
+            var initializer = A.Fake<Action<IXmppStream>>();
 
-            XmppChannel channel = new XmppChannel(initializer, streamChannel, settings);
+            XmppChannel channel = new XmppChannel(streamChannel, settings);
+            channel.StreamInitializer = initializer;
 
             channel.Open();
 
-            A.CallTo(() => initializer.Init(A<IXmppStream>._)).MustHaveHappened();
+            A.CallTo(() => initializer.Invoke(A<IXmppStream>._)).MustHaveHappened();
         }
 
         private IStreamChannel CreateStreamChannel()

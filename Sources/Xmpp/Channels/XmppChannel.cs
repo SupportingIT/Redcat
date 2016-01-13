@@ -8,25 +8,24 @@ namespace Redcat.Xmpp.Channels
 {
     public class XmppChannel : ChannelBase, IInputChannel<Stanza>, IAsyncInputChannel<Stanza>, IOutputChannel<Stanza>, IAsyncOutputChannel<Stanza>
     {
-        private IStreamInitializer streamInitializer;
         private IStreamChannel streamChannel;
         private XmppStream xmppStream;
         private StreamProxy streamProxy;
 
-        public XmppChannel(IStreamInitializer streamInitializer, IStreamChannel streamChannel, ConnectionSettings settings) : base(settings)
+        public XmppChannel(IStreamChannel streamChannel, ConnectionSettings settings) : base(settings)
         {
-            if (streamInitializer == null) throw new ArgumentNullException(nameof(streamInitializer));
             if (streamChannel == null) throw new ArgumentNullException(nameof(streamChannel));
-            this.streamInitializer = streamInitializer;
             this.streamChannel = streamChannel;            
         }
+
+        public Action<IXmppStream> StreamInitializer { get; set; }
 
         protected override void OnOpening()
         {
             base.OnOpening();
             streamChannel.Open();            
             xmppStream = CreateXmppStream();
-            streamInitializer.Init(xmppStream);
+            StreamInitializer?.Invoke(xmppStream);
         }
 
         protected override void OnClosing()
