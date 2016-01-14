@@ -7,7 +7,7 @@ using System;
 
 namespace Redcat.Core.Net
 {
-    public class TcpChannel : AsyncChannelBase, IStreamChannel, ISecureStreamChannel
+    public class TcpChannel : ChannelBase, IStreamChannel, ISecureStreamChannel
     {
         private SslStream secureStream;
         private TcpClient tcpClient;
@@ -27,7 +27,7 @@ namespace Redcat.Core.Net
         protected override void OnClosing()
         {
             base.OnClosing();
-            tcpClient.Close();            
+            tcpClient.Close();
         }
 
         public Stream GetStream()

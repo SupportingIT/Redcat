@@ -1,8 +1,12 @@
 {
+	"version" : "0.1-alpha-*",
+	"description" : "Core library for Redcat Communicator",
 	"frameworks": {		
 		"dnxcore50" : {
 			"dependencies" : {
-				"Microsoft.CSharp": "4.0.0"				
+				"System.Runtime": "4.0.20",
+				"System.Collections" : "4.0.10",
+				"System.Linq" : "4.0.0"
 			}
 		}
 	}

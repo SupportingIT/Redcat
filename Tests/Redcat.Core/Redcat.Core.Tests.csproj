@@ -76,7 +76,7 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Sources\Core\Redcat.Core.csproj">
+    <ProjectReference Include="..\..\Sources\Redcat.Core\Redcat.Core.csproj">
       <Project>{5ea90f4a-92f4-4b98-b669-866460de26a0}</Project>
       <Name>Redcat.Core</Name>
     </ProjectReference>

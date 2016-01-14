@@ -84,11 +84,11 @@
     <Compile Include="XmppStreamWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Sources\Core\Redcat.Core.csproj">
+    <ProjectReference Include="..\..\Sources\Redcat.Core\Redcat.Core.csproj">
       <Project>{5ea90f4a-92f4-4b98-b669-866460de26a0}</Project>
       <Name>Redcat.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Sources\Xmpp\Redcat.Xmpp.csproj">
+    <ProjectReference Include="..\..\Sources\Redcat.Xmpp\Redcat.Xmpp.csproj">
       <Project>{26fa8d28-ecc2-40af-96c1-04a9400b8a36}</Project>
       <Name>Redcat.Xmpp</Name>
     </ProjectReference>

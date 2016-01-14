@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Redcat.Core</RootNamespace>
-    <AssemblyName>redcatfx</AssemblyName>
+    <AssemblyName>Redcat.Core</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -34,7 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Channels\AsyncChannelBase.cs" />
     <Compile Include="Channels\CompositeChannelFactory.cs" />
     <Compile Include="Channels\IAsyncChannel.cs" />
     <Compile Include="Channels\IChannel.cs" />
@@ -46,27 +45,14 @@
     <Compile Include="ICommunicator.cs" />
     <Compile Include="ObserverExtensions.cs" />
     <Compile Include="StreamProxy.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Communicator.cs" />
     <Compile Include="ConnectionSettings.cs" />
-    <Compile Include="Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySet.cs" />
     <Compile Include="IMessageDispatcher.cs" />
     <Compile Include="Channels\ChannelBase.cs" />
     <Compile Include="Channels\IChannelFactory.cs" />
-    <Compile Include="Channels\IMessageChannel.cs" />
     <Compile Include="MessageDispatcher.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
