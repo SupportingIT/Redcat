@@ -5,15 +5,15 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{459AD7EE-94AE-4956-BA89-CC37870D48F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Core", "Sources\Core\Redcat.Core.csproj", "{5EA90F4A-92F4-4B98-B669-866460DE26A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Core", "Sources\Redcat.Core\Redcat.Core.csproj", "{5EA90F4A-92F4-4B98-B669-866460DE26A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Core.Tests", "Tests\Core\Redcat.Core.Tests.csproj", "{DB368528-BCD9-4678-B161-25567654E18D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Core.Tests", "Tests\Redcat.Core\Redcat.Core.Tests.csproj", "{DB368528-BCD9-4678-B161-25567654E18D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Xmpp", "Xmpp", "{BDE1F267-2B1F-4A93-B8F6-0592A5C21DFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Xmpp", "Sources\Xmpp\Redcat.Xmpp.csproj", "{26FA8D28-ECC2-40AF-96C1-04A9400B8A36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Xmpp", "Sources\Redcat.Xmpp\Redcat.Xmpp.csproj", "{26FA8D28-ECC2-40AF-96C1-04A9400B8A36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Xmpp.Tests", "Tests\Xmpp\Redcat.Xmpp.Tests.csproj", "{95E7B813-6D63-49BC-83C2-BC47B9DDA5D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Xmpp.Tests", "Tests\Redcat.Xmpp\Redcat.Xmpp.Tests.csproj", "{95E7B813-6D63-49BC-83C2-BC47B9DDA5D8}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Redcat.Core.Net", "Sources\Redcat.Core.Net\Redcat.Core.Net.shproj", "{18BA6FA0-2351-4BD7-80B3-DB93E4A71FD6}"
 EndProject

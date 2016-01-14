@@ -7,7 +7,7 @@ using System;
 
 namespace Redcat.Xmpp
 {
-    public class StreamInitializer : IStreamInitializer
+    public class StreamInitializer
     {
         private ICollection<IFeatureNegatiator> negotiators;
         private ConnectionSettings settings;

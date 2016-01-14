@@ -25,26 +25,28 @@ namespace Redcat.Core
         public void Connect(ConnectionSettings settings)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
+            Connection connection = OpenConnection(settings);
+            activeConnections.Add(connection);
+        }
+
+        private Connection OpenConnection(ConnectionSettings settings)
+        {
             IChannel channel = channelFactory.CreateChannel(settings);
             channel.Open();
-            AddConnection(settings, channel);
+            Connection connection = CreateConnection(settings.ConnectionName, channel);
+            connection.Closing += OnClosingConnection;
+            return connection;
+        }
+
+        private Connection CreateConnection(string name, IChannel channel)
+        {
+            return new ChannelConnection(name, channel);
         }
 
         public async Task ConnectAsync(ConnectionSettings settings)
         {
-            IChannel channel = channelFactory.CreateChannel(settings);
-            IAsyncChannel asyncChannel = channel as IAsyncChannel;
-            if (asyncChannel != null) await asyncChannel.OpenAsync();
-            else await Task.Run(() => channel.Open());
-            AddConnection(settings, channel);
-        }
-
-        private void AddConnection(ConnectionSettings settings, IChannel channel)
-        {
-            Connection conn = new ChannelConnection(settings.ConnectionName, channel);
-            conn.Closing += OnClosingConnection;
-            activeConnections.Add(conn);
-        }
+            await Task.Run(() => Connect(settings));
+        }        
 
         public void OnCompleted() { }
 
