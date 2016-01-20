@@ -22,11 +22,23 @@ namespace Redcat.Xmpp.Tests.Negotiators
         }
 
         [Test]
-        public void CanNegotiate_Returns_True_For_Sasl_Feature()
+        public void CanNegotiate_Returns_True_For_Sasl_Feature_And_Non_Empty_Credentials()
         {
             XmlElement sasl = new XmlElement("mechanisms", Namespaces.Sasl);
+            settings.Username = "user";
+            settings.Password = "pwd";
 
             Assert.That(negotiator.CanNegotiate(sasl), Is.True);
+        }
+
+        [Test]
+        public void CanNegotiate_Returns_False_If_No_Credentials_Provided()
+        {
+            XmlElement sasl = new XmlElement("mechanisms", Namespaces.Sasl);
+            settings.Username = "";
+            settings.Password = "";            
+
+            Assert.That(negotiator.CanNegotiate(sasl), Is.False);
         }
 
         [Test]

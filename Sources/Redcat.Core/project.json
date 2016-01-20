@@ -1,12 +1,23 @@
 {
-	"version" : "0.1-alpha-*",
+	"version" : "0.1-alpha",
 	"description" : "Core library for Redcat Communicator",
-	"frameworks": {		
+	"frameworks": {
+		"dnx451" : {},
 		"dnxcore50" : {
 			"dependencies" : {
 				"System.Runtime": "4.0.20",
 				"System.Collections" : "4.0.10",
 				"System.Linq" : "4.0.0"
+			}
+		},
+		".NETPortable,Version=v4.5,Profile=Profile111" : {
+			"frameworkAssemblies" : {
+				"System.Runtime": "",
+				"System.Collections": "",
+				"System.IO": "",
+				"System.Linq": "",
+				"System.Resources.ResourceManager": "",
+				"System.Threading.Tasks": ""
 			}
 		}
 	}

@@ -13,8 +13,6 @@ namespace Redcat.Xmpp.Negotiators
         public bool Negotiate(IXmppStream stream, XmlElement feature)
         {
             IqStanza register = Iq.Get();
-            register.Id = 8;
-            register.To = "redcat";
             register.AddChild(new XmlElement("query", "jabber:iq:register"));
             stream.Write(register);
             var response = stream.Read();
