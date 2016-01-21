@@ -19,19 +19,7 @@
         {
             get { return GetString("Host"); }
             set { Set("Host", value); }
-        }
-
-        public string Username
-        {
-            get { return GetString("Username"); }
-            set { Set("Username", value); }
-        }
-
-        public string Password
-        {
-            get { return GetString("Password"); }
-            set { Set("Password", value); }
-        }
+        }        
 
         public int Port
         {

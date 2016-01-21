@@ -3,7 +3,9 @@ using Redcat.Core;
 using Redcat.Core.Channels;
 using Redcat.Core.Net;
 using Redcat.Xmpp.Channels;
+using Redcat.Xmpp.Negotiators;
 using SimpleInjector;
+using System;
 using System.Configuration;
 
 namespace Redcat.Xmpp.Tests
@@ -11,8 +13,9 @@ namespace Redcat.Xmpp.Tests
     [TestFixture]
     public class XmppIntegrationTests
     {
+        //[Ignore]
         [Test]
-        public void Client_Connection()
+        public void Test_Xmpp_Connection()
         {            
             string processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
             int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
@@ -30,7 +33,8 @@ namespace Redcat.Xmpp.Tests
 
             container.Register<ICommunicator, Communicator>();            
             container.Register<IChannelFactory, XmppChannelFactory>();
-            container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();            
+            container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
+            container.Register<Func<ISaslCredentials>>(() => GetCredentials);
 
             return container.GetInstance<ICommunicator>();
         }
@@ -42,10 +46,29 @@ namespace Redcat.Xmpp.Tests
             settings.Domain = ConfigurationManager.AppSettings["Domain"];
             settings.Host = ConfigurationManager.AppSettings["Host"];
             settings.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
-            settings.Username = ConfigurationManager.AppSettings["Username"];
-            settings.Password = ConfigurationManager.AppSettings["Password"];
             settings.Resource(ConfigurationManager.AppSettings["Resource"]);
             return settings;
-        }        
+        }
+
+        private ISaslCredentials GetCredentials()
+        {
+            return new SaslCredentials(ConfigurationManager.AppSettings["Username"], ConfigurationManager.AppSettings["Password"]);
+        }
+    }    
+
+    class SaslCredentials : ISaslCredentials
+    {
+        internal SaslCredentials(string username, string password)
+        {
+            Username = username;
+            Password = password;
+        }
+
+        public string Password { get; }
+
+        public string Username { get; }
+
+        public void Dispose()
+        { }
     }
 }

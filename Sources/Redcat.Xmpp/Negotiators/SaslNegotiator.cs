@@ -1,6 +1,5 @@
 ﻿using System;
 using Redcat.Xmpp.Xml;
-using Redcat.Core;
 using System.Collections.Generic;
 
 namespace Redcat.Xmpp.Negotiators
@@ -8,13 +7,13 @@ namespace Redcat.Xmpp.Negotiators
     public class SaslNegotiator : IFeatureNegatiator
     {
         private IDictionary<string, SaslAuthenticator> authenticators;
-        private ConnectionSettings settings;
+        private Func<ISaslCredentials> credentialProvider;
 
-        public SaslNegotiator(ConnectionSettings settings)
+        public SaslNegotiator(Func<ISaslCredentials> credentialProvider)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            if (credentialProvider == null) throw new ArgumentNullException(nameof(credentialProvider));
             authenticators = new Dictionary<string, SaslAuthenticator>();
-            this.settings = settings;
+            this.credentialProvider = credentialProvider;
         }
 
         public void AddAuthenticator(string mechanismName, SaslAuthenticator authenticator)
@@ -24,7 +23,15 @@ namespace Redcat.Xmpp.Negotiators
 
         public bool CanNegotiate(XmlElement feature)
         {
-            return IsSaslFeature(feature);
+            using (var credentials = credentialProvider.Invoke())
+            {
+                return IsSaslFeature(feature) && IsCredentialsValid(credentials);
+            }
+        }
+
+        private bool IsCredentialsValid(ISaslCredentials credentials)
+        {
+            return credentials != null && !string.IsNullOrEmpty(credentials.Username) && !string.IsNullOrEmpty(credentials.Password);
         }
 
         public bool Negotiate(IXmppStream stream, XmlElement feature)
@@ -33,8 +40,11 @@ namespace Redcat.Xmpp.Negotiators
             if (feature.Childs.Count == 0) throw new InvalidOperationException();
 
             SaslAuthenticator authenticator = FindAuthenticator(feature.Childs);
-            XmlElement result = authenticator.Invoke(stream, settings);
-            if (result.Name == "failure") throw new InvalidOperationException();
+            using (var credentials = credentialProvider.Invoke())
+            {
+                XmlElement result = authenticator.Invoke(stream, credentials);
+                if (result.Name == "failure") throw new InvalidOperationException();
+            }
             
             return true;
         }

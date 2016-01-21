@@ -3,5 +3,5 @@ using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp.Negotiators
 {
-    public delegate XmlElement SaslAuthenticator(IXmppStream stream, ConnectionSettings settings);
+    public delegate XmlElement SaslAuthenticator(IXmppStream stream, ISaslCredentials settings);
 }

@@ -11,34 +11,37 @@ namespace Redcat.Xmpp.Tests.Negotiators
     [TestFixture]
     public class SaslNegotiatorTests
     {
-        private ConnectionSettings settings;
+        private Func<ISaslCredentials> credentialProvider;
+        private ISaslCredentials credentials;
         private SaslNegotiator negotiator;
 
         [SetUp]
         public void SetUp()
         {
-            settings = new ConnectionSettings();
-            negotiator = new SaslNegotiator(settings);
+            credentialProvider = A.Fake<Func<ISaslCredentials>>();
+            credentials = A.Fake<ISaslCredentials>();
+            A.CallTo(() => credentialProvider.Invoke()).Returns(credentials);
+            negotiator = new SaslNegotiator(credentialProvider);
         }
 
         [Test]
         public void CanNegotiate_Returns_True_For_Sasl_Feature_And_Non_Empty_Credentials()
         {
             XmlElement sasl = new XmlElement("mechanisms", Namespaces.Sasl);
-            settings.Username = "user";
-            settings.Password = "pwd";
-
+            A.CallTo(() => credentials.Username).Returns("user");
+            A.CallTo(() => credentials.Password).Returns("pwd");
+                        
             Assert.That(negotiator.CanNegotiate(sasl), Is.True);
+            AssertCredentialsDisposed(credentials);
         }
 
         [Test]
         public void CanNegotiate_Returns_False_If_No_Credentials_Provided()
         {
             XmlElement sasl = new XmlElement("mechanisms", Namespaces.Sasl);
-            settings.Username = "";
-            settings.Password = "";            
-
+                        
             Assert.That(negotiator.CanNegotiate(sasl), Is.False);
+            AssertCredentialsDisposed(credentials);
         }
 
         [Test]
@@ -80,7 +83,8 @@ namespace Redcat.Xmpp.Tests.Negotiators
 
             negotiator.Negotiate(A.Fake<IXmppStream>(), element);
 
-            A.CallTo(() => authenticator.Invoke(A<IXmppStream>._, A<ConnectionSettings>._)).MustHaveHappened();
+            A.CallTo(() => authenticator.Invoke(A<IXmppStream>._, credentials)).MustHaveHappened();
+            AssertCredentialsDisposed(credentials);
         }
 
         [Test]
@@ -95,7 +99,8 @@ namespace Redcat.Xmpp.Tests.Negotiators
 
             negotiator.Negotiate(A.Fake<IXmppStream>(), element);
 
-            A.CallTo(() => auth.Invoke(A<IXmppStream>._, A<ConnectionSettings>._)).MustHaveHappened();
+            A.CallTo(() => auth.Invoke(A<IXmppStream>._, credentials)).MustHaveHappened();
+            AssertCredentialsDisposed(credentials);
         }
 
         [Test]
@@ -112,8 +117,9 @@ namespace Redcat.Xmpp.Tests.Negotiators
 
             negotiator.Negotiate(A.Fake<IXmppStream>(), element);
 
-            A.CallTo(() => auth.Invoke(A<IXmppStream>._, A<ConnectionSettings>._)).MustNotHaveHappened();
-            A.CallTo(() => auth1.Invoke(A<IXmppStream>._, A<ConnectionSettings>._)).MustHaveHappened();
+            A.CallTo(() => auth.Invoke(A<IXmppStream>._, credentials)).MustNotHaveHappened();
+            A.CallTo(() => auth1.Invoke(A<IXmppStream>._, credentials)).MustHaveHappened();
+            AssertCredentialsDisposed(credentials);
         }
 
         [Test]
@@ -121,11 +127,12 @@ namespace Redcat.Xmpp.Tests.Negotiators
         public void Negotiate_Throws_Exception_If_Authentication_Failed()
         {
             SaslAuthenticator authenticator = A.Fake<SaslAuthenticator>();
-            A.CallTo(() => authenticator.Invoke(A<IXmppStream>._, A<ConnectionSettings>._)).Returns(Tls.Failure);
+            A.CallTo(() => authenticator.Invoke(A<IXmppStream>._, A<ISaslCredentials>._)).Returns(Tls.Failure);
             negotiator.AddAuthenticator("auth", authenticator);
             XmlElement element = CreateSaslFeature("auth");
 
             negotiator.Negotiate(A.Fake<IXmppStream>(), element);
+            AssertCredentialsDisposed(credentials);
         }
 
         private XmlElement CreateSaslFeature(params string[] mechanisms)
@@ -140,5 +147,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
 
             return element;
         }
+
+        private void AssertCredentialsDisposed(ISaslCredentials credentials) => A.CallTo(() => credentials.Dispose()).MustHaveHappened();
     }
 }

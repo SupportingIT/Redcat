@@ -7,11 +7,11 @@ namespace Redcat.Xmpp.Negotiators
 {
     public static class Authenticators
     {
-        public static XmlElement Plain(IXmppStream stream, ConnectionSettings settings)
+        public static XmlElement Plain(IXmppStream stream, ISaslCredentials credentials)
         {
             XmlElement auth = new XmlElement("auth", Namespaces.Sasl);
             auth.SetAttributeValue("mechanism", "PLAIN");
-            auth.Value = GetAuthenticationString(settings.Username, settings.Password);
+            auth.Value = GetAuthenticationString(credentials.Username, credentials.Password);
             stream.Write(auth);
             return stream.Read();
         }
