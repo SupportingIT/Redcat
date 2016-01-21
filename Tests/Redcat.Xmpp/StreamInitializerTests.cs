@@ -12,7 +12,7 @@ namespace Redcat.Xmpp.Tests
     [TestFixture]
     public class StreamInitializerTests
     {
-        private ConnectionSettings settings;
+        private ConnectionSettings settings;        
         private StreamInitializer initializer;
         private TestXmppStream stream;
 
@@ -48,9 +48,9 @@ namespace Redcat.Xmpp.Tests
 
             RunInitializer(false);
 
-            A.CallTo(() => negotiators[0].Negotiate(stream, feature)).MustNotHaveHappened();
-            A.CallTo(() => negotiators[1].Negotiate(stream, feature)).MustHaveHappened();
-            A.CallTo(() => negotiators[2].Negotiate(stream, feature)).MustNotHaveHappened();
+            A.CallTo(() => negotiators[0].Negotiate(A<NegotiationContext>._)).MustNotHaveHappened();
+            A.CallTo(() => negotiators[1].Negotiate(A<NegotiationContext>._)).MustHaveHappened();
+            A.CallTo(() => negotiators[2].Negotiate(A<NegotiationContext>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace Redcat.Xmpp.Tests
             RunInitializer();
 
             A.CallTo(() => negotiator.CanNegotiate(A<XmlElement>._)).MustNotHaveHappened();
-            A.CallTo(() => negotiator.Negotiate(stream, A<XmlElement>._)).MustNotHaveHappened();
+            A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace Redcat.Xmpp.Tests
 
             RunInitializer(false);
 
-            A.CallTo(() => negotiator.Negotiate(stream, A<XmlElement>._)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace Redcat.Xmpp.Tests
             EnqueueResponse(true, new XmlElement("feature3"));
             RunInitializer();
 
-            A.CallTo(() => negotiator.Negotiate(stream, A<XmlElement>._)).MustHaveHappened(Repeated.Exactly.Twice);
+            A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).MustHaveHappened(Repeated.Exactly.Twice);
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace Redcat.Xmpp.Tests
 
             RunInitializer(false);
 
-            A.CallTo(() => negotiator.Negotiate(stream, A<XmlElement>._)).MustNotHaveHappened();
+            A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -137,7 +137,7 @@ namespace Redcat.Xmpp.Tests
             var tlsFeature = Tls.Start;
             IFeatureNegatiator tlsNegotiator = A.Fake<IFeatureNegatiator>();
             A.CallTo(() => tlsNegotiator.CanNegotiate(tlsFeature)).Returns(true);
-            A.CallTo(() => tlsNegotiator.Negotiate(A<IXmppStream>._, tlsFeature)).Returns(true);
+            A.CallTo(() => tlsNegotiator.Negotiate(A<NegotiationContext>._)).Returns(true);
             IFeatureNegatiator negotiator = A.Fake<IFeatureNegatiator>();
             A.CallTo(() => negotiator.CanNegotiate(A<XmlElement>._)).Returns(true);
             A.CallTo(() => negotiator.CanNegotiate(tlsFeature)).Returns(false);            
@@ -146,8 +146,8 @@ namespace Redcat.Xmpp.Tests
 
             RunInitializer();
 
-            A.CallTo(() => tlsNegotiator.Negotiate(stream, tlsFeature)).MustHaveHappened();
-            A.CallTo(() => negotiator.Negotiate(stream, A<XmlElement>._)).MustNotHaveHappened();
+            A.CallTo(() => tlsNegotiator.Negotiate(A<NegotiationContext>._)).MustHaveHappened();
+            A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -185,7 +185,7 @@ namespace Redcat.Xmpp.Tests
         {
             var negotiator = A.Fake<IFeatureNegatiator>();
             if (canNeogatiateAny) A.CallTo(() => negotiator.CanNegotiate(A<XmlElement>._)).Returns(true);
-            if (neogatiatesAny) A.CallTo(() => negotiator.Negotiate(stream, A<XmlElement>._)).Returns(true);
+            if (neogatiatesAny) A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).Returns(true);
             return negotiator;
         }
 

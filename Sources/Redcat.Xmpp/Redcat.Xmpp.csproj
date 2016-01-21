@@ -39,6 +39,7 @@
     <Compile Include="IFeatureNegatiator.cs" />
     <Compile Include="IXmppStream.cs" />
     <Compile Include="JID.cs" />
+    <Compile Include="NegotiationContext.cs" />
     <Compile Include="Negotiators\Authenticators.cs" />
     <Compile Include="Negotiators\BindNegotiator.cs" />
     <Compile Include="Negotiators\ISaslCredentials.cs" />

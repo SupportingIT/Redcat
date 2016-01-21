@@ -10,12 +10,12 @@ namespace Redcat.Xmpp.Negotiators
             return feature.Name == "register";
         }
 
-        public bool Negotiate(IXmppStream stream, XmlElement feature)
+        public bool Negotiate(NegotiationContext context)
         {
             IqStanza register = Iq.Get();
             register.AddChild(new XmlElement("query", "jabber:iq:register"));
-            stream.Write(register);
-            var response = stream.Read();
+            context.Stream.Write(register);
+            var response = context.Stream.Read();
             return false;
         }
     }

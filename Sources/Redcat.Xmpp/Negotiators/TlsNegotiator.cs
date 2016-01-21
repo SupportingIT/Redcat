@@ -19,14 +19,14 @@ namespace Redcat.Xmpp.Negotiators
             return feature.Name == "starttls" && feature.Xmlns == Namespaces.Tls;
         }
 
-        public bool Negotiate(IXmppStream stream, XmlElement feature)
+        public bool Negotiate(NegotiationContext context)
         {
-            stream.Write(Tls.Start);
-            var response = stream.Read();
+            context.Stream.Write(Tls.Start);
+            var response = context.Stream.Read();
             if (IsResponseValid(response)) setTlsContext();
             else
             {
-                stream.Write(Tls.Failure);
+                context.Stream.Write(Tls.Failure);
                 throw new ProtocolViolationException("Invalid response received from server");
             }
             return true;

@@ -15,6 +15,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
 
         private ConnectionSettings settings;
         private BindNegotiator negotiator;
+        private NegotiationContext context;
         private TestXmppStream stream;
 
         [SetUp]
@@ -24,6 +25,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
             negotiator = new BindNegotiator(settings);
             stream = new TestXmppStream();
             stream.EnqueueResponse(CreateBindResponse());
+            context = new NegotiationContext(stream) { Feature = Bind };
         }
 
         [Test]
@@ -42,7 +44,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         [Test]
         public void Negoatiate_Sends_Correct_Empty_Resource_Bind()
         {
-            negotiator.Negotiate(stream, Bind);
+            negotiator.Negotiate(context);
             XmlElement bindRequest = stream.SendedElements.Dequeue();
             XmlElement bind = bindRequest.Childs.Single();
 
@@ -57,7 +59,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
             string resource = "some-res";
             settings.Resource(resource);
 
-            negotiator.Negotiate(stream, Bind);
+            negotiator.Negotiate(context);
             XmlElement bindRequest = stream.SendedElements.Dequeue();
             XmlElement res = bindRequest.Child("bind").Childs.Single();
 
@@ -68,7 +70,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         [Test]
         public void Negoatiate_Sets_User_Jid_According_Value_In_Response()
         {
-            negotiator.Negotiate(stream, Bind);
+            negotiator.Negotiate(context);
 
             Assert.That(settings.UserJid(), Is.EqualTo(userJid));
         }

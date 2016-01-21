@@ -20,11 +20,11 @@ namespace Redcat.Xmpp.Negotiators
             return feature.Name == "bind" && feature.Xmlns == Namespaces.Bind;
         }
 
-        public bool Negotiate(IXmppStream stream, XmlElement feature)
+        public bool Negotiate(NegotiationContext context)
         {
             IqStanza bindIq = CreateBindRequest();
-            stream.Write(bindIq);
-            JID response = ReadUserJid(stream);
+            context.Stream.Write(bindIq);
+            JID response = ReadUserJid(context.Stream);
             settings.UserJid(response);
             return false;
         }

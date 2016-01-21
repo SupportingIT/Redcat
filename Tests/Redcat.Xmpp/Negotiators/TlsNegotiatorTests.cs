@@ -12,6 +12,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
     public class TlsNegotiatorTests
     {
         private Action setTlsContext;
+        private NegotiationContext context;
         private TestXmppStream stream;
         private TlsNegotiator negotiator;
 
@@ -21,6 +22,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
             setTlsContext = A.Fake<Action>();
             stream = new TestXmppStream();
             negotiator = new TlsNegotiator(setTlsContext);
+            context = new NegotiationContext(stream) { Feature = Tls.Start };
         }
 
         [Test]
@@ -42,7 +44,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         {            
             stream.EnqueueResponse(Tls.Proceed);
          
-            negotiator.Negotiate(stream, Tls.Start);
+            negotiator.Negotiate(context);
 
             var sended = stream.GetSentElement();
             Assert.That(sended, Is.EqualTo(Tls.Start));
@@ -60,7 +62,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         {
             stream.EnqueueResponse(response);
 
-            negotiator.Negotiate(stream, Tls.Start);
+            negotiator.Negotiate(context);
         }
 
         [Test]
@@ -68,7 +70,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         {
             stream.EnqueueResponse(Tls.Proceed);
             
-            bool restartStream = negotiator.Negotiate(stream, Tls.Start);
+            bool restartStream = negotiator.Negotiate(context);
 
             A.CallTo(() => setTlsContext.Invoke()).MustHaveHappened();
             Assert.That(restartStream, Is.True);

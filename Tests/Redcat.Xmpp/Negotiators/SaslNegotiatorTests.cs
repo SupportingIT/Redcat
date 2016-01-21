@@ -1,10 +1,8 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
-using Redcat.Core;
 using Redcat.Xmpp.Negotiators;
 using Redcat.Xmpp.Xml;
 using System;
-using System.Security.Authentication;
 
 namespace Redcat.Xmpp.Tests.Negotiators
 {
@@ -14,6 +12,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         private Func<ISaslCredentials> credentialProvider;
         private ISaslCredentials credentials;
         private SaslNegotiator negotiator;
+        private NegotiationContext context;
 
         [SetUp]
         public void SetUp()
@@ -50,7 +49,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         {
             XmlElement element = new XmlElement("not-mechanisms");
 
-            negotiator.Negotiate(A.Fake<IXmppStream>(), element);
+            negotiator.Negotiate(CreateContext(element));
         }
 
         [Test]
@@ -59,7 +58,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
         {
             XmlElement element = new XmlElement("mechanisms");
 
-            negotiator.Negotiate(A.Fake<IXmppStream>(), element);
+            negotiator.Negotiate(CreateContext(element));
         }
 
         [Test]
@@ -71,7 +70,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
             negotiator.AddAuthenticator("m4", A.Fake<SaslAuthenticator>());
             negotiator.AddAuthenticator("m5", A.Fake<SaslAuthenticator>());
 
-            negotiator.Negotiate(A.Fake<IXmppStream>(), element);
+            negotiator.Negotiate(CreateContext(element));
         }
 
         [Test]
@@ -81,7 +80,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
             SaslAuthenticator authenticator = A.Fake<SaslAuthenticator>();
             negotiator.AddAuthenticator("m2", authenticator);
 
-            negotiator.Negotiate(A.Fake<IXmppStream>(), element);
+            negotiator.Negotiate(CreateContext(element));
 
             A.CallTo(() => authenticator.Invoke(A<IXmppStream>._, credentials)).MustHaveHappened();
             AssertCredentialsDisposed(credentials);
@@ -97,7 +96,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
             SaslAuthenticator auth = A.Fake<SaslAuthenticator>();
             negotiator.AddAuthenticator("auth0", auth);
 
-            negotiator.Negotiate(A.Fake<IXmppStream>(), element);
+            negotiator.Negotiate(CreateContext(element));
 
             A.CallTo(() => auth.Invoke(A<IXmppStream>._, credentials)).MustHaveHappened();
             AssertCredentialsDisposed(credentials);
@@ -115,7 +114,7 @@ namespace Redcat.Xmpp.Tests.Negotiators
             negotiator.AddAuthenticator("auth0", auth);
             negotiator.AddAuthenticator("auth1", auth1);
 
-            negotiator.Negotiate(A.Fake<IXmppStream>(), element);
+            negotiator.Negotiate(CreateContext(element));
 
             A.CallTo(() => auth.Invoke(A<IXmppStream>._, credentials)).MustNotHaveHappened();
             A.CallTo(() => auth1.Invoke(A<IXmppStream>._, credentials)).MustHaveHappened();
@@ -131,9 +130,11 @@ namespace Redcat.Xmpp.Tests.Negotiators
             negotiator.AddAuthenticator("auth", authenticator);
             XmlElement element = CreateSaslFeature("auth");
 
-            negotiator.Negotiate(A.Fake<IXmppStream>(), element);
+            negotiator.Negotiate(CreateContext(element));
             AssertCredentialsDisposed(credentials);
         }
+
+        private NegotiationContext CreateContext(XmlElement feature) => new NegotiationContext(A.Fake<IXmppStream>()) { Feature = feature };
 
         private XmlElement CreateSaslFeature(params string[] mechanisms)
         {

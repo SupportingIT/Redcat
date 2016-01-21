@@ -11,6 +11,7 @@ namespace Redcat.Xmpp
     {
         private ICollection<IFeatureNegatiator> negotiators;
         private ConnectionSettings settings;
+        private NegotiationContext context;
         private int iterationLimit;
 
         public StreamInitializer(ConnectionSettings settings)
@@ -44,7 +45,8 @@ namespace Redcat.Xmpp
         public void Init(IXmppStream stream)
         {
             bool initRequired = true;
-
+            context = new NegotiationContext(stream);
+            
             for (int i = 0; i < iterationLimit; i++)
             {
                 if (initRequired) InitStream(stream);
@@ -94,7 +96,7 @@ namespace Redcat.Xmpp
             XmlElement feature = null;
             IFeatureNegatiator negotiator = GetNegotiator(features, out feature);
 
-            return negotiator.Negotiate(stream, feature);
+            return negotiator.Negotiate(context);
         }
 
         private IFeatureNegatiator GetNegotiator(ICollection<XmlElement> features, out XmlElement feature)

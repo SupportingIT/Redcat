@@ -34,15 +34,15 @@ namespace Redcat.Xmpp.Negotiators
             return credentials != null && !string.IsNullOrEmpty(credentials.Username) && !string.IsNullOrEmpty(credentials.Password);
         }
 
-        public bool Negotiate(IXmppStream stream, XmlElement feature)
+        public bool Negotiate(NegotiationContext context)
         {            
-            if (!IsSaslFeature(feature)) throw new InvalidOperationException();
-            if (feature.Childs.Count == 0) throw new InvalidOperationException();
+            if (!IsSaslFeature(context.Feature)) throw new InvalidOperationException();
+            if (context.Feature.Childs.Count == 0) throw new InvalidOperationException();
 
-            SaslAuthenticator authenticator = FindAuthenticator(feature.Childs);
+            SaslAuthenticator authenticator = FindAuthenticator(context.Feature.Childs);
             using (var credentials = credentialProvider.Invoke())
             {
-                XmlElement result = authenticator.Invoke(stream, credentials);
+                XmlElement result = authenticator.Invoke(context.Stream, credentials);
                 if (result.Name == "failure") throw new InvalidOperationException();
             }
             
