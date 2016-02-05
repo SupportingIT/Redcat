@@ -12,16 +12,18 @@ namespace Redcat.Xmpp.Tests
     [TestFixture]
     public class StreamInitializerTests
     {
-        private ConnectionSettings settings;        
+        private ConnectionSettings settings;
+        private NegotiationContext context;
         private StreamInitializer initializer;
         private TestXmppStream stream;
 
         [SetUp]
         public void Setup()
-        {
+        {            
             stream = new TestXmppStream();
             settings = new ConnectionSettings { Domain = "test-domain" };
             initializer = new StreamInitializer(settings);
+            context = new NegotiationContext(stream);
         }
 
         [Test]
@@ -40,17 +42,17 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void Uses_Correct_Negotiator_For_Feature()
         {
-            var negotiators = A.CollectionOfFake<IFeatureNegatiator>(3);
-            A.CallTo(() => negotiators[1].CanNegotiate(A<XmlElement>._)).Returns(true);
+            var negotiators = A.CollectionOfFake<IFeatureNegatiator>(3);            
             initializer.AddNegotiators(negotiators);            
             var feature = new XmlElement("feature1");
+            A.CallTo(() => negotiators[1].CanNegotiate(context, feature)).Returns(true);
             EnqueueResponse(true, feature);
 
             RunInitializer(false);
 
-            A.CallTo(() => negotiators[0].Negotiate(A<NegotiationContext>._)).MustNotHaveHappened();
-            A.CallTo(() => negotiators[1].Negotiate(A<NegotiationContext>._)).MustHaveHappened();
-            A.CallTo(() => negotiators[2].Negotiate(A<NegotiationContext>._)).MustNotHaveHappened();
+            A.CallTo(() => negotiators[0].Negotiate(context, feature)).MustNotHaveHappened();
+            A.CallTo(() => negotiators[1].Negotiate(context, feature)).MustHaveHappened();
+            A.CallTo(() => negotiators[2].Negotiate(context, feature)).MustNotHaveHappened();
         }
 
         [Test]
@@ -61,8 +63,8 @@ namespace Redcat.Xmpp.Tests
 
             RunInitializer();
 
-            A.CallTo(() => negotiator.CanNegotiate(A<XmlElement>._)).MustNotHaveHappened();
-            A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).MustNotHaveHappened();
+            A.CallTo(() => negotiator.CanNegotiate(context, A<XmlElement>._)).MustNotHaveHappened();
+            A.CallTo(() => negotiator.Negotiate(context, A<XmlElement>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -75,7 +77,7 @@ namespace Redcat.Xmpp.Tests
 
             RunInitializer(false);
 
-            A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => negotiator.Negotiate(context, A<XmlElement>._)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
         [Test]
@@ -88,7 +90,7 @@ namespace Redcat.Xmpp.Tests
             EnqueueResponse(true, new XmlElement("feature3"));
             RunInitializer();
 
-            A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).MustHaveHappened(Repeated.Exactly.Twice);
+            A.CallTo(() => negotiator.Negotiate(context, A<XmlElement>._)).MustHaveHappened(Repeated.Exactly.Twice);
         }
 
         [Test]
@@ -100,7 +102,7 @@ namespace Redcat.Xmpp.Tests
 
             RunInitializer(false);
 
-            A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).MustNotHaveHappened();
+            A.CallTo(() => negotiator.Negotiate(context, A<XmlElement>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -134,20 +136,20 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void Negoatiates_Tls_Feature_First()
         {
-            var tlsFeature = Tls.Start;
             IFeatureNegatiator tlsNegotiator = A.Fake<IFeatureNegatiator>();
-            A.CallTo(() => tlsNegotiator.CanNegotiate(tlsFeature)).Returns(true);
-            A.CallTo(() => tlsNegotiator.Negotiate(A<NegotiationContext>._)).Returns(true);
+            
+            A.CallTo(() => tlsNegotiator.CanNegotiate(context, A<XmlElement>._)).Returns(true);
+            A.CallTo(() => tlsNegotiator.Negotiate(context, A<XmlElement>._)).Returns(true);
             IFeatureNegatiator negotiator = A.Fake<IFeatureNegatiator>();
-            A.CallTo(() => negotiator.CanNegotiate(A<XmlElement>._)).Returns(true);
-            A.CallTo(() => negotiator.CanNegotiate(tlsFeature)).Returns(false);            
+            A.CallTo(() => negotiator.CanNegotiate(context, A<XmlElement>._)).Returns(true);
+            A.CallTo(() => negotiator.CanNegotiate(context, A<XmlElement>._)).Returns(false);            
             initializer.AddNegotiators(new[] { negotiator, tlsNegotiator });
-            EnqueueResponse(true, new XmlElement("feature1"), tlsFeature, new XmlElement("feature2"));
+            EnqueueResponse(true, new XmlElement("feature1"), Tls.Start, new XmlElement("feature2"));
 
             RunInitializer();
 
-            A.CallTo(() => tlsNegotiator.Negotiate(A<NegotiationContext>._)).MustHaveHappened();
-            A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).MustNotHaveHappened();
+            A.CallTo(() => tlsNegotiator.Negotiate(context, A<XmlElement>._)).MustHaveHappened();
+            A.CallTo(() => negotiator.Negotiate(context, A<XmlElement>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -184,8 +186,8 @@ namespace Redcat.Xmpp.Tests
         private IFeatureNegatiator CreateNegotiator(bool canNeogatiateAny, bool neogatiatesAny = false)
         {
             var negotiator = A.Fake<IFeatureNegatiator>();
-            if (canNeogatiateAny) A.CallTo(() => negotiator.CanNegotiate(A<XmlElement>._)).Returns(true);
-            if (neogatiatesAny) A.CallTo(() => negotiator.Negotiate(A<NegotiationContext>._)).Returns(true);
+            if (canNeogatiateAny) A.CallTo(() => negotiator.CanNegotiate(context, A<XmlElement>._)).Returns(true);
+            if (neogatiatesAny) A.CallTo(() => negotiator.Negotiate(context, A<XmlElement>._)).Returns(true);
             return negotiator;
         }
 

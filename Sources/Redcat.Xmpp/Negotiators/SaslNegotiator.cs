@@ -21,11 +21,11 @@ namespace Redcat.Xmpp.Negotiators
             authenticators.Add(mechanismName, authenticator);
         }
 
-        public bool CanNegotiate(XmlElement feature)
+        public bool CanNegotiate(NegotiationContext context, XmlElement feature)
         {
             using (var credentials = credentialProvider.Invoke())
             {
-                return IsSaslFeature(feature) && IsCredentialsValid(credentials);
+                return !context.IsAuthenticated && IsSaslFeature(feature) && IsCredentialsValid(credentials);
             }
         }
 
@@ -34,16 +34,17 @@ namespace Redcat.Xmpp.Negotiators
             return credentials != null && !string.IsNullOrEmpty(credentials.Username) && !string.IsNullOrEmpty(credentials.Password);
         }
 
-        public bool Negotiate(NegotiationContext context)
+        public bool Negotiate(NegotiationContext context, XmlElement feature)
         {            
-            if (!IsSaslFeature(context.Feature)) throw new InvalidOperationException();
-            if (context.Feature.Childs.Count == 0) throw new InvalidOperationException();
+            if (!IsSaslFeature(feature)) throw new InvalidOperationException();
+            if (feature.Childs.Count == 0) throw new InvalidOperationException();
 
-            SaslAuthenticator authenticator = FindAuthenticator(context.Feature.Childs);
+            SaslAuthenticator authenticator = FindAuthenticator(feature.Childs);
             using (var credentials = credentialProvider.Invoke())
             {
                 XmlElement result = authenticator.Invoke(context.Stream, credentials);
                 if (result.Name == "failure") throw new InvalidOperationException();
+                if (result.Name == "success") context.IsAuthenticated = true;
             }
             
             return true;

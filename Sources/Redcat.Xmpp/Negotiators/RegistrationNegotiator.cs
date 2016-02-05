@@ -5,12 +5,12 @@ namespace Redcat.Xmpp.Negotiators
 {
     public class RegistrationNegotiator : IFeatureNegatiator
     {
-        public bool CanNegotiate(XmlElement feature)
+        public bool CanNegotiate(NegotiationContext context, XmlElement feature)
         {
             return feature.Name == "register";
         }
 
-        public bool Negotiate(NegotiationContext context)
+        public bool Negotiate(NegotiationContext context, XmlElement feature)
         {
             IqStanza register = Iq.Get();
             register.AddChild(new XmlElement("query", "jabber:iq:register"));

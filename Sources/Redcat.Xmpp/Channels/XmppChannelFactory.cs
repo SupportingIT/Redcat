@@ -31,7 +31,7 @@ namespace Redcat.Xmpp.Channels
             StreamInitializer initializer = new StreamInitializer(settings);
             initializer.Negotiators.Add(CreateSaslNegotiator(credentialsProvider));
             initializer.Negotiators.Add(new TlsNegotiator(setTlsContext));
-            initializer.Negotiators.Add(new BindNegotiator(settings));
+            initializer.Negotiators.Add(new BindNegotiator());
             initializer.Negotiators.Add(new RegistrationNegotiator());
             return initializer.Init;
         }

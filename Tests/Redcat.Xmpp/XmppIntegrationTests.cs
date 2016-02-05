@@ -13,7 +13,7 @@ namespace Redcat.Xmpp.Tests
     [TestFixture]
     public class XmppIntegrationTests
     {
-        //[Ignore]
+        [Ignore]
         [Test]
         public void Test_Xmpp_Connection()
         {            
@@ -22,9 +22,7 @@ namespace Redcat.Xmpp.Tests
             ICommunicator communicator = CreateCommunicator();
             
             ConnectionSettings settings = CreateConnectionSettings();
-            communicator.Connect(settings);
-
-            //communicator.Send<Stanza>(Presence.Available());
+            communicator.Connect(settings);            
         }
 
         private ICommunicator CreateCommunicator()

@@ -1,5 +1,4 @@
-﻿using Redcat.Core;
-using Redcat.Xmpp.Xml;
+﻿using Redcat.Xmpp.Xml;
 using System;
 using System.Net;
 
@@ -7,34 +6,26 @@ namespace Redcat.Xmpp.Negotiators
 {
     public class BindNegotiator : IFeatureNegatiator
     {
-        private ConnectionSettings settings;
-
-        public BindNegotiator(ConnectionSettings settings)
-        {
-            this.settings = settings;
-        }
-
-        public bool CanNegotiate(XmlElement feature)
+        public bool CanNegotiate(NegotiationContext context, XmlElement feature)
         {
             if (feature == null) throw new ArgumentNullException(nameof(feature));
+            if (context.Jid != null) return false;
             return feature.Name == "bind" && feature.Xmlns == Namespaces.Bind;
         }
 
-        public bool Negotiate(NegotiationContext context)
+        public bool Negotiate(NegotiationContext context, XmlElement feature)
         {
             IqStanza bindIq = CreateBindRequest();
             context.Stream.Write(bindIq);
             JID response = ReadUserJid(context.Stream);
-            settings.UserJid(response);
+            context.Jid = response;
             return false;
         }
 
         private IqStanza CreateBindRequest()
         {
             IqStanza stanza = Iq.Set();
-            string resource = settings.Resource();
-            if (string.IsNullOrEmpty(resource)) stanza.AddChild(Bind.New());
-            else stanza.AddChild(Bind.Resource(resource));
+            stanza.AddChild(Bind.New());            
             return stanza;
         }
 

@@ -14,12 +14,14 @@ namespace Redcat.Xmpp.Negotiators
             this.setTlsContext = setTlsContext;
         }
 
-        public bool CanNegotiate(XmlElement feature)
+        public bool CanNegotiate(NegotiationContext context, XmlElement feature)
         {
-            return feature.Name == "starttls" && feature.Xmlns == Namespaces.Tls;
+            return feature.Name == "starttls" 
+                && feature.Xmlns == Namespaces.Tls
+                && !context.IsTlsEstablished;
         }
 
-        public bool Negotiate(NegotiationContext context)
+        public bool Negotiate(NegotiationContext context, XmlElement feature)
         {
             context.Stream.Write(Tls.Start);
             var response = context.Stream.Read();

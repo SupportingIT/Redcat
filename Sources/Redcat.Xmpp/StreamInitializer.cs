@@ -46,12 +46,15 @@ namespace Redcat.Xmpp
         {
             bool initRequired = true;
             context = new NegotiationContext(stream);
+            XmlElement features = null;
             
             for (int i = 0; i < iterationLimit; i++)
             {
-                if (initRequired) InitStream(stream);
-
-                var features = ReadFeatures(stream);
+                if (initRequired)
+                {
+                    InitStream(stream);
+                    features = ReadFeatures(stream);
+                }
 
                 if (features.Childs.Count == 0) return;
                 if (!HasNegotiatorForFeatures(features.Childs)) return;                
@@ -88,7 +91,7 @@ namespace Redcat.Xmpp
 
         private bool HasNegotiatorForFeatures(IEnumerable<XmlElement> features)
         {
-            return features.Any(f => negotiators.Any(n => n.CanNegotiate(f)));
+            return features.Any(f => negotiators.Any(n => n.CanNegotiate(context, f)));
         }
 
         private bool HandleFeatures(IXmppStream stream, ICollection<XmlElement> features)
@@ -96,26 +99,26 @@ namespace Redcat.Xmpp
             XmlElement feature = null;
             IFeatureNegatiator negotiator = GetNegotiator(features, out feature);
 
-            return negotiator.Negotiate(context);
+            return negotiator.Negotiate(context, feature);
         }
 
         private IFeatureNegatiator GetNegotiator(ICollection<XmlElement> features, out XmlElement feature)
         {
-            if (features.HasTlsFeature() && negotiators.Any(n => n.CanNegotiate(features.TlsFeature())))
+            if (features.HasTlsFeature() && negotiators.Any(n => n.CanNegotiate(context, features.TlsFeature())))
             {
                 feature = features.TlsFeature();
-                return negotiators.First(n => n.CanNegotiate(features.TlsFeature()));
+                return negotiators.First(n => n.CanNegotiate(context, features.TlsFeature()));
             }
 
-            if (features.HasSaslFeature() && negotiators.Any(n => n.CanNegotiate(features.SaslFeature())))
+            if (features.HasSaslFeature() && negotiators.Any(n => n.CanNegotiate(context, features.SaslFeature())))
             {
                 feature = features.SaslFeature();
-                return negotiators.First(n => n.CanNegotiate(features.SaslFeature()));
+                return negotiators.First(n => n.CanNegotiate(context, features.SaslFeature()));
             }
 
             foreach (XmlElement f in features)
-            {
-                var negotiator = negotiators.FirstOrDefault(n => n.CanNegotiate(f));
+            {                
+                var negotiator = negotiators.FirstOrDefault(n => n.CanNegotiate(context, f));
                 if (negotiator != null)
                 {
                     feature = f;
