@@ -1,32 +1,28 @@
 ﻿using Redcat.Core.Channels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Redcat.Core
 {
-    public class MessageDispatcher// : IMessageDispatcher
+    public class MessageDispatcher : IMessageDispatcher
     {
-        public Connection DefaultConnection { get; set; }
+        private IOutputChannelProvider channelProvider;
 
-        public IEnumerable<Connection>ActiveConnections { get; set; }
-
-        public void Dispatch<T>(T message)
+        public MessageDispatcher(IOutputChannelProvider channelProvider)
         {
-            if (ActiveConnections.Count() == 0) throw new InvalidOperationException("No active connections");            
-            var connection = SelectConnection(ActiveConnections, message);
-            if (connection == null) throw new InvalidOperationException("No connections to send message " + message);
-            SendMessage(connection, message);
+            this.channelProvider = channelProvider;
         }
 
-        private Connection SelectConnection<T>(IEnumerable<Connection> connections, T message)
+        public void Dispatch<T>(T message) where T : class
         {
-            return null;
-        }
+            if (message == null) throw new NullReferenceException(nameof(message));
+            IOutputChannel<T> channel = channelProvider.GetChannel(message);
+            if (channel == null) throw new InvalidOperationException();
+            channel.Send(message);
+        }        
+    }
 
-        private void SendMessage<T>(Connection connection, T message)
-        {
-            throw new NotImplementedException();
-        }
+    public interface IOutputChannelProvider
+    {
+        IOutputChannel<T> GetChannel<T>(T message);
     }
 }

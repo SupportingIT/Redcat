@@ -9,11 +9,13 @@ namespace Redcat.Core
     public class Communicator : ICommunicator, IDisposable, IObserver<ConnectionCommand>
     {
         private IChannelFactory channelFactory;
+        private IMessageDispatcher dispatcher;
         private ICollection<Connection> activeConnections;
 
-        public Communicator(IChannelFactory channelFactory)
+        public Communicator(IChannelFactory channelFactory, IMessageDispatcher dispatcher)
         {
             this.channelFactory = channelFactory;
+            this.dispatcher = dispatcher;
             activeConnections = new List<Connection>();
         }
 
@@ -71,7 +73,12 @@ namespace Redcat.Core
             activeConnections.Remove(connection);
         }
 
-        private void OnClosingConnection(object sender, EventArgs args) => CloseConnection((Connection)sender);        
+        private void OnClosingConnection(object sender, EventArgs args) => CloseConnection((Connection)sender);
+
+        public void Send<T>(T message) where T : class
+        {
+            dispatcher.Dispatch(message);
+        }
 
         public void Dispose()
         { }

@@ -8,11 +8,21 @@ namespace Redcat.Core.Tests
     [TestFixture]
     public class CommunicatorTests
     {
+        private IChannelFactory channelFactory;
+        private IMessageDispatcher dispatcher;
+        private Communicator communicator;
+
+        [SetUp]
+        public void SetUp()
+        {
+            channelFactory = A.Fake<IChannelFactory>();
+            dispatcher = A.Fake<IMessageDispatcher>();
+            communicator = new Communicator(channelFactory, dispatcher);
+        }
+
         [Test]
         public void Connect_Crates_Connection_With_Given_Name()
         {
-            IChannelFactory factory = A.Fake<IChannelFactory>();
-            Communicator communicator = new Communicator(factory);
             string connectionName = "ConnName";
             ConnectionSettings settings = new ConnectionSettings { ConnectionName = connectionName };
             communicator.Connect(settings);
@@ -25,11 +35,9 @@ namespace Redcat.Core.Tests
         [Test]
         public void Connect_Opens_Created_Channel()
         {
-            IChannelFactory factory = A.Fake<IChannelFactory>();
             IChannel channel = A.Fake<IChannel>();
-            A.CallTo(() => factory.CreateChannel(A<ConnectionSettings>._)).Returns(channel);
-            Communicator communicator = new Communicator(factory);
-
+            A.CallTo(() => channelFactory.CreateChannel(A<ConnectionSettings>._)).Returns(channel);
+            
             communicator.Connect(new ConnectionSettings());
 
             A.CallTo(() => channel.Open()).MustHaveHappened();
@@ -38,10 +46,8 @@ namespace Redcat.Core.Tests
         [Test]
         public void Closing_Connection_Closes_Channels_And_Removes_It_From_ActiveConnections()
         {
-            IChannelFactory factory = A.Fake<IChannelFactory>();
             IChannel channel = A.Fake<IChannel>();
-            A.CallTo(() => factory.CreateChannel(A<ConnectionSettings>._)).Returns(channel);
-            Communicator communicator = new Communicator(factory);
+            A.CallTo(() => channelFactory.CreateChannel(A<ConnectionSettings>._)).Returns(channel);            
             communicator.Connect(new ConnectionSettings());
 
             Connection conn = communicator.ActiveConnections.Single();
@@ -54,23 +60,19 @@ namespace Redcat.Core.Tests
         [Test]
         public void OnNext_Open_ConnectionCommand_Creates_New_Connection()
         {
-            IChannelFactory factory = A.Fake<IChannelFactory>();
-            Communicator communicator = new Communicator(factory);
             string connName = "some-name";
             ConnectionSettings settings = new ConnectionSettings { ConnectionName = connName };
             var command = ConnectionCommand.Open(settings);
 
             communicator.OnNext(command);
 
-            A.CallTo(() => factory.CreateChannel(settings)).MustHaveHappened();
+            A.CallTo(() => channelFactory.CreateChannel(settings)).MustHaveHappened();
             Assert.That(communicator.ActiveConnections.Single().Name, Is.EqualTo(connName));
         }
 
         [Test]
         public void OnNext_Close_ConnectionCommand_Closes_Existed_Active_Connection()
         {
-            IChannelFactory factory = A.Fake<IChannelFactory>();
-            Communicator communicator = new Communicator(factory);
             string connName = "conn-name";
             ConnectionSettings settings = new ConnectionSettings { ConnectionName = connName };
             communicator.Connect(settings);
@@ -79,6 +81,14 @@ namespace Redcat.Core.Tests
             communicator.OnNext(command);
 
             CollectionAssert.IsEmpty(communicator.ActiveConnections);
+        }
+
+        [Test]
+        public void Send_Uses_Dispatcher_To_Send_Messages()
+        {
+            communicator.Send("Hello world");
+
+            A.CallTo(() => dispatcher.Dispatch("Hello world")).MustHaveHappened();
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IMessageDispatcher
     {
-        void Dispatch<T>(T message);
+        void Dispatch<T>(T message) where T : class;
     }
 }

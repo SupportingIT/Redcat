@@ -7,5 +7,6 @@ namespace Redcat.Core
         IEnumerable<Connection> ActiveConnections { get; }
 
         void Connect(ConnectionSettings settings);
+        void Send<T>(T message) where T : class;
     }
 }

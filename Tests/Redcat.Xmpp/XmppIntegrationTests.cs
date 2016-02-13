@@ -17,13 +17,11 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void Test_Xmpp_Connection()
         {            
-            string processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-            int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
-            ICommunicator communicator = CreateCommunicator();
-            
+            ICommunicator communicator = CreateCommunicator();            
             ConnectionSettings settings = CreateConnectionSettings();
+
             communicator.Connect(settings);            
-        }
+        }        
 
         private ICommunicator CreateCommunicator()
         {
@@ -31,6 +29,7 @@ namespace Redcat.Xmpp.Tests
 
             container.Register<ICommunicator, Communicator>();            
             container.Register<IChannelFactory, XmppChannelFactory>();
+            container.Register<IMessageDispatcher, MessageDispatcher>();
             container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
             container.Register<Func<ISaslCredentials>>(() => GetCredentials);
 
@@ -41,16 +40,20 @@ namespace Redcat.Xmpp.Tests
         {
             ConnectionSettings settings = new ConnectionSettings();
             settings.ChannelType = "xmpp";
-            settings.Domain = ConfigurationManager.AppSettings["Domain"];
+            settings.Domain =  ConfigurationManager.AppSettings["Domain"];
             settings.Host = ConfigurationManager.AppSettings["Host"];
             settings.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
-            settings.Resource(ConfigurationManager.AppSettings["Resource"]);
             return settings;
         }
 
         private ISaslCredentials GetCredentials()
         {
             return new SaslCredentials(ConfigurationManager.AppSettings["Username"], ConfigurationManager.AppSettings["Password"]);
+        }
+
+        private ISaslCredentials GetEmptyCredentials()
+        {
+            return new SaslCredentials("", "");
         }
     }    
 

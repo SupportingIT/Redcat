@@ -5,49 +5,39 @@ using System;
 
 namespace Redcat.Core.Tests
 {
-    [TestFixture, Ignore]
+    [TestFixture]
     public class MessageDispatcherTests
     {
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void Dispatch_Throws_Exception_If_No_ActiveConnections()
-        {                  
-            MessageDispatcher dispatcher = new MessageDispatcher();
-
-            dispatcher.Dispatch("some-string");
-        }
-
-        [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Dispatch_Throws_Exception_If_No_Output_Channels_For_Aproriate_Massage()
-        {            
-            MessageDispatcher dispatcher = new MessageDispatcher();
-
-            dispatcher.Dispatch("some-string");
-        }
-
-        [Test]
-        public void Dispatch_Sends_Message_Via_Approriate_Output_Connection()
-        {            
-            MessageDispatcher dispatcher = new MessageDispatcher();
-            Guid message = Guid.NewGuid();
-
-            dispatcher.Dispatch(message);
-        }
-
-        [Test]
-        public void Dispatch_Sends_Message_Via_Default_Connection()
+        public void Dispatch_Throws_Exception_If_ChannelProvider_Returns_Null()
         {
-            IOutputChannel<int> defaultChannel = A.Fake<IOutputChannel<int>>();
-            IOutputChannel<int> activeChannel = A.Fake<IOutputChannel<int>>();           
-            
-            MessageDispatcher dispatcher = new MessageDispatcher();
-            int message = 8;
+            IOutputChannelProvider provider = A.Fake<IOutputChannelProvider>();
+            A.CallTo(() => provider.GetChannel(A<string>._)).Returns(null);
+            MessageDispatcher dispatcher = new MessageDispatcher(provider);
 
-            dispatcher.Dispatch(message);
+            dispatcher.Dispatch("Hello world");
+        }
 
-            A.CallTo(() => defaultChannel.Send(message)).MustHaveHappened();
-            A.CallTo(() => activeChannel.Send(message)).MustNotHaveHappened();
+        [Test]
+        [ExpectedException(typeof(NullReferenceException))]
+        public void Dispatch_Throws_Exceptions_If_Message_Is_Null()
+        {
+            MessageDispatcher dispatcher = new MessageDispatcher(A.Fake<IOutputChannelProvider>());
+            dispatcher.Dispatch<string>(null);
+        }
+
+        [Test]
+        public void Dispatch_Sends_Message_Via_Channel()
+        {
+            IOutputChannelProvider provider = A.Fake<IOutputChannelProvider>();
+            IOutputChannel<string> channel = A.Fake<IOutputChannel<string>>();
+            A.CallTo(() => provider.GetChannel(A<string>._)).Returns(channel);
+            MessageDispatcher dispatcher = new MessageDispatcher(provider);
+
+            dispatcher.Dispatch("Hello world");
+
+            A.CallTo(() => channel.Send("Hello world")).MustHaveHappened();
         }
     }
 }
