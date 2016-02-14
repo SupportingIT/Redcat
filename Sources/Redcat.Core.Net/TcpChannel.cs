@@ -4,45 +4,90 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Redcat.Core.Net
 {
-    public class TcpChannel : ChannelBase, IStreamChannel, ISecureStreamChannel
+    public class TcpChannel : ChannelBase, IStreamChannel, ISecureStreamChannel, IAsyncInputChannel<ArraySegment<byte>>, IObservable<ArraySegment<byte>>
     {
+        private ICollection<IObserver<ArraySegment<byte>>> subscribers;
+        private NetworkStream stream;
         private SslStream secureStream;
-        private TcpClient tcpClient;
+        private Socket socket;
+        private SocketAsyncEventArgs args;
+        private TaskCompletionSource<ArraySegment<byte>> complitionSource;
 
         public TcpChannel(ConnectionSettings settings) : base(settings)
-        { }
+        {
+            subscribers = new List<IObserver<ArraySegment<byte>>>();
+        }
 
         public bool AcceptAllCertificates { get; set; }
 
         protected override void OnOpening()
         {
             base.OnOpening();
-            tcpClient = new TcpClient();
-            tcpClient.Connect(Settings.Host, Settings.Port);
+            socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(Settings.Host, Settings.Port);
         }
 
         protected override void OnClosing()
         {
             base.OnClosing();
-            tcpClient.Close();
+            socket.Close();
         }
 
         public Stream GetStream()
         {
-            return tcpClient.GetStream();
+            if (stream == null) stream = new NetworkStream(socket);
+            return stream;
         }
 
         public Stream GetSecureStream()
         {
             if (secureStream == null)
             {
-                secureStream = new SslStream(tcpClient.GetStream(), true, ValidateServerCertificate);
+                secureStream = new SslStream(stream, true, ValidateServerCertificate);
                 secureStream.AuthenticateAsClient(Settings.Host);
             }
             return secureStream;
+        }
+
+        byte[] buffer = new byte[10000];
+
+        public ArraySegment<byte> Receive()
+        {
+            int receivedBytes = socket.Receive(buffer);
+            return new ArraySegment<byte>(buffer, 0, receivedBytes);
+        }
+
+        public async Task<ArraySegment<byte>> ReceiveAsync()
+        {
+            if (args == null)
+            {
+                complitionSource = new TaskCompletionSource<ArraySegment<byte>>();
+                args = new SocketAsyncEventArgs();
+                args.SetBuffer(buffer, 0, buffer.Length);                
+                args.Completed += OnDataReceived;
+            }
+
+            if (!socket.ReceiveAsync(args))
+            {
+                return new ArraySegment<byte>(args.Buffer, args.Offset, args.Count);
+            }
+            
+            return await complitionSource.Task;            
+        }
+
+        private void OnDataReceived(object sender, SocketAsyncEventArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IDisposable Subscribe(IObserver<ArraySegment<byte>> subscriber)
+        {
+            return subscribers.Subscribe(subscriber);
         }
 
         private bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

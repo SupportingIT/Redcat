@@ -42,6 +42,8 @@
     <Compile Include="Connection.cs" />
     <Compile Include="BinaryData.cs" />
     <Compile Include="ConnectionCommand.cs" />
+    <Compile Include="Contact.cs" />
+    <Compile Include="ContactController.cs" />
     <Compile Include="ICommunicator.cs" />
     <Compile Include="ObserverExtensions.cs" />
     <Compile Include="SingleChannelCommunicator.cs" />
