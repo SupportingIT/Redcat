@@ -44,6 +44,7 @@
     <Compile Include="ConnectionCommand.cs" />
     <Compile Include="ICommunicator.cs" />
     <Compile Include="ObserverExtensions.cs" />
+    <Compile Include="SingleChannelCommunicator.cs" />
     <Compile Include="StreamProxy.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="ConnectionSettings.cs" />

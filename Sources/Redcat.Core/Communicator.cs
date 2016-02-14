@@ -31,6 +31,11 @@ namespace Redcat.Core
             activeConnections.Add(connection);
         }
 
+        public void Disconnect()
+        {
+            throw new NotImplementedException();
+        }
+
         private Connection OpenConnection(ConnectionSettings settings)
         {
             IChannel channel = channelFactory.CreateChannel(settings);

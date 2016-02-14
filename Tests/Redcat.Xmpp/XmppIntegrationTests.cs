@@ -4,6 +4,7 @@ using Redcat.Core.Channels;
 using Redcat.Core.Net;
 using Redcat.Xmpp.Channels;
 using Redcat.Xmpp.Negotiators;
+using Redcat.Xmpp.Xml;
 using SimpleInjector;
 using System;
 using System.Configuration;
@@ -20,14 +21,15 @@ namespace Redcat.Xmpp.Tests
             ICommunicator communicator = CreateCommunicator();            
             ConnectionSettings settings = CreateConnectionSettings();
 
-            communicator.Connect(settings);            
+            communicator.Connect(settings);
+            communicator.Send(Presence.Available());
         }        
 
         private ICommunicator CreateCommunicator()
         {
             Container container = new Container();
 
-            container.Register<ICommunicator, Communicator>();            
+            container.Register<ICommunicator, SingleChannelCommunicator>();            
             container.Register<IChannelFactory, XmppChannelFactory>();
             container.Register<IMessageDispatcher, MessageDispatcher>();
             container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
@@ -38,8 +40,7 @@ namespace Redcat.Xmpp.Tests
 
         private ConnectionSettings CreateConnectionSettings()
         {
-            ConnectionSettings settings = new ConnectionSettings();
-            settings.ChannelType = "xmpp";
+            ConnectionSettings settings = new ConnectionSettings();            
             settings.Domain =  ConfigurationManager.AppSettings["Domain"];
             settings.Host = ConfigurationManager.AppSettings["Host"];
             settings.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
@@ -48,7 +49,8 @@ namespace Redcat.Xmpp.Tests
 
         private ISaslCredentials GetCredentials()
         {
-            return new SaslCredentials(ConfigurationManager.AppSettings["Username"], ConfigurationManager.AppSettings["Password"]);
+            return new SaslCredentials(ConfigurationManager.AppSettings["Username"], 
+                                       ConfigurationManager.AppSettings["Password"]);
         }
 
         private ISaslCredentials GetEmptyCredentials()

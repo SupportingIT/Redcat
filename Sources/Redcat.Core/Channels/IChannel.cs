@@ -11,12 +11,12 @@ namespace Redcat.Core.Channels
         event EventHandler<StateChangedEventArgs> StateChanged;
     }
 
-    public interface IInputChannel<T> : IChannel
+    public interface IInputChannel<out T> : IChannel
     {
         T Receive();
     }
 
-    public interface IOutputChannel<T> : IChannel
+    public interface IOutputChannel<in T> : IChannel
     {
         void Send(T message);
     }

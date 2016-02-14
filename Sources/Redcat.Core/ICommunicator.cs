@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace Redcat.Core
+﻿namespace Redcat.Core
 {
     public interface ICommunicator
     {
-        IEnumerable<Connection> ActiveConnections { get; }
-
         void Connect(ConnectionSettings settings);
+        void Disconnect();
         void Send<T>(T message) where T : class;
     }
 }
