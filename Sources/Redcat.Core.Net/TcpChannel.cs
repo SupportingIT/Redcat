@@ -81,8 +81,8 @@ namespace Redcat.Core.Net
         }
 
         private void OnDataReceived(object sender, SocketAsyncEventArgs args)
-        {
-            throw new NotImplementedException();
+        {            
+            complitionSource.SetResult(new ArraySegment<byte>(buffer, 0, args.BytesTransferred));
         }
 
         public IDisposable Subscribe(IObserver<ArraySegment<byte>> subscriber)
