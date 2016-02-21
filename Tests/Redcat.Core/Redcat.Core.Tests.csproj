@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ByteBufferTests.cs" />
     <Compile Include="CommunicatorTests.cs" />
     <Compile Include="ObserverExtensionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
