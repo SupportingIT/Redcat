@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Redcat.Core
 {
@@ -62,6 +63,16 @@ namespace Redcat.Core
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public override string ToString()
+        {
+            return Encoding.UTF8.GetString(buffer, startIndex, Count);
+        }
+
+        public string ToString(int offset, int count)
+        {
+            return Encoding.UTF8.GetString(buffer, startIndex + offset, count);
         }
     }
 }

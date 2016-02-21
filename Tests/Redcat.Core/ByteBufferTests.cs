@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Text;
 
 namespace Redcat.Core.Tests
 {
@@ -139,6 +140,26 @@ namespace Redcat.Core.Tests
         }
 
         #endregion
+
+        [Test]
+        public void ToString_Returns_String_Constructed_From_Buffer_Bytes()
+        {
+            ByteBuffer buffer = new ByteBuffer(20);
+            byte[] data = Encoding.UTF8.GetBytes("Hello world");
+            buffer.Write(data);
+
+            Assert.That(buffer.ToString(), Is.EqualTo("Hello world"));
+        }
+
+        [Test]
+        public void ToString_Returns_Correct_Substring()
+        {
+            ByteBuffer buffer = new ByteBuffer(15);
+            byte[] data = Encoding.UTF8.GetBytes("Hola world");
+            buffer.Write(data);
+
+            Assert.That(buffer.ToString(5, 4), Is.EqualTo("worl"));
+        }
 
         private byte[] CreateByteArray(int count)
         {
