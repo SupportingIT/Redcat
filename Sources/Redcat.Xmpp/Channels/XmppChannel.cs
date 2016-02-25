@@ -1,31 +1,38 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Redcat.Core;
 using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp.Channels
 {
-    public class XmppChannel : ChannelBase, IInputChannel<Stanza>, IAsyncInputChannel<Stanza>, IOutputChannel<Stanza>, IAsyncOutputChannel<Stanza>
+    public class XmppChannel : BufferChannel<XmlElement>, IDuplexChannel<XmlElement>
     {
-        private IStreamChannel streamChannel;
-        private XmppStream xmppStream;
+        private const int DefaultBufferSize = 1024;
+        private IStreamChannel streamChannel;        
         private StreamProxy streamProxy;
+        private IDisposable subscription;
 
-        public XmppChannel(IStreamChannel streamChannel, ConnectionSettings settings) : base(settings)
+        private XmppStreamWriter writer;
+
+        public XmppChannel(IStreamChannel streamChannel, ConnectionSettings settings) : base(DefaultBufferSize, settings)
         {
             if (streamChannel == null) throw new ArgumentNullException(nameof(streamChannel));
-            this.streamChannel = streamChannel;            
+            this.streamChannel = streamChannel;
+            if (streamChannel is IObservable<ArraySegment<byte>>)
+            {
+                subscription = ((IObservable<ArraySegment<byte>>)streamChannel).Subscribe(this);
+            }
         }
 
-        public Action<IXmppStream> StreamInitializer { get; set; }
+        public Action<IDuplexChannel<XmlElement>> StreamInitializer { get; set; }
 
         protected override void OnOpening()
         {
             base.OnOpening();
-            streamChannel.Open();            
-            xmppStream = CreateXmppStream();
-            StreamInitializer?.Invoke(xmppStream);
+            streamChannel.Open();
+            streamProxy = new StreamProxy(streamChannel.GetStream());
+            writer = new XmppStreamWriter(streamProxy);
+            StreamInitializer?.Invoke(this);
         }
 
         protected override void OnClosing()
@@ -34,36 +41,15 @@ namespace Redcat.Xmpp.Channels
             streamChannel.Close();
         }
 
-        protected virtual XmppStream CreateXmppStream()
-        {
-            streamProxy = new StreamProxy(streamChannel.GetStream());
-            return new XmppStream(streamProxy);
-        }
-
         internal void SetTlsContext()
         {
             if (!(streamChannel is ISecureStreamChannel)) throw new InvalidOperationException();
             streamProxy.OriginStream = ((ISecureStreamChannel)streamChannel).GetSecureStream();
         }
 
-        public Stanza Receive()
+        public void Send(XmlElement message)
         {
-            return xmppStream.Read() as Stanza;
-        }
-
-        public async Task<Stanza> ReceiveAsync()
-        {
-            return await xmppStream.ReadAsync() as Stanza;
-        }
-
-        public void Send(Stanza stanza)
-        {
-            xmppStream.Write(stanza);
-        }
-
-        public async Task SendAsync(Stanza stanza)
-        {
-            await xmppStream.WriteAsync(stanza);
+            writer.Write(message);
         }
     }
 }

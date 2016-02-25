@@ -12,15 +12,20 @@ namespace Redcat.Core.Net
     public class TcpChannel : ChannelBase, IStreamChannel, ISecureStreamChannel, IAsyncInputChannel<ArraySegment<byte>>, IObservable<ArraySegment<byte>>
     {
         private ICollection<IObserver<ArraySegment<byte>>> subscribers;
+
         private NetworkStream stream;
         private SslStream secureStream;
+
+        private byte[] buffer;
         private Socket socket;
+
         private SocketAsyncEventArgs args;
         private TaskCompletionSource<ArraySegment<byte>> complitionSource;
 
-        public TcpChannel(ConnectionSettings settings) : base(settings)
+        public TcpChannel(int bufferSize, ConnectionSettings settings) : base(settings)
         {
             subscribers = new List<IObserver<ArraySegment<byte>>>();
+            buffer = new byte[bufferSize];
         }
 
         public bool AcceptAllCertificates { get; set; }
@@ -30,6 +35,7 @@ namespace Redcat.Core.Net
             base.OnOpening();
             socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(Settings.Host, Settings.Port);
+            ReceiveAsync();
         }
 
         protected override void OnClosing()
@@ -53,8 +59,6 @@ namespace Redcat.Core.Net
             }
             return secureStream;
         }
-
-        byte[] buffer = new byte[10000];
 
         public ArraySegment<byte> Receive()
         {
@@ -82,7 +86,9 @@ namespace Redcat.Core.Net
 
         private void OnDataReceived(object sender, SocketAsyncEventArgs args)
         {            
-            complitionSource.SetResult(new ArraySegment<byte>(buffer, 0, args.BytesTransferred));
+            var result = new ArraySegment<byte>(buffer, 0, args.BytesTransferred);
+            complitionSource.SetResult(result);
+            subscribers.OnNext(result);
         }
 
         public IDisposable Subscribe(IObserver<ArraySegment<byte>> subscriber)

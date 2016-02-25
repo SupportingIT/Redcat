@@ -4,6 +4,7 @@ using Redcat.Core;
 using Redcat.Xmpp.Xml;
 using System.Net;
 using System;
+using Redcat.Core.Channels;
 
 namespace Redcat.Xmpp
 {
@@ -42,10 +43,10 @@ namespace Redcat.Xmpp
             foreach (var negatiator in negatiators) this.negotiators.Add(negatiator);
         }
 
-        public void Init(IXmppStream stream)
+        public void Init(IDuplexChannel<XmlElement> stream)
         {
             bool initRequired = true;
-            context = new NegotiationContext(stream);
+            context = null;// new NegotiationContext(stream);
             XmlElement features = null;
             
             for (int i = 0; i < iterationLimit; i++)
@@ -64,19 +65,19 @@ namespace Redcat.Xmpp
             throw new InvalidOperationException();
         }
 
-        private void InitStream(IXmppStream stream)
+        private void InitStream(IDuplexChannel<XmlElement> stream)
         {
             StreamHeader header = StreamHeader.CreateClientHeader(settings.Domain);
-            stream.Write(header);
-            XmlElement response = stream.Read();
+            stream.Send(header);
+            XmlElement response = stream.Receive();
             //First response might be a result of previous feature negotiation
-            if (response.Name != "stream:stream") response = stream.Read();
+            if (response.Name != "stream:stream") response = stream.Receive();
             VerifyResponseHeader(response);
         }
 
-        private XmlElement ReadFeatures(IXmppStream stream)
+        private XmlElement ReadFeatures(IDuplexChannel<XmlElement> stream)
         {
-            XmlElement features = stream.Read();
+            XmlElement features = stream.Receive();
             VerifyStreamFeatures(features);
             return features;
         }
@@ -94,7 +95,7 @@ namespace Redcat.Xmpp
             return features.Any(f => negotiators.Any(n => n.CanNegotiate(context, f)));
         }
 
-        private bool HandleFeatures(IXmppStream stream, ICollection<XmlElement> features)
+        private bool HandleFeatures(IDuplexChannel<XmlElement> stream, ICollection<XmlElement> features)
         {            
             XmlElement feature = null;
             IFeatureNegatiator negotiator = GetNegotiator(features, out feature);

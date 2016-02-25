@@ -1,6 +1,7 @@
 ﻿using Redcat.Core;
 using Redcat.Core.Channels;
 using Redcat.Xmpp.Negotiators;
+using Redcat.Xmpp.Xml;
 using System;
 using StreamChannelFactory = Redcat.Core.Channels.IChannelFactory<Redcat.Core.Channels.IStreamChannel>;
 
@@ -26,7 +27,7 @@ namespace Redcat.Xmpp.Channels
             return channel;
         }
 
-        private Action<IXmppStream> CreateInitializer(Action setTlsContext, ConnectionSettings settings, Func<ISaslCredentials> credentialsProvider)
+        private Action<IDuplexChannel<XmlElement>> CreateInitializer(Action setTlsContext, ConnectionSettings settings, Func<ISaslCredentials> credentialsProvider)
         {
             StreamInitializer initializer = new StreamInitializer(settings);
             initializer.Negotiators.Add(CreateSaslNegotiator(credentialsProvider));

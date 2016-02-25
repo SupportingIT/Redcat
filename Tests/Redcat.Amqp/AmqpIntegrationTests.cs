@@ -13,7 +13,7 @@ namespace Redcat.Amqp.Tests
         public void Amqp_Connection_Test()
         {
             ConnectionSettings settings = CreateConnectionSettings();
-            TcpChannel channel = new TcpChannel(settings);
+            TcpChannel channel = new TcpChannel(10, settings);
             channel.Open();
             Stream stream = channel.GetStream();
             byte[] header = { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 0, 1, 0, 0 };
