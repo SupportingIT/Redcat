@@ -14,7 +14,10 @@ namespace Redcat.Xmpp.Tests
     [TestFixture]
     public class XmppIntegrationTests
     {
-        [Ignore]
+        private Container container;
+        private TcpChannel tcpChannel;
+
+        //[Ignore]
         [Test]
         public void Test_Xmpp_Connection()
         {            
@@ -22,17 +25,22 @@ namespace Redcat.Xmpp.Tests
             ConnectionSettings settings = CreateConnectionSettings();
 
             communicator.Connect(settings);
-            communicator.Send(Presence.Available());
+            communicator.Send(Roster.Get("buzzx8@redcat/res"));
+            var response = tcpChannel.Receive();
         }        
 
         private ICommunicator CreateCommunicator()
         {
-            Container container = new Container();
+            container = new Container();
 
             container.Register<ICommunicator, SingleChannelCommunicator>();            
             container.Register<IChannelFactory, XmppChannelFactory>();
             container.Register<IMessageDispatcher, MessageDispatcher>();
-            container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
+            container.Register<IChannelFactory<IStreamChannel>>(() => {
+                var factory = new TcpChannelFactory();
+                factory.ChannelCreated += (s, e) => tcpChannel = e;
+                return factory;
+            });
             container.Register<Func<ISaslCredentials>>(() => GetCredentials);
 
             return container.GetInstance<ICommunicator>();

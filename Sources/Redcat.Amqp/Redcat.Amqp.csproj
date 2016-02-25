@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5EA90F4A-92F4-4B98-B669-866460DE26A0}</ProjectGuid>
+    <ProjectGuid>{3906ABB1-9C62-4095-BC51-E345CC2D4C7E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Redcat.Core</RootNamespace>
-    <AssemblyName>Redcat.Core</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
+    <RootNamespace>Redcat.Amqp</RootNamespace>
+    <AssemblyName>Redcat.Amqp</AssemblyName>
+    <DefaultLanguage>ru-RU</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
@@ -34,29 +34,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ByteBuffer.cs" />
-    <Compile Include="Channels\CompositeChannelFactory.cs" />
-    <Compile Include="Channels\IAsyncChannel.cs" />
-    <Compile Include="Channels\IChannel.cs" />
-    <Compile Include="Channels\IReactiveChannel.cs" />
-    <Compile Include="Channels\IStreamChannel.cs" />
-    <Compile Include="Connection.cs" />
-    <Compile Include="BinaryData.cs" />
-    <Compile Include="ConnectionCommand.cs" />
-    <Compile Include="Contact.cs" />
-    <Compile Include="ContactController.cs" />
-    <Compile Include="ICommunicator.cs" />
-    <Compile Include="ObserverExtensions.cs" />
-    <Compile Include="SingleChannelCommunicator.cs" />
-    <Compile Include="StreamProxy.cs" />
-    <Compile Include="Communicator.cs" />
-    <Compile Include="ConnectionSettings.cs" />
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <ProjectReference Include="..\Redcat.Core\Redcat.Core.csproj">
+      <Project>{5ea90f4a-92f4-4b98-b669-866460de26a0}</Project>
+      <Name>Redcat.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertySet.cs" />
-    <Compile Include="IMessageDispatcher.cs" />
-    <Compile Include="Channels\ChannelBase.cs" />
-    <Compile Include="Channels\IChannelFactory.cs" />
-    <Compile Include="MessageDispatcher.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

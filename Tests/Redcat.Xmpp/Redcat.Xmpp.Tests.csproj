@@ -58,6 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContactControllerTests.cs" />
     <Compile Include="JidTests.cs" />
     <Compile Include="Negotiators\BindNegotiatorTests.cs" />
     <Compile Include="Negotiators\SaslNegotiatorTests.cs" />

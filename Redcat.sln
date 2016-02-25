@@ -23,8 +23,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.App.Wpf", "Sources\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.App", "Sources\Apps\Redcat.App\Redcat.App.csproj", "{5BFDBBC3-942C-47D3-8783-6B8FB16649E6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp", "Amqp", "{67C683D6-2FCF-473A-B3D7-62D0981412F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Amqp.Tests", "Tests\Redcat.Amqp\Redcat.Amqp.Tests.csproj", "{4514A85C-097B-4189-8716-CA4539347CC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Amqp", "Sources\Redcat.Amqp\Redcat.Amqp.csproj", "{3906ABB1-9C62-4095-BC51-E345CC2D4C7E}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{4514a85c-097b-4189-8716-ca4539347cc1}*SharedItemsImports = 4
 		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{18ba6fa0-2351-4bd7-80b3-db93e4a71fd6}*SharedItemsImports = 13
 		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{95e7b813-6d63-49bc-83c2-bc47b9dda5d8}*SharedItemsImports = 4
 	EndGlobalSection
@@ -57,6 +64,14 @@ Global
 		{5BFDBBC3-942C-47D3-8783-6B8FB16649E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BFDBBC3-942C-47D3-8783-6B8FB16649E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BFDBBC3-942C-47D3-8783-6B8FB16649E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4514A85C-097B-4189-8716-CA4539347CC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4514A85C-097B-4189-8716-CA4539347CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4514A85C-097B-4189-8716-CA4539347CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4514A85C-097B-4189-8716-CA4539347CC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3906ABB1-9C62-4095-BC51-E345CC2D4C7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3906ABB1-9C62-4095-BC51-E345CC2D4C7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3906ABB1-9C62-4095-BC51-E345CC2D4C7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3906ABB1-9C62-4095-BC51-E345CC2D4C7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,5 +83,7 @@ Global
 		{95E7B813-6D63-49BC-83C2-BC47B9DDA5D8} = {BDE1F267-2B1F-4A93-B8F6-0592A5C21DFA}
 		{C2791A6D-17A1-460C-88C5-7A3AE9EA27D0} = {35292152-8346-42DB-AA16-2B620A974DB1}
 		{5BFDBBC3-942C-47D3-8783-6B8FB16649E6} = {35292152-8346-42DB-AA16-2B620A974DB1}
+		{4514A85C-097B-4189-8716-CA4539347CC1} = {67C683D6-2FCF-473A-B3D7-62D0981412F1}
+		{3906ABB1-9C62-4095-BC51-E345CC2D4C7E} = {67C683D6-2FCF-473A-B3D7-62D0981412F1}
 	EndGlobalSection
 EndGlobal
