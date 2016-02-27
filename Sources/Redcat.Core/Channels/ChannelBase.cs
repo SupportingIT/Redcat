@@ -2,13 +2,14 @@
 
 namespace Redcat.Core.Channels
 {
-    public abstract class ChannelBase : IChannel
+    public abstract class ChannelBase : DisposableObject, IChannel
     {
         private ConnectionSettings settings;
-        private ChannelState state;
+        private ChannelState state;        
 
         protected ChannelBase(ConnectionSettings settings)
-        {
+        {            
+            state = ChannelState.Close;
             this.settings = settings;
         }
 
@@ -68,6 +69,11 @@ namespace Redcat.Core.Channels
         protected virtual void OnStateChanged(ChannelState state)
         {
             if (StateChanged != null) StateChanged(this, new StateChangedEventArgs(state));
+        }
+
+        protected override void DisposeManagedResources()
+        {
+            Close();
         }
 
         public event EventHandler<StateChangedEventArgs> StateChanged;

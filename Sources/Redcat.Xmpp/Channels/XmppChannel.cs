@@ -70,5 +70,13 @@ namespace Redcat.Xmpp.Channels
                 }
             }
         }
+
+        protected override void DisposeManagedResources()
+        {
+            base.DisposeManagedResources();
+            if (subscription != null) subscription.Dispose();
+            streamChannel.DisposeIfDisposable();
+            writer.Dispose();
+        }
     }
 }

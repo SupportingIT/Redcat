@@ -9,10 +9,8 @@ using System.Collections.Generic;
 
 namespace Redcat.Core.Net
 {
-    public class TcpChannel : ChannelBase, IInputChannel<ArraySegment<byte>>, ISecureStreamChannel, IAsyncInputChannel<ArraySegment<byte>>, IObservable<ArraySegment<byte>>
+    public class TcpChannel : ObservableChannel<ArraySegment<byte>>, IInputChannel<ArraySegment<byte>>, ISecureStreamChannel, IAsyncInputChannel<ArraySegment<byte>>, IObservable<ArraySegment<byte>>
     {
-        private ICollection<IObserver<ArraySegment<byte>>> subscribers;
-
         private Stream stream;
 
         private byte[] buffer;
@@ -23,7 +21,6 @@ namespace Redcat.Core.Net
 
         public TcpChannel(int bufferSize, ConnectionSettings settings) : base(settings)
         {
-            subscribers = new List<IObserver<ArraySegment<byte>>>();
             buffer = new byte[bufferSize];
         }
 
@@ -92,14 +89,22 @@ namespace Redcat.Core.Net
         }
 
         private void StopListening()
-        {
+        {            
             isListening = false;
         }
 
         private void OnDataReceived(object sender, SocketAsyncEventArgs args)
         {
             if (!isListening) return;
-            subscribers.OnNext(Receive());
+            try
+            {
+                RiseOnNext(Receive());
+            }
+            catch (IOException e)
+            {
+                if (isListening && !socket.Connected) return;
+                throw e;
+            }
             DoReceive();
         }
 
@@ -109,11 +114,6 @@ namespace Redcat.Core.Net
             {
                 OnDataReceived(socket, args);
             }
-        }
-
-        public IDisposable Subscribe(IObserver<ArraySegment<byte>> subscriber)
-        {
-            return subscribers.Subscribe(subscriber);
         }
 
         private bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
@@ -128,6 +128,14 @@ namespace Redcat.Core.Net
             if (AcceptAllCertificates) return true;
 
             return sslPolicyErrors == SslPolicyErrors.None;
+        }
+
+        protected override void DisposeManagedResources()
+        {
+            base.DisposeManagedResources();            
+            args.Dispose();
+            stream.Dispose();
+            socket.Dispose();
         }
 
         public event EventHandler<CertificateValidationEventArgs> CertificateValidation;

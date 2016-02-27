@@ -3,7 +3,7 @@ using System;
 
 namespace Redcat.Core
 {
-    public class SingleChannelCommunicator : ICommunicator, IDisposable
+    public class SingleChannelCommunicator : DisposableObject, ICommunicator
     {
         private IChannelFactory channelFactory;
         private IChannel channel;
@@ -29,15 +29,17 @@ namespace Redcat.Core
 
         public void Send<T>(T message) where T : class
         {
+            ThrowIfDisposed(nameof(SingleChannelCommunicator));
             if (message == null) throw new ArgumentNullException(nameof(message));
             var outputChannel = channel as IOutputChannel<T>;
             if (outputChannel == null) throw new InvalidOperationException();
             outputChannel.Send(message);
         }
 
-        public void Dispose()
+        protected override void DisposeManagedResources()
         {
-            Disconnect();
+            base.DisposeManagedResources();
+            channel.DisposeIfDisposable();
         }
     }
 }

@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace Redcat.Core.Channels
 {
-    public class BufferChannel<T> : ChannelBase, IInputChannel<T>, IAsyncInputChannel<T>, IObservable<T>, IObserver<ArraySegment<byte>>
+    public class BufferChannel<T> : ObservableChannel<T>, IInputChannel<T>, IAsyncInputChannel<T>, IObservable<T>, IObserver<ArraySegment<byte>>
     {
         private ByteBuffer buffer;
-        private ICollection<IObserver<T>> observers;
         private Queue<T> messageQueue;
         private ManualResetEventSlim bufferEvent;
 
@@ -17,7 +16,6 @@ namespace Redcat.Core.Channels
             buffer = new ByteBuffer(bufferSize);
             bufferEvent = new ManualResetEventSlim(false);
             messageQueue = new Queue<T>();
-            observers = new List<IObserver<T>>();
         }
 
         protected ByteBuffer Buffer => buffer;
@@ -71,13 +69,22 @@ namespace Redcat.Core.Channels
             lock (messageQueue)
             {
                 if (messageQueue.Count == 1) bufferEvent.Reset();
-                return messageQueue.Dequeue();
+                T message = messageQueue.Dequeue();
+                RiseOnNext(message);
+                return message;
             }
-        }        
+        }
 
-        public IDisposable Subscribe(IObserver<T> observer)
+        protected override void OnClose()
         {
-            return observers.Subscribe(observer);
+            base.OnClose();
+            bufferEvent.Set();
+        }
+
+        protected override void DisposeManagedResources()
+        {
+            base.DisposeManagedResources();
+            bufferEvent.Dispose();
         }
     }
 }

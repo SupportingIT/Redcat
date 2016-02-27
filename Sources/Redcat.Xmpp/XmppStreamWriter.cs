@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Redcat.Xmpp
 {
-    public class XmppStreamWriter
+    public class XmppStreamWriter : IDisposable
     {
         private static Encoding defaultEncoding = Encoding.UTF8;
         private TextWriter writer;
@@ -96,5 +96,7 @@ namespace Redcat.Xmpp
             writer.Write(name);
             writer.Write(">");
         }
+
+        public void Dispose() => writer.Dispose();
     }
 }
