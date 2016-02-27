@@ -9,7 +9,6 @@
     <Import_RootNamespace>Redcat.Core.Net</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)ReactiveTcpChannel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpChannel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpChannelFactory.cs" />
   </ItemGroup>
