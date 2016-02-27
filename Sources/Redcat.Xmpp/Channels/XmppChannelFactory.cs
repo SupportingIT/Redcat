@@ -23,7 +23,7 @@ namespace Redcat.Xmpp.Channels
             IStreamChannel streamChannel = streamChannelFactory.CreateChannel(settings);
             XmppChannel channel = new XmppChannel(streamChannel, settings);
             channel.Initializer = CreateInitializer(channel.SetTlsContext, settings, credentialsProvider);
-            
+            ChannelCreated?.Invoke(this, channel);
             return channel;
         }
 
@@ -43,5 +43,7 @@ namespace Redcat.Xmpp.Channels
             sasl.AddAuthenticator("PLAIN", Authenticators.Plain);
             return sasl;
         }
+
+        public event EventHandler<XmppChannel> ChannelCreated;
     }    
 }

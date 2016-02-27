@@ -36,6 +36,13 @@ namespace Redcat.Core
             outputChannel.Send(message);
         }
 
+        public T Receive<T>()
+        {
+            var inChannel = channel as IInputChannel<T>;
+            if (inChannel == null) throw new InvalidOperationException();
+            return inChannel.Receive();
+        }
+
         protected override void DisposeManagedResources()
         {
             base.DisposeManagedResources();

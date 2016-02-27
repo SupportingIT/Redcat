@@ -29,7 +29,7 @@ namespace Redcat.Core.Net
         protected override void OnOpening()
         {
             base.OnOpening();
-            socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            if (socket == null) socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(Settings.Host, Settings.Port);
             stream = GetStream();            
             StartListen();
@@ -38,7 +38,9 @@ namespace Redcat.Core.Net
         protected override void OnClosing()
         {
             base.OnClosing();
+            stream.Close();
             socket.Close();
+            stream = null;
         }
 
         public Stream GetStream()

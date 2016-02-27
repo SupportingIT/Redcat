@@ -15,24 +15,47 @@ namespace Redcat.Xmpp.Tests
     public class XmppIntegrationTests
     {
         private Container container;
-        private TcpChannel tcpChannel;
+        private XmppChannel channel;
 
         [SetUp]
         public void SetUp()
         {
             container = new Container();
+        }       
+
+        [TearDown]
+        public void TearDown()
+        {
+            container.Dispose();
         }
 
-        //[Ignore]
+        [Ignore]
         [Test]
-        public void Test_Xmpp_Connection()
-        {            
-            ICommunicator communicator = CreateCommunicator();            
+        public void TestXmppConnection()
+        {
+            ExecuteConnected(c => { });
+        }
+
+        [Ignore]
+        [Test]
+        public void TestRosterRequest()
+        {
+            ExecuteConnected(c => {
+                var comm = c as SingleChannelCommunicator;
+                comm.SendRosterRequest();
+                var response = comm.Receive<XmlElement>();
+            });
+        }
+
+        private void ExecuteConnected(Action<ICommunicator> action)
+        {
+            ICommunicator communicator = CreateCommunicator();
             ConnectionSettings settings = CreateConnectionSettings();
-            
+
             communicator.Connect(settings);
+            action(communicator);
             communicator.Disconnect();
-        }        
+        }
 
         private ICommunicator CreateCommunicator()
         {
@@ -45,11 +68,7 @@ namespace Redcat.Xmpp.Tests
             container.Register<ICommunicator, SingleChannelCommunicator>();
             container.Register<IChannelFactory, XmppChannelFactory>();
             container.Register<IMessageDispatcher, MessageDispatcher>();
-            container.Register<IChannelFactory<IStreamChannel>>(() => {
-                var factory = new TcpChannelFactory();
-                factory.ChannelCreated += (s, e) => tcpChannel = e;
-                return factory;
-            });
+            container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
             container.Register<Func<ISaslCredentials>>(() => GetCredentials);
         }
 

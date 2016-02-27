@@ -56,6 +56,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Channels\XmppChannelFactory.cs" />
     <Compile Include="Channels\XmppChannel.cs" />
+    <Compile Include="RosterExtensions.cs" />
     <Compile Include="StreamInitializer.cs" />
     <Compile Include="Xml\Bind.cs" />
     <Compile Include="Xml\DatagramElement.cs" />
