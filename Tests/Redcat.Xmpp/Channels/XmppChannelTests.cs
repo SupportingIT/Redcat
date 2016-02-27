@@ -18,14 +18,14 @@ namespace Redcat.Xmpp.Tests.Channels
             ConnectionSettings settings = new ConnectionSettings { Domain = "redcat" };
             IXmppStream xmppStream = A.Fake<IXmppStream>();
             IStreamChannel streamChannel = CreateStreamChannel();
-            var initializer = A.Fake<Action<IDuplexChannel<XmlElement>>>();
+            var initializer = A.Fake<Action<IXmppStream>>();
 
             XmppChannel channel = new XmppChannel(streamChannel, settings);
-            channel.StreamInitializer = initializer;
+            channel.Initializer = initializer;
 
             channel.Open();
 
-            A.CallTo(() => initializer.Invoke(A<IDuplexChannel<XmlElement>>._)).MustHaveHappened();
+            A.CallTo(() => initializer.Invoke(A<IXmppStream>._)).MustHaveHappened();
         }
 
         private IStreamChannel CreateStreamChannel()

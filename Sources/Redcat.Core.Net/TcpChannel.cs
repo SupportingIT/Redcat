@@ -13,7 +13,7 @@ namespace Redcat.Core.Net
     {
         private ICollection<IObserver<ArraySegment<byte>>> subscribers;
 
-        private StreamProxy streamProxy;
+        private Stream stream;
 
         private byte[] buffer;
         private Socket socket;
@@ -34,7 +34,7 @@ namespace Redcat.Core.Net
             base.OnOpening();
             socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(Settings.Host, Settings.Port);
-            streamProxy = new StreamProxy(new NetworkStream(socket));
+            stream = GetStream();            
             StartListen();
         }
 
@@ -46,32 +46,40 @@ namespace Redcat.Core.Net
 
         public Stream GetStream()
         {
-            if (streamProxy == null)
+            if (stream == null)
             {
-                streamProxy = new StreamProxy(new NetworkStream(socket));
+                stream = new NetworkStream(socket);
             }
-            return streamProxy;
+            return stream;
         }
 
-        public void SetStreamSecurity()
+        public Stream GetSecuredStream()
         {
-            SslStream sslStream = new SslStream(streamProxy.OriginStream, false, ValidateServerCertificate);
-            sslStream.AuthenticateAsClient(Settings.Host);
+            if (!(stream is SslStream))
+            {
+                StopListening();
+                SslStream ssl = new SslStream(stream, true, ValidateServerCertificate);                
+                ssl.AuthenticateAsClient(Settings.Host);
+                stream = ssl;
+                StartListen();
+            }
+
+            return stream;
         }
 
         public ArraySegment<byte> Receive()
         {
-            int byteCount = streamProxy.Read(buffer, 0, buffer.Length);
+            int byteCount = stream.Read(buffer, 0, buffer.Length);
             return new ArraySegment<byte>(buffer, 0, byteCount);
         }
 
         public async Task<ArraySegment<byte>> ReceiveAsync()
         {
-            int byteCount = await streamProxy.ReadAsync(buffer, 0, buffer.Length);
+            int byteCount = await stream.ReadAsync(buffer, 0, buffer.Length);
             return new ArraySegment<byte>(buffer, 0, byteCount);
         }
 
-        public void StartListen()
+        private void StartListen()
         {
             if (args == null)
             {
@@ -80,13 +88,27 @@ namespace Redcat.Core.Net
                 args.Completed += OnDataReceived;
             }
             isListening = true;
-            socket.ReceiveAsync(args);
+            DoReceive();
+        }
+
+        private void StopListening()
+        {
+            isListening = false;
         }
 
         private void OnDataReceived(object sender, SocketAsyncEventArgs args)
-        {                        
+        {
+            if (!isListening) return;
             subscribers.OnNext(Receive());
-            if (isListening) socket.ReceiveAsync(args);
+            DoReceive();
+        }
+
+        private void DoReceive()
+        {
+            if (!socket.ReceiveAsync(args))
+            {
+                OnDataReceived(socket, args);
+            }
         }
 
         public IDisposable Subscribe(IObserver<ArraySegment<byte>> subscriber)

@@ -14,7 +14,7 @@ namespace Redcat.Xmpp
         public XmppStreamWriter(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException("stream");
-            writer = new StreamWriter(stream, defaultEncoding);
+            writer = new StreamWriter(stream, defaultEncoding);            
         }
 
         public XmppStreamWriter(TextWriter writer)

@@ -9,6 +9,6 @@ namespace Redcat.Core.Channels
 
     public interface ISecureStreamChannel : IStreamChannel
     {
-        void SetStreamSecurity();
+        Stream GetSecuredStream();
     }
 }

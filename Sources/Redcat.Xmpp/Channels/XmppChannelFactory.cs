@@ -22,12 +22,12 @@ namespace Redcat.Xmpp.Channels
         {            
             IStreamChannel streamChannel = streamChannelFactory.CreateChannel(settings);
             XmppChannel channel = new XmppChannel(streamChannel, settings);
-            channel.StreamInitializer = CreateInitializer(channel.SetTlsContext, settings, credentialsProvider);
+            channel.Initializer = CreateInitializer(channel.SetTlsContext, settings, credentialsProvider);
             
             return channel;
         }
 
-        private Action<IDuplexChannel<XmlElement>> CreateInitializer(Action setTlsContext, ConnectionSettings settings, Func<ISaslCredentials> credentialsProvider)
+        private Action<IXmppStream> CreateInitializer(Action setTlsContext, ConnectionSettings settings, Func<ISaslCredentials> credentialsProvider)
         {
             StreamInitializer initializer = new StreamInitializer(settings);
             initializer.Negotiators.Add(CreateSaslNegotiator(credentialsProvider));

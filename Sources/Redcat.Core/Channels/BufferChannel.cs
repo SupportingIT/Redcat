@@ -8,7 +8,7 @@ namespace Redcat.Core.Channels
     public class BufferChannel<T> : ChannelBase, IInputChannel<T>, IAsyncInputChannel<T>, IObservable<T>, IObserver<ArraySegment<byte>>
     {
         private ByteBuffer buffer;
-        private ICollection<T> observers;
+        private ICollection<IObserver<T>> observers;
         private Queue<T> messageQueue;
         private ManualResetEventSlim bufferEvent;
 
@@ -17,6 +17,7 @@ namespace Redcat.Core.Channels
             buffer = new ByteBuffer(bufferSize);
             bufferEvent = new ManualResetEventSlim(false);
             messageQueue = new Queue<T>();
+            observers = new List<IObserver<T>>();
         }
 
         protected ByteBuffer Buffer => buffer;
@@ -24,6 +25,11 @@ namespace Redcat.Core.Channels
         protected void EnqueueMessage(T message)
         {
             messageQueue.Enqueue(message);
+        }
+
+        protected void EnqueueMessages(IEnumerable<T> messages)
+        {
+            foreach (T message in messages) EnqueueMessage(message);
         }
 
         public void OnCompleted()
@@ -34,9 +40,12 @@ namespace Redcat.Core.Channels
 
         public void OnNext(ArraySegment<byte> value)
         {
-            buffer.Write(value.Array, value.Offset, value.Count);
-            OnBufferUpdated();
-            if (messageQueue.Count > 0 && !bufferEvent.IsSet) bufferEvent.Set();
+            lock (messageQueue)
+            {
+                buffer.Write(value.Array, value.Offset, value.Count);
+                OnBufferUpdated();
+                if (messageQueue.Count > 0 && !bufferEvent.IsSet) bufferEvent.Set();
+            }
         }
 
         protected virtual void OnBufferUpdated()
@@ -59,12 +68,16 @@ namespace Redcat.Core.Channels
                 bufferEvent.Wait();
             }
 
-            return messageQueue.Dequeue();
+            lock (messageQueue)
+            {
+                if (messageQueue.Count == 1) bufferEvent.Reset();
+                return messageQueue.Dequeue();
+            }
         }        
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            throw new NotImplementedException();
+            return observers.Subscribe(observer);
         }
     }
 }

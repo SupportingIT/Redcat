@@ -2,22 +2,23 @@
 using Redcat.Core;
 using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
-using System.IO;
+using Redcat.Xmpp.Parsing;
 
 namespace Redcat.Xmpp.Channels
 {
-    public class XmppChannel : BufferChannel<XmlElement>, IDuplexChannel<XmlElement>
+    public class XmppChannel : BufferChannel<XmlElement>, IDuplexChannel<XmlElement>, IXmppStream
     {
         private const int DefaultBufferSize = 1024;
         private IStreamChannel streamChannel;        
         private IDisposable subscription;
+        private IXmlParser parser;
 
         private XmppStreamWriter writer;
-        private Stream stream;
 
         public XmppChannel(IStreamChannel streamChannel, ConnectionSettings settings) : base(DefaultBufferSize, settings)
         {
             if (streamChannel == null) throw new ArgumentNullException(nameof(streamChannel));
+            parser = new XmppStreamParser();
             this.streamChannel = streamChannel;
             if (streamChannel is IObservable<ArraySegment<byte>>)
             {
@@ -25,15 +26,14 @@ namespace Redcat.Xmpp.Channels
             }
         }
 
-        public Action<IDuplexChannel<XmlElement>> StreamInitializer { get; set; }
+        public Action<IXmppStream> Initializer { get; set; }
 
         protected override void OnOpening()
         {
             base.OnOpening();
             streamChannel.Open();
-            stream = streamChannel.GetStream();
-            writer = new XmppStreamWriter(stream);
-            StreamInitializer?.Invoke(this);
+            writer = new XmppStreamWriter(streamChannel.GetStream());
+            Initializer?.Invoke(this);
         }
 
         protected override void OnClosing()
@@ -45,8 +45,12 @@ namespace Redcat.Xmpp.Channels
         internal void SetTlsContext()
         {
             if (!(streamChannel is ISecureStreamChannel)) throw new InvalidOperationException();
-            ((ISecureStreamChannel)streamChannel).SetStreamSecurity();
+            writer = new XmppStreamWriter(((ISecureStreamChannel)streamChannel).GetSecuredStream());
         }
+
+        public XmlElement Read() => Receive();
+
+        public void Write(XmlElement element) => Send(element);
 
         public void Send(XmlElement message)
         {
@@ -55,7 +59,16 @@ namespace Redcat.Xmpp.Channels
 
         protected override void OnBufferUpdated()
         {
-            throw new NotImplementedException();
+            for (int i = Buffer.Count - 1; i >= 0; i--)
+            {
+                if (Buffer[i] == '>')
+                {
+                    var elements = parser.Parse(Buffer.ToString(0, i + 1));
+                    EnqueueMessages(elements);
+                    Buffer.Discard(i + 1);
+                    break;
+                }
+            }
         }
     }
 }
