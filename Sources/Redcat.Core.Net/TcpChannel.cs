@@ -9,18 +9,17 @@ using System.Collections.Generic;
 
 namespace Redcat.Core.Net
 {
-    public class TcpChannel : ChannelBase, IStreamChannel, ISecureStreamChannel, IAsyncInputChannel<ArraySegment<byte>>, IObservable<ArraySegment<byte>>
+    public class TcpChannel : ChannelBase, IInputChannel<ArraySegment<byte>>, ISecureStreamChannel, IAsyncInputChannel<ArraySegment<byte>>, IObservable<ArraySegment<byte>>
     {
         private ICollection<IObserver<ArraySegment<byte>>> subscribers;
 
-        private NetworkStream stream;
-        private SslStream secureStream;
+        private StreamProxy streamProxy;
 
         private byte[] buffer;
         private Socket socket;
 
         private SocketAsyncEventArgs args;
-        private TaskCompletionSource<ArraySegment<byte>> complitionSource;
+        private bool isListening;
 
         public TcpChannel(int bufferSize, ConnectionSettings settings) : base(settings)
         {
@@ -35,7 +34,8 @@ namespace Redcat.Core.Net
             base.OnOpening();
             socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(Settings.Host, Settings.Port);
-            ReceiveAsync();
+            streamProxy = new StreamProxy(new NetworkStream(socket));
+            StartListen();
         }
 
         protected override void OnClosing()
@@ -46,49 +46,47 @@ namespace Redcat.Core.Net
 
         public Stream GetStream()
         {
-            if (stream == null) stream = new NetworkStream(socket);
-            return stream;
+            if (streamProxy == null)
+            {
+                streamProxy = new StreamProxy(new NetworkStream(socket));
+            }
+            return streamProxy;
         }
 
-        public Stream GetSecureStream()
+        public void SetStreamSecurity()
         {
-            if (secureStream == null)
-            {
-                secureStream = new SslStream(stream, true, ValidateServerCertificate);
-                secureStream.AuthenticateAsClient(Settings.Host);
-            }
-            return secureStream;
+            SslStream sslStream = new SslStream(streamProxy.OriginStream, false, ValidateServerCertificate);
+            sslStream.AuthenticateAsClient(Settings.Host);
         }
 
         public ArraySegment<byte> Receive()
         {
-            int receivedBytes = socket.Receive(buffer);
-            return new ArraySegment<byte>(buffer, 0, receivedBytes);
+            int byteCount = streamProxy.Read(buffer, 0, buffer.Length);
+            return new ArraySegment<byte>(buffer, 0, byteCount);
         }
 
         public async Task<ArraySegment<byte>> ReceiveAsync()
         {
+            int byteCount = await streamProxy.ReadAsync(buffer, 0, buffer.Length);
+            return new ArraySegment<byte>(buffer, 0, byteCount);
+        }
+
+        public void StartListen()
+        {
             if (args == null)
             {
-                complitionSource = new TaskCompletionSource<ArraySegment<byte>>();
                 args = new SocketAsyncEventArgs();
-                args.SetBuffer(buffer, 0, buffer.Length);                
+                args.BufferList = new List<ArraySegment<byte>> { new ArraySegment<byte>(new byte[0], 0, 0) };
                 args.Completed += OnDataReceived;
             }
-
-            if (!socket.ReceiveAsync(args))
-            {
-                return new ArraySegment<byte>(args.Buffer, args.Offset, args.Count);
-            }
-            
-            return await complitionSource.Task;            
+            isListening = true;
+            socket.ReceiveAsync(args);
         }
 
         private void OnDataReceived(object sender, SocketAsyncEventArgs args)
-        {            
-            var result = new ArraySegment<byte>(buffer, 0, args.BytesTransferred);
-            complitionSource.SetResult(result);
-            subscribers.OnNext(result);
+        {                        
+            subscribers.OnNext(Receive());
+            if (isListening) socket.ReceiveAsync(args);
         }
 
         public IDisposable Subscribe(IObserver<ArraySegment<byte>> subscriber)

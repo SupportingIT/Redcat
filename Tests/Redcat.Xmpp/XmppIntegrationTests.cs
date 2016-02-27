@@ -23,10 +23,9 @@ namespace Redcat.Xmpp.Tests
         {            
             ICommunicator communicator = CreateCommunicator();            
             ConnectionSettings settings = CreateConnectionSettings();
-
-            communicator.Connect(settings);
-            communicator.Send(Roster.Get("buzzx8@redcat/res"));
-            var response = tcpChannel.Receive();
+            
+            communicator.Connect(settings);            
+            communicator.Send(Roster.Get("buzzx8@redcat/res"));            
         }        
 
         private ICommunicator CreateCommunicator()

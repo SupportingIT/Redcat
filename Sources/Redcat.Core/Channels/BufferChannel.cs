@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Redcat.Core.Channels
@@ -8,12 +9,21 @@ namespace Redcat.Core.Channels
     {
         private ByteBuffer buffer;
         private ICollection<T> observers;
-        private TaskCompletionSource<T> completionSource;
+        private Queue<T> messageQueue;
+        private ManualResetEventSlim bufferEvent;
 
         public BufferChannel(int bufferSize, ConnectionSettings settings) : base(settings)
         {
             buffer = new ByteBuffer(bufferSize);
-            completionSource = new TaskCompletionSource<T>();
+            bufferEvent = new ManualResetEventSlim(false);
+            messageQueue = new Queue<T>();
+        }
+
+        protected ByteBuffer Buffer => buffer;
+
+        protected void EnqueueMessage(T message)
+        {
+            messageQueue.Enqueue(message);
         }
 
         public void OnCompleted()
@@ -25,18 +35,32 @@ namespace Redcat.Core.Channels
         public void OnNext(ArraySegment<byte> value)
         {
             buffer.Write(value.Array, value.Offset, value.Count);
-            throw new NotImplementedException();
+            OnBufferUpdated();
+            if (messageQueue.Count > 0 && !bufferEvent.IsSet) bufferEvent.Set();
         }
+
+        protected virtual void OnBufferUpdated()
+        { }
 
         public T Receive()
         {
-            return ReceiveAsync().Result;
+            return RetreiveMessage();
         }
 
         public async Task<T> ReceiveAsync()
         {
-            return await completionSource.Task;
+            return await Task.Run(() => RetreiveMessage());
         }
+
+        private T RetreiveMessage()
+        {
+            if (messageQueue.Count == 0)
+            {
+                bufferEvent.Wait();
+            }
+
+            return messageQueue.Dequeue();
+        }        
 
         public IDisposable Subscribe(IObserver<T> observer)
         {

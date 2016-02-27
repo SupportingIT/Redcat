@@ -7,8 +7,8 @@ namespace Redcat.Core.Channels
         Stream GetStream();
     }
 
-    public interface ISecureStreamChannel : IChannel
+    public interface ISecureStreamChannel : IStreamChannel
     {
-        Stream GetSecureStream();
+        void SetStreamSecurity();
     }
 }

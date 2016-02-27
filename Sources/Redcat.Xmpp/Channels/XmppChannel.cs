@@ -2,6 +2,7 @@
 using Redcat.Core;
 using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
+using System.IO;
 
 namespace Redcat.Xmpp.Channels
 {
@@ -9,10 +10,10 @@ namespace Redcat.Xmpp.Channels
     {
         private const int DefaultBufferSize = 1024;
         private IStreamChannel streamChannel;        
-        private StreamProxy streamProxy;
         private IDisposable subscription;
 
         private XmppStreamWriter writer;
+        private Stream stream;
 
         public XmppChannel(IStreamChannel streamChannel, ConnectionSettings settings) : base(DefaultBufferSize, settings)
         {
@@ -30,8 +31,8 @@ namespace Redcat.Xmpp.Channels
         {
             base.OnOpening();
             streamChannel.Open();
-            streamProxy = new StreamProxy(streamChannel.GetStream());
-            writer = new XmppStreamWriter(streamProxy);
+            stream = streamChannel.GetStream();
+            writer = new XmppStreamWriter(stream);
             StreamInitializer?.Invoke(this);
         }
 
@@ -44,12 +45,17 @@ namespace Redcat.Xmpp.Channels
         internal void SetTlsContext()
         {
             if (!(streamChannel is ISecureStreamChannel)) throw new InvalidOperationException();
-            streamProxy.OriginStream = ((ISecureStreamChannel)streamChannel).GetSecureStream();
+            ((ISecureStreamChannel)streamChannel).SetStreamSecurity();
         }
 
         public void Send(XmlElement message)
         {
             writer.Write(message);
+        }
+
+        protected override void OnBufferUpdated()
+        {
+            throw new NotImplementedException();
         }
     }
 }
