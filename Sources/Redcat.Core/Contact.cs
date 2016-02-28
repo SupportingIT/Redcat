@@ -1,8 +1,8 @@
 ﻿namespace Redcat.Core
 {
-    public class Contact
+    public abstract class Contact
     {
-        public Contact(object id)
+        protected Contact(object id)
         {
             Id = id;
         }

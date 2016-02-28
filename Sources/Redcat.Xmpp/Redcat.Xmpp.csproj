@@ -58,6 +58,9 @@
     <Compile Include="Channels\XmppChannelFactory.cs" />
     <Compile Include="Channels\XmppChannel.cs" />
     <Compile Include="RosterExtensions.cs" />
+    <Compile Include="RosterHandler.cs" />
+    <Compile Include="RosterItem.cs" />
+    <Compile Include="StanzaRouter.cs" />
     <Compile Include="StreamInitializer.cs" />
     <Compile Include="Xml\Bind.cs" />
     <Compile Include="Xml\DatagramElement.cs" />

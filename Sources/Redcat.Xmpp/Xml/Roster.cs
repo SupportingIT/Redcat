@@ -4,22 +4,12 @@ namespace Redcat.Xmpp.Xml
 {
     public static class Roster
     {
-        public static IqStanza Get(JID from)
+        public static IqStanza Request(object id = null, JID from = null)
         {
             IqStanza iq = Iq.Get();
-            iq.Id = Guid.NewGuid();
-            iq.AddChild(Query());
-            iq.From = from;
-            return iq;
-        }
-
-        public static IqStanza Set(JID itemJid)
-        {
-            IqStanza iq = Iq.Set();
-            iq.Id = "123";
-            var item = new XmlElement("item");
-            item.SetAttributeValue("jid", itemJid);
-            iq.AddQuery().AddChild(item);
+            if (id != null) iq.Id = id;
+            if (from != null) iq.From = from;
+            iq.AddQuery();            
             return iq;
         }
 
@@ -30,6 +20,11 @@ namespace Redcat.Xmpp.Xml
             return query;
         }
 
-        private static XmlElement Query() => new XmlElement("query", Namespaces.Roster);
+        private static XmlElement Query() => new IqQuery(Namespaces.Roster);
+
+        public static bool IsRosterRequest(this IqStanza iq)
+        {
+            return iq.IsGet() && iq.HasChild("query", Namespaces.Roster);
+        }
     }
 }

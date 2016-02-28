@@ -7,13 +7,13 @@ namespace Redcat.Xmpp
     {
         public static void SendRosterRequest(this ICommunicator communicator, JID from = null)
         {
-            IqStanza request = Roster.Get(from);
+            IqStanza request = Roster.Request(from);
             communicator.Send(request);
         }
 
         public static void SendRosterAdd(this ICommunicator communicator, JID itemJid)
         {
-            IqStanza request = Roster.Set(itemJid);
+            IqStanza request = null;// Roster.Set(itemJid);
             communicator.Send(request);
         }
     }
