@@ -23,17 +23,17 @@ namespace Redcat.Xmpp.Channels
             IStreamChannel streamChannel = streamChannelFactory.CreateChannel(settings);
             XmppChannel channel = new XmppChannel(streamChannel, settings);
             channel.Initializer = CreateInitializer(channel.SetTlsContext, settings, credentialsProvider);
-            ChannelCreated?.Invoke(this, channel);
             return channel;
         }
 
-        private Action<IXmppStream> CreateInitializer(Action setTlsContext, ConnectionSettings settings, Func<ISaslCredentials> credentialsProvider)
+        private Func<IXmppStream, NegotiationContext> CreateInitializer(Action setTlsContext, ConnectionSettings settings, Func<ISaslCredentials> credentialsProvider)
         {
             StreamInitializer initializer = new StreamInitializer(settings);
             initializer.Negotiators.Add(CreateSaslNegotiator(credentialsProvider));
             initializer.Negotiators.Add(new TlsNegotiator(setTlsContext));
             initializer.Negotiators.Add(new BindNegotiator());
-            initializer.Negotiators.Add(new RegistrationNegotiator());
+            initializer.Negotiators.Add(new SessionNegotiator());
+            //initializer.Negotiators.Add(new RegistrationNegotiator());
             return initializer.Init;
         }
 

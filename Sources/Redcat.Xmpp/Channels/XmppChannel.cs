@@ -15,6 +15,8 @@ namespace Redcat.Xmpp.Channels
 
         private XmppStreamWriter writer;
 
+        private NegotiationContext context;
+
         public XmppChannel(IStreamChannel streamChannel, ConnectionSettings settings) : base(DefaultBufferSize, settings)
         {
             if (streamChannel == null) throw new ArgumentNullException(nameof(streamChannel));
@@ -26,14 +28,16 @@ namespace Redcat.Xmpp.Channels
             }
         }
 
-        public Action<IXmppStream> Initializer { get; set; }
+        public NegotiationContext Context => context;
+
+        public Func<IXmppStream, NegotiationContext> Initializer { get; set; }
 
         protected override void OnOpening()
         {
             base.OnOpening();
             streamChannel.Open();
             writer = new XmppStreamWriter(streamChannel.GetStream());
-            Initializer?.Invoke(this);
+            context = Initializer?.Invoke(this);
         }
 
         protected override void OnClosing()

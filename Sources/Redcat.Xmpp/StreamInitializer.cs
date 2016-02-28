@@ -42,7 +42,7 @@ namespace Redcat.Xmpp
             foreach (var negatiator in negatiators) this.negotiators.Add(negatiator);
         }
 
-        public void Init(IXmppStream stream)
+        public NegotiationContext Init(IXmppStream stream)
         {
             bool initRequired = true;
             context = new NegotiationContext(stream);
@@ -56,8 +56,8 @@ namespace Redcat.Xmpp
                     features = ReadFeatures(stream);
                 }
 
-                if (features.Childs.Count == 0) return;
-                if (!HasNegotiatorForFeatures(features.Childs)) return;                
+                if (features.Childs.Count == 0) return context;
+                if (!HasNegotiatorForFeatures(features.Childs)) return context;                
 
                 initRequired = HandleFeatures(stream, features.Childs);                
             }

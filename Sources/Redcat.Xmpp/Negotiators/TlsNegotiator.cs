@@ -25,7 +25,10 @@ namespace Redcat.Xmpp.Negotiators
         {
             context.Stream.Write(Tls.Start);
             var response = context.Stream.Read();
-            if (IsResponseValid(response)) setTlsContext();
+            if (IsResponseValid(response))
+            {
+                setTlsContext(); context.IsTlsEstablished = true;
+            }
             else
             {
                 context.Stream.Write(Tls.Failure);

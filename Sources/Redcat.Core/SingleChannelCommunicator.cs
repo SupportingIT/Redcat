@@ -36,6 +36,8 @@ namespace Redcat.Core
             outputChannel.Send(message);
         }
 
+        public IChannel Channel => channel;
+
         public T Receive<T>()
         {
             var inChannel = channel as IInputChannel<T>;

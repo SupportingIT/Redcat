@@ -7,15 +7,15 @@ namespace Redcat.Xmpp
         public NegotiationContext(IXmppStream stream)
         {
             Stream = stream;
-        }
-
-        //public XmlElement Feature { get; set; }
+        }        
 
         public IXmppStream Stream { get; }
 
         public bool IsAuthenticated { get; set; }
 
         public bool IsTlsEstablished { get; set; }
+
+        public bool IsSessionEsteblished { get; set; }
 
         public JID Jid { get; set; }
     }

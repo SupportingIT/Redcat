@@ -14,8 +14,7 @@ namespace Redcat.Xmpp.Tests
     [TestFixture]
     public class XmppIntegrationTests
     {
-        private Container container;
-        private XmppChannel channel;
+        private Container container;        
 
         [SetUp]
         public void SetUp()
@@ -39,10 +38,13 @@ namespace Redcat.Xmpp.Tests
         [Ignore]
         [Test]
         public void TestRosterRequest()
-        {
+        {            
             ExecuteConnected(c => {
+                var processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
                 var comm = c as SingleChannelCommunicator;
-                comm.SendRosterRequest();
+                var channel = comm.Channel as XmppChannel;
+                //comm.SendRosterAdd("buzz_contact@redcat");
+                comm.SendRosterRequest(channel.Context.Jid);
                 var response = comm.Receive<XmlElement>();
             });
         }
