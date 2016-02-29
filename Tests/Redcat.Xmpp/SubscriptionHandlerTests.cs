@@ -51,7 +51,8 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void AcceptSubscription_Sends_SubscriptionApprove_Stanza()
         {            
-            JID subscriber = "user@redcat.org";            
+            JID subscriber = "user@redcat.org";
+            handler.OnNext(Subscription.IncomingRequest(subscriber));
 
             handler.AcceptSubscription(subscriber);
 
@@ -63,6 +64,7 @@ namespace Redcat.Xmpp.Tests
         public void CancelSubscription_Sends_SubscriptionApprove_Stanza()
         {
             JID subscriber = "user@redcat.org";
+            handler.OnNext(Subscription.IncomingRequest(subscriber));
 
             handler.CancelSubscription(subscriber);
 

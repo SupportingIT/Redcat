@@ -4,12 +4,9 @@ using Redcat.Core.Channels;
 using Redcat.Core.Net;
 using Redcat.Xmpp.Channels;
 using Redcat.Xmpp.Negotiators;
-using Redcat.Xmpp.Xml;
 using SimpleInjector;
 using System;
 using System.Configuration;
-using System.Linq;
-using System.Threading;
 
 namespace Redcat.Xmpp.Tests
 {
