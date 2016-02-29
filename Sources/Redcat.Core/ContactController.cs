@@ -6,7 +6,7 @@ namespace Redcat.Core
     public class ContactController : IObserver<ContactCommand>, IObservable<ContactCommand>
     {
         private List<Contact> contacts;
-        private List<IObserver<ContactCommand>> observers;
+        private List<IObserver<ContactCommand>> observers;        
 
         public ContactController(params Contact[] contacts)
         {
@@ -27,6 +27,8 @@ namespace Redcat.Core
             observers.OnNext(ContactCommand.Remove(contact));
             contacts.Remove(contact);
         }
+
+        public void RequestContacts() => observers.OnNext(ContactCommand.Get());
 
         public void Update()
         {

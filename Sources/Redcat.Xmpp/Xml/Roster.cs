@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Redcat.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Redcat.Xmpp.Xml
 {
@@ -25,6 +28,51 @@ namespace Redcat.Xmpp.Xml
         public static bool IsRosterRequest(this IqStanza iq)
         {
             return iq.IsGet() && iq.HasChild("query", Namespaces.Roster);
+        }
+
+        public static bool IsRosterResponse(this IqStanza iq)
+        {
+            return iq.IsResult() && iq.HasChild("query");
+        }
+
+        public static IEnumerable<XmlElement> GetRosterItems(this IqStanza iq)
+        {
+            var query = iq.Child("query");
+            return query.Childs.Where(c => c.Name == "item");
+        }
+
+        public static IqStanza AddItem(Contact contact)
+        {
+            IqStanza iq = Iq.Set();
+            iq.AddQueryWithItems(false, contact);
+            return iq;
+        }
+
+        public static IqStanza RemoveItem(Contact contact)
+        {
+            IqStanza iq = Iq.Set();
+            iq.AddQueryWithItems(true, contact);
+            return iq;
+        }
+
+        public static IqStanza Result(params Contact[] contacts)
+        {
+            IqStanza iq = Iq.Result();
+            iq.AddQueryWithItems(false, contacts);
+            return iq;
+        }
+
+        private static void AddQueryWithItems(this IqStanza iq, bool isRemove, params Contact[] contacts)
+        {            
+            var query = iq.AddQuery();
+            foreach (var contact in contacts)
+            {
+                var item = new XmlElement("item");
+                if (contact.Id is JID) item.SetAttributeValue("jid", (JID)contact.Id);
+                item.SetAttributeValue("name", contact.Name);
+                if (isRemove) item.SetAttributeValue("subscription", "remove");
+                query.AddChild(item);
+            }
         }
     }
 }

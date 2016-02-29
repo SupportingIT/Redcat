@@ -8,6 +8,8 @@ using Redcat.Xmpp.Xml;
 using SimpleInjector;
 using System;
 using System.Configuration;
+using System.Linq;
+using System.Threading;
 
 namespace Redcat.Xmpp.Tests
 {
@@ -43,9 +45,13 @@ namespace Redcat.Xmpp.Tests
                 var processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
                 var comm = c as SingleChannelCommunicator;
                 var channel = comm.Channel as XmppChannel;
-                //comm.SendRosterAdd("buzz_contact@redcat");
-                comm.SendRosterRequest(channel.Context.Jid);
-                var response = comm.Receive<XmlElement>();
+                Contact contact = new RosterItem("test_contact2@redcat.com");
+
+                ContactController controller = ConnectContactController(channel);
+                controller.Remove(contact);
+                var roster = channel.Read();
+
+                CollectionAssert.IsNotEmpty(controller.Contacts);
             });
         }
 
@@ -59,19 +65,42 @@ namespace Redcat.Xmpp.Tests
             communicator.Disconnect();
         }
 
+        private ContactController ConnectContactController(XmppChannel channel)
+        {
+            ContactController controller = container.GetInstance<ContactController>();
+            RosterHandler handler = container.GetInstance<RosterHandler>();
+            StanzaRouter router = container.GetInstance<StanzaRouter>();
+
+            channel.Subscribe(router);
+            router.Subscribe(handler);
+            handler.Subscribe(channel);
+            handler.Subscribe(controller);
+            controller.Subscribe(handler);
+
+            return controller;
+        }
+
         private ICommunicator CreateCommunicator()
         {
             RegisterCommunicator();
+            RegisterMessageHandlers();
             return container.GetInstance<ICommunicator>();
         }
 
         private void RegisterCommunicator()
         {
-            container.Register<ICommunicator, SingleChannelCommunicator>();
-            container.Register<IChannelFactory, XmppChannelFactory>();
-            container.Register<IMessageDispatcher, MessageDispatcher>();
-            container.Register<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
-            container.Register<Func<ISaslCredentials>>(() => GetCredentials);
+            container.RegisterSingleton<ICommunicator, SingleChannelCommunicator>();
+            container.RegisterSingleton<IChannelFactory, XmppChannelFactory>();
+            container.RegisterSingleton<IMessageDispatcher, MessageDispatcher>();
+            container.RegisterSingleton<IChannelFactory<IStreamChannel>, TcpChannelFactory>();
+            container.RegisterSingleton<Func<ISaslCredentials>>(() => GetCredentials);
+        }
+
+        private void RegisterMessageHandlers()
+        {
+            container.RegisterSingleton<StanzaRouter>();
+            container.RegisterSingleton<RosterHandler>();
+            container.RegisterSingleton(() => new ContactController());
         }
 
         private ConnectionSettings CreateConnectionSettings()
