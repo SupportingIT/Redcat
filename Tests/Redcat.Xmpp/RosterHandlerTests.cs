@@ -10,7 +10,7 @@ namespace Redcat.Xmpp.Tests
     public class RosterHandlerTests
     {
         [Test]
-        public void OnNext_Converts_RequestContacts_Command_To_Roster_Get_Command()
+        public void OnNext_Converts_GetContacts_Command_To_Roster_Get_Iq()
         {
             RosterHandler handler = new RosterHandler();
             ContactCommand command = ContactCommand.Get();
@@ -27,9 +27,15 @@ namespace Redcat.Xmpp.Tests
         }
 
         [Test]
-        public void OnNext_Converts_RosterResult_To_()
+        public void OnNext_Converts_AddContact_Command_To_Add_Roster_Iq()
         {
+            Assert.Fail();
+        }
 
+        [Test]
+        public void OnNext_Converts_RosterResult_To_ListContacts_Command()
+        {
+            Assert.Fail();
         }
     }
 }

@@ -8,11 +8,11 @@ namespace Redcat.Xmpp.Parsing
     public class XmppStreamParser : IXmlParser
     {
         private IXmlElementBuilder builder;
-        private XmlLexer lexer;            
+        private XmlLexer lexer;
 
         public XmppStreamParser()
         {
-            builder = new XmlElementBuilder();
+            builder = new StanzaBuilder();
             lexer = new XmlLexer();
             lexer.Options.ParseTagName = true;
         }

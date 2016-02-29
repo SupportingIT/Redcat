@@ -5,30 +5,34 @@ using System.Collections.Generic;
 
 namespace Redcat.Xmpp
 {
-    public class StanzaRouter : IObserver<Stanza>, IObservable<IqStanza>, IObservable<PresenceStanza>
+    public class StanzaRouter : IObserver<XmlElement>, IObservable<IqStanza>, IObservable<PresenceStanza>, IObservable<MessageStanza>
     {
         private ICollection<IObserver<IqStanza>> iqObservers;
         private ICollection<IObserver<PresenceStanza>> presenceObservers;
+        private ICollection<IObserver<MessageStanza>> messageObservers;
 
         public StanzaRouter()
         {
             iqObservers = new List<IObserver<IqStanza>>();
             presenceObservers = new List<IObserver<PresenceStanza>>();
+            messageObservers = new List<IObserver<MessageStanza>>();
         }
 
         public void OnCompleted()
         {
             iqObservers.OnCompleted();
             presenceObservers.OnCompleted();
+            messageObservers.OnCompleted();
         }
 
         public void OnError(Exception error)
         { }
 
-        public void OnNext(Stanza stanza)
+        public void OnNext(XmlElement element)
         {
-            if (stanza is IqStanza) iqObservers.OnNext((IqStanza)stanza);
-            if (stanza is PresenceStanza) presenceObservers.OnNext((PresenceStanza)stanza);
+            if (element is IqStanza) iqObservers.OnNext((IqStanza)element);
+            if (element is PresenceStanza) presenceObservers.OnNext((PresenceStanza)element);
+            if (element is MessageStanza) messageObservers.OnNext((MessageStanza)element);
         }
 
         public IDisposable Subscribe(IObserver<PresenceStanza> observer)
@@ -39,6 +43,11 @@ namespace Redcat.Xmpp
         public IDisposable Subscribe(IObserver<IqStanza> observer)
         {
             return iqObservers.Subscribe(observer);
+        }
+
+        public IDisposable Subscribe(IObserver<MessageStanza> observer)
+        {
+            return messageObservers.Subscribe(observer);
         }
     }
 }

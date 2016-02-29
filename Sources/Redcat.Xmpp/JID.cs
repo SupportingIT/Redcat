@@ -17,7 +17,7 @@ namespace Redcat.Xmpp
 
         public JID(string bareJid)
         {
-            if(!Regex.IsMatch(bareJid, @"(\S+@)?\w+(\.\w{3})?(/\w*)?")) throw new ArgumentException("Invalid format for Jid");
+            if(!IsValid(bareJid)) throw new ArgumentException("Invalid format for Jid");
 
             int domSeparatorPos = bareJid.IndexOf('@');
             int resSeparatorPos = bareJid.IndexOf('/');
@@ -160,6 +160,11 @@ namespace Redcat.Xmpp
             return User == jid.User &&
                    Domain == jid.Domain &&
                    Resource == jid.Resource;
+        }
+
+        public static bool IsValid(string bareJid)
+        {
+            return Regex.IsMatch(bareJid, @"(\S+@)?\w+(\.\w{3})?(/\w*)?");
         }
     }
 }

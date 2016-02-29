@@ -50,6 +50,7 @@
     <Compile Include="Parsing\DelegateBuilder.cs" />
     <Compile Include="Parsing\IXmlElementBuilder.cs" />
     <Compile Include="Parsing\IXmlParser.cs" />
+    <Compile Include="Parsing\StanzaBuilder.cs" />
     <Compile Include="Parsing\XmlElementBuilder.cs" />
     <Compile Include="Parsing\XmlElementBuilderBase.cs" />
     <Compile Include="Parsing\XmlLexer.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Xml\Iq.cs" />
     <Compile Include="Xml\IqQuery.cs" />
     <Compile Include="Xml\IqStanza.cs" />
+    <Compile Include="Xml\MessageStanza.cs" />
     <Compile Include="Xml\Presence.cs" />
     <Compile Include="Xml\PresenceStanza.cs" />
     <Compile Include="Xml\Roster.cs" />

@@ -19,10 +19,12 @@ namespace Redcat.Xmpp.Parsing
 
         protected override XmlElement CreateElement(string elementName)
         {
-            XmlElement element = new XmlElement(elementName);
+            XmlElement element = CreateElementInstance(elementName);
             nodesBranch.Push(element);
             return element;
         }
+
+        protected virtual XmlElement CreateElementInstance(string elementName) => new XmlElement(elementName);
 
         protected override void OnAddAttribute(BuilderContext context)
         {

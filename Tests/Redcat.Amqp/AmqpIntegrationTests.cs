@@ -9,7 +9,7 @@ namespace Redcat.Amqp.Tests
     [TestFixture]
     public class AmqpIntegrationTests
     {
-        [Test]
+        [Test, Ignore]
         public void Amqp_Connection_Test()
         {
             ConnectionSettings settings = CreateConnectionSettings();
