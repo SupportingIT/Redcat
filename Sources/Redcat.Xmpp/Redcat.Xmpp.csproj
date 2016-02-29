@@ -63,6 +63,7 @@
     <Compile Include="RosterItem.cs" />
     <Compile Include="StanzaRouter.cs" />
     <Compile Include="StreamInitializer.cs" />
+    <Compile Include="SubscriptionHandler.cs" />
     <Compile Include="Xml\Bind.cs" />
     <Compile Include="Xml\DatagramElement.cs" />
     <Compile Include="Xml\Iq.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Xml\RosterItem.cs" />
     <Compile Include="Xml\Stanza.cs" />
     <Compile Include="Xml\StreamFeatureExtensions.cs" />
+    <Compile Include="Xml\Subscription.cs" />
     <Compile Include="Xml\Tls.cs" />
     <Compile Include="Xml\XmlElement.cs" />
     <Compile Include="Xml\Namespaces.cs" />

@@ -74,6 +74,7 @@
     <Compile Include="RosterHandlerTests.cs" />
     <Compile Include="StanzaRouterTests.cs" />
     <Compile Include="StreamInitializerTests.cs" />
+    <Compile Include="SubscriptionHandlerTests.cs" />
     <Compile Include="TestXmppStream.cs" />
     <Compile Include="Xml\DatagramElementTests.cs" />
     <Compile Include="Xml\IqTest.cs" />
