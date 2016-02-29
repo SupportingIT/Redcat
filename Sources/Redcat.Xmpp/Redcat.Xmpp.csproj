@@ -58,7 +58,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Channels\XmppChannelFactory.cs" />
     <Compile Include="Channels\XmppChannel.cs" />
-    <Compile Include="RosterExtensions.cs" />
     <Compile Include="RosterHandler.cs" />
     <Compile Include="RosterItem.cs" />
     <Compile Include="StanzaRouter.cs" />

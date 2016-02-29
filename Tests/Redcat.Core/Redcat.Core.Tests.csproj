@@ -64,7 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ByteBufferTests.cs" />
-    <Compile Include="CommunicatorTests.cs" />
+    <Compile Include="CommunicatorBaseTests.cs" />
+    <Compile Include="MultiChannelCommunicatorTests.cs" />
     <Compile Include="ContactControllerTests.cs" />
     <Compile Include="ObserverExtensionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

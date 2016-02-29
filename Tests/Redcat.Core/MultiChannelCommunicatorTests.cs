@@ -6,7 +6,7 @@ using System.Linq;
 namespace Redcat.Core.Tests
 {
     [TestFixture]
-    public class CommunicatorTests
+    public class MultiChannelCommunicatorTests
     {
         
     }

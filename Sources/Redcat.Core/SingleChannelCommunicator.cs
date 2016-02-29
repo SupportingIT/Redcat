@@ -3,52 +3,42 @@ using System;
 
 namespace Redcat.Core
 {
-    public class SingleChannelCommunicator : DisposableObject, ICommunicator
+    public class SingleChannelCommunicator : CommunicatorBase
     {
-        private IChannelFactory channelFactory;
-        private IChannel channel;
+        public SingleChannelCommunicator(IChannelFactory channelFactory) : base(channelFactory)
+        { }
 
-        public SingleChannelCommunicator(IChannelFactory channelFactory)
+        protected IChannel Channel { get; private set; }
+
+        protected override void OnChannelCreated(IChannel channel)
         {
-            this.channelFactory = channelFactory;
+            base.OnChannelCreated(channel);            
+            Channel = channel;
+            Channel.Open();
         }
 
-        public void Connect(ConnectionSettings settings)
+        protected override void OnConnecting(ConnectionSettings settings)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
-            channel = channelFactory.CreateChannel(settings);            
-            if (channel == null) throw new InvalidOperationException();
-            channel.Open();
+            if (IsConnected) throw new InvalidOperationException();
+            base.OnConnecting(settings);
         }
 
-        public void Disconnect()
+        protected override void OnDisconnecting()
         {
-            if (channel == null) return;
-            channel.Close();
+            base.OnDisconnecting();
+            Channel.Close();
         }
 
-        public void Send<T>(T message) where T : class
+        protected override void OnDisconnected()
         {
-            ThrowIfDisposed(nameof(SingleChannelCommunicator));
-            if (message == null) throw new ArgumentNullException(nameof(message));
-            var outputChannel = channel as IOutputChannel<T>;
-            if (outputChannel == null) throw new InvalidOperationException();
-            outputChannel.Send(message);
-        }
-
-        public IChannel Channel => channel;
-
-        public T Receive<T>()
-        {
-            var inChannel = channel as IInputChannel<T>;
-            if (inChannel == null) throw new InvalidOperationException();
-            return inChannel.Receive();
+            base.OnDisconnected();
+            IsConnected = false;
         }
 
         protected override void DisposeManagedResources()
         {
             base.DisposeManagedResources();
-            channel.DisposeIfDisposable();
+            Channel.DisposeIfDisposable();
         }
     }
 }

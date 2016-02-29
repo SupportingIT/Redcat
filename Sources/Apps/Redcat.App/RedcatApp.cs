@@ -7,7 +7,7 @@ namespace Redcat.App
 {
     public class RedcatApp : MvxApplication
     {
-        private ICommunicator communicator;
+        //private ICommunicator communicator;
 
         public override void Initialize()
         {
