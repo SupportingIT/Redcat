@@ -4,7 +4,7 @@
     {
         public static PresenceStanza Request(JID subscribtionJid)
         {
-            PresenceStanza stanza = Presence.Subscribe();
+            PresenceStanza stanza = Presence.Subscribe();            
             stanza.To = subscribtionJid;
             return stanza;
         }

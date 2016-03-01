@@ -3,14 +3,14 @@ using System;
 
 namespace Redcat.Core
 {
-    public class SingleChannelCommunicator : CommunicatorBase
+    public class SingleChannelCommunicator<T> : CommunicatorBase<T> where T : IChannel
     {
-        public SingleChannelCommunicator(IChannelFactory channelFactory) : base(channelFactory)
+        public SingleChannelCommunicator(IChannelFactory<T> channelFactory) : base(channelFactory)
         { }
 
-        protected IChannel Channel { get; private set; }
+        protected T Channel { get; private set; }
 
-        protected override void OnChannelCreated(IChannel channel)
+        protected override void OnChannelCreated(T channel)
         {
             base.OnChannelCreated(channel);            
             Channel = channel;

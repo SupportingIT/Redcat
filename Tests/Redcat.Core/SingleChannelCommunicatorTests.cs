@@ -8,14 +8,14 @@ namespace Redcat.Core.Tests
     [TestFixture]
     public class SingleChannelCommunicatorTests
     {
-        private IChannelFactory channelFactory;
-        private SingleChannelCommunicator communicator;
+        private IChannelFactory<IChannel> channelFactory;
+        private SingleChannelCommunicator<IChannel> communicator;
 
         [SetUp]
         public void SetUp()
         {
-            channelFactory = A.Fake<IChannelFactory>();
-            communicator = new SingleChannelCommunicator(channelFactory);
+            channelFactory = A.Fake<IChannelFactory<IChannel>>();
+            communicator = new SingleChannelCommunicator<IChannel>(channelFactory);
         }
 
         [Test]

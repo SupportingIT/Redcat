@@ -37,16 +37,19 @@ namespace Redcat.Xmpp
 
         public IDisposable Subscribe(IObserver<PresenceStanza> observer)
         {
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
             return presenceObservers.Subscribe(observer);
         }
 
         public IDisposable Subscribe(IObserver<IqStanza> observer)
         {
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
             return iqObservers.Subscribe(observer);
         }
 
         public IDisposable Subscribe(IObserver<MessageStanza> observer)
         {
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
             return messageObservers.Subscribe(observer);
         }
     }

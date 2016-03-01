@@ -41,38 +41,29 @@ namespace Redcat.Xmpp.Xml
             return query.Childs.Where(c => c.Name == "item");
         }
 
-        public static IqStanza AddItem(Contact contact)
+        public static bool IsRosterPush(this IqStanza stanza)
         {
-            IqStanza iq = Iq.Set();
-            iq.AddQueryWithItems(false, contact);
-            return iq;
+            return stanza.IsSet() && stanza.GetRosterItems().Any();
         }
 
-        public static IqStanza RemoveItem(Contact contact)
+        public static IqStanza AddItem(JID jid, string name = null)
         {
-            IqStanza iq = Iq.Set();
-            iq.AddQueryWithItems(true, contact);
-            return iq;
+            IqStanza stanza = Iq.Set();
+            XmlElement item = new XmlElement("item");
+            item.SetAttributeValue("jid", jid);
+            if (name != null) item.SetAttributeValue("name", name);
+            stanza.AddQuery().AddChild(item);
+            return stanza;
         }
 
-        public static IqStanza Result(params Contact[] contacts)
+        public static IqStanza RemoveItem(JID jid)
         {
-            IqStanza iq = Iq.Result();
-            iq.AddQueryWithItems(false, contacts);
-            return iq;
-        }
-
-        private static void AddQueryWithItems(this IqStanza iq, bool isRemove, params Contact[] contacts)
-        {            
-            var query = iq.AddQuery();
-            foreach (var contact in contacts)
-            {
-                var item = new XmlElement("item");
-                if (contact.Id is JID) item.SetAttributeValue("jid", (JID)contact.Id);
-                item.SetAttributeValue("name", contact.Name);
-                if (isRemove) item.SetAttributeValue("subscription", "remove");
-                query.AddChild(item);
-            }
+            IqStanza stanza = Iq.Set();
+            XmlElement item = new XmlElement("item");
+            item.SetAttributeValue("jid", jid);
+            item.SetAttributeValue("subscription", "remove");            
+            stanza.AddQuery().AddChild(item);
+            return stanza;
         }
     }
 }

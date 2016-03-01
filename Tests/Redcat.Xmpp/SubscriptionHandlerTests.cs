@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
+using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
 using System;
 
@@ -9,18 +10,16 @@ namespace Redcat.Xmpp.Tests
     public class SubscriptionHandlerTests
     {
         private SubscriptionHandler handler;
-        private IObserver<PresenceStanza> observer;
+        private IOutputChannel<XmlElement> channel;
         private PresenceStanza stanza;
 
         [SetUp]
         public void SetUp()
         {
-            handler = new SubscriptionHandler();
-            observer = A.Fake<IObserver<PresenceStanza>>();
-            handler.Subscribe(observer);
-            A.CallTo(() => observer.OnNext(A<PresenceStanza>._)).Invokes(c =>
-            {
-                stanza = c.GetArgument<PresenceStanza>(0);
+            channel = A.Fake<IOutputChannel<XmlElement>>();
+            handler = new SubscriptionHandler(channel);
+            A.CallTo(() => channel.Send(A<XmlElement>._)).Invokes(c => {
+                stanza = (PresenceStanza)c.GetArgument<XmlElement>(0);
             });
         }
 
@@ -38,7 +37,7 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void SubscriptionRequest_Stanza_Adds_IncomingSubscriptions_Jid()
         {
-            SubscriptionHandler handler = new SubscriptionHandler();
+            SubscriptionHandler handler = new SubscriptionHandler(channel);
             JID[] subscribers = { "user1@redcat", "user2@redcat" };
 
             handler.OnNext(Subscription.IncomingRequest(subscribers[0]));

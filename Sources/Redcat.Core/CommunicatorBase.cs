@@ -3,23 +3,23 @@ using System;
 
 namespace Redcat.Core
 {
-    public abstract class CommunicatorBase : DisposableObject, ICommunicator
+    public abstract class CommunicatorBase<T> : DisposableObject, ICommunicator where T : IChannel
     {
-        private IChannelFactory channelFactory;
+        private IChannelFactory<T> channelFactory;
 
-        protected CommunicatorBase(IChannelFactory channelFactory)
+        protected CommunicatorBase(IChannelFactory<T> channelFactory)
         {
             if (channelFactory == null) throw new ArgumentNullException(nameof(channelFactory));
             this.channelFactory = channelFactory;
         }
 
-        protected IChannelFactory ChannelFactory => channelFactory;
+        protected IChannelFactory<T> ChannelFactory => channelFactory;
 
         public void Connect(ConnectionSettings settings)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));            
             OnConnecting(settings);
-            IChannel channel = channelFactory.CreateChannel(settings);
+            T channel = channelFactory.CreateChannel(settings);
             if (channel == null) throw new InvalidOperationException();
             OnChannelCreated(channel);
             OnConnected();
@@ -35,7 +35,7 @@ namespace Redcat.Core
             IsConnected = true;
         }
 
-        protected virtual void OnChannelCreated(IChannel channel)
+        protected virtual void OnChannelCreated(T channel)
         {
             ChannelCreated?.Invoke(this, channel);
         }
@@ -52,6 +52,6 @@ namespace Redcat.Core
         protected virtual void OnDisconnected()
         { }
 
-        public event EventHandler<IChannel> ChannelCreated;
+        public event EventHandler<T> ChannelCreated;
     }
 }

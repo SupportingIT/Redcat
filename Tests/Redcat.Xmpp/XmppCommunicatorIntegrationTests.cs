@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using Redcat.Core;
+using Redcat.Core.Channels;
+using Redcat.Core.Net;
 using Redcat.Xmpp.Channels;
 using Redcat.Xmpp.Negotiators;
 using SimpleInjector;
@@ -9,7 +11,7 @@ using System.Configuration;
 namespace Redcat.Xmpp.Tests
 {
     [TestFixture]
-    public class XmppIntegrationTests
+    public class XmppCommunicatorIntegrationTests
     {
         private Container container;        
 
@@ -17,7 +19,16 @@ namespace Redcat.Xmpp.Tests
         public void SetUp()
         {
             container = new Container();
+            RegisterCommunicator();
         }       
+
+        private void RegisterCommunicator()
+        {
+            container.RegisterSingleton<XmppCommunicator>();
+            container.RegisterSingleton<IXmppChannelFactory, XmppChannelFactory>();
+            container.RegisterSingleton<IStreamChannelFactory, TcpChannelFactory>();
+            container.RegisterSingleton<Func<ISaslCredentials>>(() => GetCredentials);
+        }
 
         [TearDown]
         public void TearDown()
@@ -29,46 +40,28 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void TestXmppConnection()
         {
-            
+            var communicator = container.GetInstance<XmppCommunicator>();
+            var settings = CreateConnectionSettings();
+
+            communicator.Connect(settings);
+            Assert.That(communicator.IsConnected, Is.True);
+            communicator.Disconnect();
         }
 
         [Ignore]
         [Test]
         public void TestRosterRequest()
-        {            
-            
-        }
-
-        private void ExecuteConnected(Action action)
         {
-            //ICommunicator communicator = CreateCommunicator();
-            //ConnectionSettings settings = CreateConnectionSettings();
+            var communicator = container.GetInstance<XmppCommunicator>();
+            var settings = CreateConnectionSettings();
+            communicator.Connect(settings);
 
-            //communicator.Connect(settings);
-            //action(communicator);
-            //communicator.Disconnect();
-        }
+            //communicator.LoadContacts();
+            //communicator.AddContact("user1@redcat", "User1");            
+            communicator.RemoveContact("user1@redcat");            
+            communicator.WaitIncominMessage();
 
-        private ContactController ConnectContactController(XmppChannel channel)
-        {
-            ContactController controller = container.GetInstance<ContactController>();
-            RosterHandler handler = container.GetInstance<RosterHandler>();
-            StanzaRouter router = container.GetInstance<StanzaRouter>();
-
-            channel.Subscribe(router);
-            router.Subscribe(handler);
-            handler.Subscribe(channel);
-            handler.Subscribe(controller);
-            controller.Subscribe(handler);
-
-            return controller;
-        }        
-
-        private void RegisterMessageHandlers()
-        {
-            container.RegisterSingleton<StanzaRouter>();
-            container.RegisterSingleton<RosterHandler>();
-            container.RegisterSingleton(() => new ContactController());
+            //CollectionAssert.IsNotEmpty(communicator.Contacts);
         }
 
         private ConnectionSettings CreateConnectionSettings()
@@ -82,6 +75,7 @@ namespace Redcat.Xmpp.Tests
 
         private ISaslCredentials GetCredentials()
         {
+            //return new SaslCredentials("user1@redcat", "123");
             return new SaslCredentials(ConfigurationManager.AppSettings["Username"], 
                                        ConfigurationManager.AppSettings["Password"]);
         }

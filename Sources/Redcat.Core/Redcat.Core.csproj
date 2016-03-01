@@ -43,8 +43,6 @@
     <Compile Include="Channels\IStreamChannel.cs" />
     <Compile Include="Channels\ObservableChannel.cs" />
     <Compile Include="CommunicatorBase.cs" />
-    <Compile Include="Contact.cs" />
-    <Compile Include="ContactController.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ICommunicator.cs" />
     <Compile Include="ObserverExtensions.cs" />

@@ -12,7 +12,7 @@ namespace Redcat.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void Connect_ThrowsException_If_ConnectionSettings_Is_Null()
         {
-            CommunicatorBase communicator = CreateCommunicator();
+            var communicator = CreateCommunicator();
 
             communicator.Connect(null);
         }
@@ -43,9 +43,9 @@ namespace Redcat.Core.Tests
             Assert.That(communicator.IsConnected, Is.True);
         }
 
-        private CommunicatorBase CreateCommunicator(IChannelFactory factory = null)
+        private CommunicatorBase<IChannel> CreateCommunicator(IChannelFactory factory = null)
         {
-            return A.Fake<CommunicatorBase>(o =>
+            return A.Fake<CommunicatorBase<IChannel>>(o =>
             {
                 o.CallsBaseMethods();
                 if (factory != null) o.WithArgumentsForConstructor(new object[] { factory });

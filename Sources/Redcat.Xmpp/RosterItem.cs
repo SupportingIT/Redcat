@@ -1,16 +1,15 @@
-﻿using Redcat.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Redcat.Xmpp
 {
-    public class RosterItem : Contact
+    public class RosterItem
     {
-        public RosterItem(JID jid = null) : base(jid)
-        {
-            Jid = jid;
-        }
+        public RosterItem()
+        { }
 
-        public JID Jid { get; }
+        public string Name { get; internal set; }
+
+        public JID Jid { get; internal set; }
 
         public IEnumerable<string> Groups { get; }
 
@@ -19,6 +18,11 @@ namespace Redcat.Xmpp
         public SubscriptionState SubscriptionState { get; }
 
         public string Version { get; }
+
+        public override string ToString()
+        {
+            return $"{Name}({Jid})";
+        }
     }
 
     public enum SubscriptionState { None, To, From, Both }

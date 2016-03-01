@@ -1,4 +1,5 @@
 ﻿using Redcat.Core;
+using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
 using System;
 using System.Collections.Generic;
@@ -6,15 +7,30 @@ using System.Linq;
 
 namespace Redcat.Xmpp
 {
-    public class RosterHandler : IObserver<IqStanza>, IObserver<ContactCommand>, IObservable<ContactCommand>
+    public class RosterHandler : IObserver<IqStanza>
     {
-        private ICollection<IObserver<ContactCommand>> contactObservers;
-        private ICollection<IObserver<IqStanza>> iqObservers;
+        private ICollection<RosterItem> roster;
+        private IOutputChannel<XmlElement> channel;
 
-        public RosterHandler()
+        public RosterHandler(ICollection<RosterItem> roster, IOutputChannel<XmlElement> channel)
         {
-            contactObservers = new List<IObserver<ContactCommand>>();
-            iqObservers = new List<IObserver<IqStanza>>();
+            this.roster = roster;
+            this.channel = channel;
+        }
+
+        public void RequestRosterItems()
+        {
+            channel.Send(Roster.Request());
+        }
+
+        public void AddRosterItem(JID jid, string name = null)
+        {
+            channel.Send(Roster.AddItem(jid, name));
+        }
+
+        public void RemoveRosterItem(JID jid)
+        {
+            channel.Send(Roster.RemoveItem(jid));
         }
 
         public void OnCompleted()
@@ -25,34 +41,33 @@ namespace Redcat.Xmpp
 
         public void OnNext(IqStanza value)
         {
+            if (value.IsRosterPush())
+            {
+                var item = ParseItem(value.GetRosterItems().First());
+                //Need to think a little bit
+            }
+
             if (value.IsResult())
             {
-                var items = value.GetRosterItems();
-                var contacts = items.Select(i => {
-                    var jid = i.Attributes.FirstOrDefault(a => a.Name == "jid").ToString();
-                    RosterItem item = new RosterItem(jid);
-                    item.Name = i.GetAttributeValue<string>("name");
-                    return item;
-                });
-                contactObservers.OnNext(ContactCommand.List(contacts));
+                var items = value.GetRosterItems().Select(i => ParseItem(i));
+                roster.Clear();
+                foreach (var item in items) roster.Add(item);
+            }            
+        }
+
+        private RosterItem ParseItem(XmlElement element)
+        {
+            RosterItem item = new RosterItem();
+            item.Name = element.GetAttributeValue<string>("name");
+            object jid = element.GetAttributeValue<object>("jid");
+
+            if (jid != null)
+            {
+                if (jid is JID) item.Jid = (JID)jid;
+                if (jid is string) item.Jid = (string)jid;
             }
-        }
 
-        public void OnNext(ContactCommand command)
-        {
-            if (command.IsGet()) iqObservers.OnNext(Roster.Request());
-            if (command.IsAdd()) iqObservers.OnNext(Roster.AddItem(command.Contact));
-            if (command.IsRemove()) iqObservers.OnNext(Roster.RemoveItem(command.Contact));
-        }
-
-        public IDisposable Subscribe(IObserver<ContactCommand> observer)
-        {
-            return contactObservers.Subscribe(observer);
-        }
-
-        public IDisposable Subscribe(IObserver<IqStanza> observer)
-        {
-            return iqObservers.Subscribe(observer);
+            return item;
         }
     }
 }

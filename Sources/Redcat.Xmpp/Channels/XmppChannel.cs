@@ -6,7 +6,7 @@ using Redcat.Xmpp.Parsing;
 
 namespace Redcat.Xmpp.Channels
 {
-    public class XmppChannel : BufferChannel<XmlElement>, IDuplexChannel<XmlElement>, IXmppStream, IObserver<XmlElement>
+    public class XmppChannel : BufferChannel<XmlElement>, IXmppChannel, IXmppStream, IObserver<XmlElement>
     {
         private const int DefaultBufferSize = 1024;
         private IStreamChannel streamChannel;        

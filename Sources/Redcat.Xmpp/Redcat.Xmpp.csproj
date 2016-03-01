@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Channels\IXmppChannelFactory.cs" />
     <Compile Include="ConnectionSettingExtension.cs" />
     <Compile Include="IFeatureNegatiator.cs" />
     <Compile Include="IXmppStream.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Xml\Namespaces.cs" />
     <Compile Include="Xml\StreamHeader.cs" />
     <Compile Include="Xml\XmlElementExtensions.cs" />
+    <Compile Include="XmppCommunicator.cs" />
     <Compile Include="XmppStream.cs" />
     <Compile Include="XmppStreamReader.cs" />
     <Compile Include="XmppStreamWriter.cs" />

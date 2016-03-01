@@ -9,4 +9,7 @@
     {
         T CreateChannel(ConnectionSettings settings);
     }
+
+    public interface IStreamChannelFactory : IChannelFactory<IStreamChannel>
+    { }
 }

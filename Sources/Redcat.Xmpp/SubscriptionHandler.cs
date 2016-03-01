@@ -1,18 +1,18 @@
-﻿using Redcat.Core;
+﻿using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
 using System;
 using System.Collections.Generic;
 
 namespace Redcat.Xmpp
 {
-    public class SubscriptionHandler : IObserver<PresenceStanza>, IObserver<ContactCommand>, IObservable<PresenceStanza>
+    public class SubscriptionHandler : IObserver<PresenceStanza>
     {
-        private ICollection<IObserver<PresenceStanza>> stanzaObservers;
+        private IOutputChannel<XmlElement> channel;
         private List<JID> incomingSubscriptions;
-
-        public SubscriptionHandler()
+        
+        public SubscriptionHandler(IOutputChannel<XmlElement> channel)
         {
-            stanzaObservers = new List<IObserver<PresenceStanza>>();
+            this.channel = channel;
             incomingSubscriptions = new List<JID>();
         }
 
@@ -21,39 +21,29 @@ namespace Redcat.Xmpp
         public void AcceptSubscription(JID subscriptionJid)
         {
             incomingSubscriptions.Remove(subscriptionJid);
-            stanzaObservers.OnNext(Subscription.SubscriptionApprove(subscriptionJid));
+            channel.Send(Subscription.SubscriptionApprove(subscriptionJid));
         }
 
         public void CancelSubscription(JID subscriber)
         {
             incomingSubscriptions.Remove(subscriber);
-            stanzaObservers.OnNext(Subscription.SubscriptionReject(subscriber));
+            channel.Send(Subscription.SubscriptionReject(subscriber));
         }
 
         public void RequestSubscription(JID subscriptionJid)
         {
-            stanzaObservers.OnNext(Subscription.Request(subscriptionJid));
+            channel.Send(Subscription.Request(subscriptionJid));
         }
 
         public void OnCompleted()
         { }
 
         public void OnError(Exception error)
-        { }
-
-        public void OnNext(ContactCommand value)
-        {
-            throw new NotImplementedException();
-        }
+        { }        
 
         public void OnNext(PresenceStanza stanza)
         {
             if (stanza.IsSubscriptionRequest()) incomingSubscriptions.Add(stanza.From);
-        }
-
-        public IDisposable Subscribe(IObserver<PresenceStanza> observer)
-        {
-            return stanzaObservers.Subscribe(observer);
         }
     }
 }
