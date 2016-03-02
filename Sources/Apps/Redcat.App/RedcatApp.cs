@@ -10,7 +10,7 @@ namespace Redcat.App
 
         public override void Initialize()
         {
-            var appStart = new MvxAppStart<HomeViewModel>();
+            var appStart = new MvxAppStart<MainMenuViewModel>();
             Mvx.RegisterSingleton<IMvxAppStart>(appStart);
         }
     }
