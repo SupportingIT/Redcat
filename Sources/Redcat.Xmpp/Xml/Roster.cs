@@ -12,11 +12,11 @@ namespace Redcat.Xmpp.Xml
             IqStanza iq = Iq.Get();
             if (id != null) iq.Id = id;
             if (from != null) iq.From = from;
-            iq.AddQuery();            
+            iq.AddRosterQuery();            
             return iq;
         }
 
-        private static XmlElement AddQuery(this XmlElement element)
+        public static XmlElement AddRosterQuery(this XmlElement element)
         {
             var query = Query();
             element.AddChild(query);
@@ -52,7 +52,7 @@ namespace Redcat.Xmpp.Xml
             XmlElement item = new XmlElement("item");
             item.SetAttributeValue("jid", jid);
             if (name != null) item.SetAttributeValue("name", name);
-            stanza.AddQuery().AddChild(item);
+            stanza.AddRosterQuery().AddChild(item);
             return stanza;
         }
 
@@ -62,7 +62,7 @@ namespace Redcat.Xmpp.Xml
             XmlElement item = new XmlElement("item");
             item.SetAttributeValue("jid", jid);
             item.SetAttributeValue("subscription", "remove");            
-            stanza.AddQuery().AddChild(item);
+            stanza.AddRosterQuery().AddChild(item);
             return stanza;
         }
     }

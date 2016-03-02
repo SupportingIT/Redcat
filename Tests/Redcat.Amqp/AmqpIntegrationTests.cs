@@ -6,6 +6,7 @@ using System.IO;
 
 namespace Redcat.Amqp.Tests
 {
+    [Category("Integration")]
     [TestFixture]
     public class AmqpIntegrationTests
     {

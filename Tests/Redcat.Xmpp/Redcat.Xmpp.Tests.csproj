@@ -83,6 +83,7 @@
     <Compile Include="Xml\StanzaTests.cs" />
     <Compile Include="Xml\StreamFeatureExtensionTests.cs" />
     <Compile Include="Xml\StreamHeaderTests.cs" />
+    <Compile Include="Xml\SubscriptionTests.cs" />
     <Compile Include="Xml\XmlElementExtensionsTests.cs" />
     <Compile Include="Xml\XmlElementTests.cs" />
     <Compile Include="XmppCommunicatorIntegrationTests.cs" />

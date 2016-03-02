@@ -44,7 +44,7 @@ namespace Redcat.Xmpp
             if (value.IsRosterPush())
             {
                 var item = ParseItem(value.GetRosterItems().First());
-                //Need to think a little bit
+                roster.Add(item);
             }
 
             if (value.IsResult())

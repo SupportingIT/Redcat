@@ -10,6 +10,7 @@ using System.Configuration;
 
 namespace Redcat.Xmpp.Tests
 {
+    [Category("Integration")]
     [TestFixture]
     public class XmppCommunicatorIntegrationTests
     {
