@@ -4,6 +4,7 @@ using Redcat.Core.Channels;
 using Redcat.Core.Net;
 using Redcat.Xmpp.Channels;
 using Redcat.Xmpp.Negotiators;
+using Redcat.Xmpp.Xml;
 using SimpleInjector;
 using System;
 using System.Configuration;
@@ -58,8 +59,8 @@ namespace Redcat.Xmpp.Tests
             communicator.Connect(settings);
 
             //communicator.LoadContacts();
-            //communicator.AddContact("user1@redcat", "User1");            
-            communicator.RemoveContact("user1@redcat");            
+            //communicator.AddContact("user1@redcat", "User1");
+            //communicator.RemoveContact("user1@redcat");
             communicator.WaitIncominMessage();
 
             //CollectionAssert.IsNotEmpty(communicator.Contacts);

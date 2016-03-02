@@ -1,7 +1,6 @@
 ﻿using Cirrious.CrossCore;
 using Cirrious.MvvmCross.ViewModels;
 using Redcat.App.ViewModels;
-using Redcat.Core;
 
 namespace Redcat.App
 {

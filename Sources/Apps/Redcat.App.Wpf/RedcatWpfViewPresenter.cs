@@ -5,10 +5,7 @@ using System.Windows;
 using System.Collections.Generic;
 using Cirrious.MvvmCross.Views;
 using System.Windows.Threading;
-using Redcat.App.Wpf.Views;
 using Cirrious.MvvmCross.ViewModels;
-using Redcat.App.ViewModels;
-using Cirrious.CrossCore;
 
 namespace Redcat.App.Wpf
 {
@@ -59,27 +56,11 @@ namespace Redcat.App.Wpf
 
         public override void ChangePresentation(MvxPresentationHint hint)
         {
-            var showProtocolHint = hint as ShowProtocolSettingsHint;
-            if (showProtocolHint != null)
-            {
-                var  viewLoader = Mvx.Resolve<IMvxSimpleWpfViewLoader>();
-                FrameworkElement view = viewLoader.CreateView(new MvxViewModelRequest { ViewModelType = showProtocolHint.ViewModel.GetType() });
-                view.DataContext = showProtocolHint.ViewModel;
-                ShowProtocolSettingsView(view);
-                return;
-            }
-
             base.ChangePresentation(hint);
         }
 
         private void ShowProtocolSettingsView(FrameworkElement view)
         {
-            if (dialogWindow.Content is NewAccountView)
-            {
-                ContentControl protocolSettings = (ContentControl)dialogWindow.Content;
-                protocolSettings = (ContentControl)protocolSettings.FindName("ProtocolSettings");
-                protocolSettings.Content = view;
-            }
         }
     }
 }

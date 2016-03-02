@@ -26,9 +26,7 @@ namespace Redcat.Xmpp.Channels
             {
                 subscription = ((IObservable<ArraySegment<byte>>)streamChannel).Subscribe(this);
             }
-        }
-
-        public NegotiationContext Context => context;
+        }        
 
         public Func<IXmppStream, NegotiationContext> Initializer { get; set; }
 

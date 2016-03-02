@@ -34,14 +34,15 @@ namespace Redcat.Xmpp
             rosterHandler = new RosterHandler(roster, channel);
             subscriptionHandler = new SubscriptionHandler(channel);
             stanzaRouter.Subscribe(rosterHandler);
+            stanzaRouter.Subscribe(subscriptionHandler);
         }
 
         public void Send(Stanza stanza) => Channel.Send(stanza);
 
         public void AddContact(JID jid, string name = null)
         {
-            //rosterHandler.AddRosterItem(jid, name);
-            //subscriptionHandler.RequestSubscription(jid);
+            rosterHandler.AddRosterItem(jid, name);
+            subscriptionHandler.RequestSubscription(jid);
         }
 
         public void RemoveContact(JID jid)

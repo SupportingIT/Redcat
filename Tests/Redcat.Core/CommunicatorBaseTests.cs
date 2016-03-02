@@ -20,7 +20,7 @@ namespace Redcat.Core.Tests
         [Test]
         public void Connect_Creates_Channel_Via_Provided_Factory()
         {
-            IChannelFactory factory = A.Fake<IChannelFactory>();
+            var factory = A.Fake<IChannelFactory<IChannel>>();
             IChannel channel = A.Fake<IChannel>();
             ConnectionSettings settings = new ConnectionSettings();
             A.CallTo(() => factory.CreateChannel(settings)).Returns(channel);
@@ -43,7 +43,7 @@ namespace Redcat.Core.Tests
             Assert.That(communicator.IsConnected, Is.True);
         }
 
-        private CommunicatorBase<IChannel> CreateCommunicator(IChannelFactory factory = null)
+        private CommunicatorBase<IChannel> CreateCommunicator(IChannelFactory<IChannel> factory = null)
         {
             return A.Fake<CommunicatorBase<IChannel>>(o =>
             {

@@ -36,9 +36,7 @@ namespace Redcat.App.Wpf
         {
             ContentControl mainContent = (ContentControl)MainWindow.FindName("MainContent");
             Window dialogWindow = Resources["DialogWindow"] as Window;
-            var presenter = new RedcatWpfViewPresenter(Dispatcher, mainContent, dialogWindow);
-            presenter.AddDialogView<AccountListView>();
-            presenter.AddDialogView<NewAccountView>();            
+            var presenter = new RedcatWpfViewPresenter(Dispatcher, mainContent, dialogWindow);            
 
             return presenter;
         }
