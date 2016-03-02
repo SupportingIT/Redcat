@@ -1,16 +1,13 @@
-﻿using Redcat.Core;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Redcat.Xmpp.Xml
 {
     public static class Roster
     {
-        public static IqStanza Request(object id = null, JID from = null)
+        public static IqStanza Request(JID from = null)
         {
             IqStanza iq = Iq.Get();
-            if (id != null) iq.Id = id;
             if (from != null) iq.From = from;
             iq.AddRosterQuery();            
             return iq;

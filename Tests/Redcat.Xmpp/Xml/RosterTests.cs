@@ -11,13 +11,11 @@ namespace Redcat.Xmpp.Tests.Xml
         [Test]
         public void Request_Creates_Roster_Request_Stanza()
         {
-            object id = Guid.NewGuid();
             JID from = "from@domain.com";
 
-            IqStanza iq = Roster.Request(id, from);
+            IqStanza iq = Roster.Request(from);
 
             Assert.That(iq.IsGet(), Is.True);
-            Assert.That(iq.Id, Is.EqualTo(id));
             Assert.That(iq.From, Is.EqualTo(from));
             Assert.That(iq.HasChild("query", Namespaces.Roster), Is.True);
         }

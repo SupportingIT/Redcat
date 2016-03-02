@@ -35,5 +35,13 @@ namespace Redcat.Xmpp.Tests.Xml
 
             Assert.That(element.GetAttributeValue<string>("xml:lang"), Is.EqualTo(xmlLang));
         }
+
+        [Test]
+        public void NewId_Generates_New_Value_For_Id_Attribute()
+        {
+            var element = new DatagramElement("you").NewId();
+
+            Assert.That(element.Id, Is.Not.Null);
+        }
     }
 }
