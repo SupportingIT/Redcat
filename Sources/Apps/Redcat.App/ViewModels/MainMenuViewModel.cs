@@ -1,5 +1,4 @@
-﻿using Cirrious.MvvmCross.ViewModels;
-using System;
+﻿using MvvmCross.Core.ViewModels;
 
 namespace Redcat.App.ViewModels
 {
@@ -14,7 +13,7 @@ namespace Redcat.App.ViewModels
 
         private void Settings()
         {
-            throw new NotImplementedException();
+            ShowViewModel<SettingsViewModel>();
         }
     }
 }

@@ -1,8 +1,10 @@
-﻿using Cirrious.MvvmCross.ViewModels;
-using Cirrious.MvvmCross.Wpf.Platform;
+﻿using MvvmCross.Core.ViewModels;
+using MvvmCross.Platform;
+using MvvmCross.Wpf.Platform;
+using MvvmCross.Wpf.Views;
+using Redcat.App.Services;
+using Redcat.App.Wpf.Services;
 using System.Windows.Threading;
-using Cirrious.MvvmCross.Wpf.Views;
-using Cirrious.CrossCore;
 
 namespace Redcat.App.Wpf
 {
@@ -19,6 +21,7 @@ namespace Redcat.App.Wpf
         public override void Initialize()
         {
             base.Initialize();
+            Mvx.RegisterType<IConnectionSettingsRepository, ConnectionSettingsRepository>();
         }
     }
 }

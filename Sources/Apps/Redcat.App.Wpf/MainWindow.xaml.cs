@@ -1,8 +1,6 @@
-﻿using Cirrious.MvvmCross.Views;
-using MahApps.Metro.Controls;
-using System.Windows;
-using Cirrious.MvvmCross.ViewModels;
-using System;
+﻿using MahApps.Metro.Controls;
+using MvvmCross.Core.ViewModels;
+using MvvmCross.Core.Views;
 
 namespace Redcat.App.Wpf
 {

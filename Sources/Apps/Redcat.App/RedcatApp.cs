@@ -1,5 +1,5 @@
-﻿using Cirrious.CrossCore;
-using Cirrious.MvvmCross.ViewModels;
+﻿using MvvmCross.Core.ViewModels;
+using MvvmCross.Platform;
 using Redcat.App.ViewModels;
 
 namespace Redcat.App

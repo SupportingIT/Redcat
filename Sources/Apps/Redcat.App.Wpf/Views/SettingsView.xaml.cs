@@ -2,10 +2,10 @@
 
 namespace Redcat.App.Wpf.Views
 {
-    public partial class MainMenuView : MvxWpfView
+    public partial class SettingsView : MvxWpfView
     {
-        public MainMenuView()
-        {
+        public SettingsView()
+        {            
             InitializeComponent();
         }
     }

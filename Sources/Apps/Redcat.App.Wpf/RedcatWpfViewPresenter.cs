@@ -1,8 +1,8 @@
-﻿using Cirrious.MvvmCross.Wpf.Views;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Threading;
 using Redcat.App.Wpf.Views;
+using MvvmCross.Wpf.Views;
 
 namespace Redcat.App.Wpf
 {
