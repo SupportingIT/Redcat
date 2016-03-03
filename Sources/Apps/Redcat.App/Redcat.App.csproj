@@ -42,13 +42,19 @@
     <Compile Include="RedcatApp.cs" />
     <Compile Include="Services\IConnectionSettingsRepository.cs" />
     <Compile Include="ViewModels\ConnectionSettingsViewModel.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainMenuViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\XmppCommunicatorViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Redcat.Core\Redcat.Core.csproj">
       <Project>{5ea90f4a-92f4-4b98-b669-866460de26a0}</Project>
       <Name>Redcat.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Redcat.Xmpp\Redcat.Xmpp.csproj">
+      <Project>{26fa8d28-ecc2-40af-96c1-04a9400b8a36}</Project>
+      <Name>Redcat.Xmpp</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

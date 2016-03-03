@@ -6,10 +6,18 @@ namespace Redcat.App.ViewModels
     {
         public MainMenuViewModel()
         {
+            HomeCommand = new MvxCommand(Home);
             SettingsCommand = new MvxCommand(Settings);
         }
 
+        public IMvxCommand HomeCommand { get; }
+
         public IMvxCommand SettingsCommand { get; }
+
+        private void Home()
+        {
+            ShowViewModel<HomeViewModel>();
+        }
 
         private void Settings()
         {

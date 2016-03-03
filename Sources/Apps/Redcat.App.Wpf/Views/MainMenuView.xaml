@@ -4,6 +4,7 @@
              xmlns:views="clr-namespace:MvvmCross.Wpf.Views;assembly=MvvmCross.Wpf"
                   xmlns:local="clr-namespace:Redcat.App.Wpf.Views">
     <StackPanel Orientation="Horizontal">
+        <Button Command="{Binding HomeCommand}">Home</Button>
         <Button Command="{Binding SettingsCommand}">Settings</Button>
     </StackPanel>
 </views:MvxWpfView>

@@ -23,6 +23,6 @@
                     <Button Command="{Binding SaveCommand}">Save</Button>
                 </StackPanel>
             </Grid>
-        </TabItem>
+        </TabItem>        
     </TabControl>
 </views:MvxWpfView>

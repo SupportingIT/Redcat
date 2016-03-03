@@ -1,9 +1,9 @@
-﻿using Redcat.Core;
-using Redcat.Core.Channels;
+﻿using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Redcat.Xmpp
 {
@@ -18,6 +18,8 @@ namespace Redcat.Xmpp
             this.channel = channel;
         }
 
+        public SynchronizationContext SyncContext { get; set; }
+
         public void RequestRosterItems()
         {
             channel.Send(Roster.Request());
@@ -28,9 +30,9 @@ namespace Redcat.Xmpp
             channel.Send(Roster.AddItem(jid, name));
         }
 
-        public void RemoveRosterItem(JID jid)
+        public void RemoveRosterItem(JID jid, string name = null)
         {
-            channel.Send(Roster.RemoveItem(jid));
+            channel.Send(Roster.RemoveItem(jid, name));
         }
 
         public void OnCompleted()
@@ -39,20 +41,26 @@ namespace Redcat.Xmpp
         public void OnError(Exception error)
         { }
 
-        public void OnNext(IqStanza value)
+        public void OnNext(IqStanza stanza)
         {
-            if (value.IsRosterPush())
+            if (SyncContext != null) SyncContext.Send(s => OnNextIq(stanza), null);
+            else OnNextIq(stanza);         
+        }
+
+        private void OnNextIq(IqStanza stanza)
+        {
+            if (stanza.IsRosterPush())
             {
-                var item = ParseItem(value.GetRosterItems().First());
+                var item = ParseItem(stanza.GetRosterItems().First());
                 roster.Add(item);
             }
 
-            if (value.IsResult())
+            if (stanza.IsRosterResponse())
             {
-                var items = value.GetRosterItems().Select(i => ParseItem(i));
+                var items = stanza.GetRosterItems().Select(i => ParseItem(i));
                 roster.Clear();
                 foreach (var item in items) roster.Add(item);
-            }            
+            }
         }
 
         private RosterItem ParseItem(XmlElement element)

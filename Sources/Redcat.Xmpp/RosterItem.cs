@@ -7,9 +7,9 @@ namespace Redcat.Xmpp
         public RosterItem()
         { }
 
-        public string Name { get; internal set; }
+        public string Name { get; set; }
 
-        public JID Jid { get; internal set; }
+        public JID Jid { get; set; }
 
         public IEnumerable<string> Groups { get; }
 

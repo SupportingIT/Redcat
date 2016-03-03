@@ -4,6 +4,8 @@ using Redcat.Xmpp.Channels;
 using Redcat.Xmpp.Xml;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace Redcat.Xmpp
 {
@@ -18,11 +20,11 @@ namespace Redcat.Xmpp
 
         public XmppCommunicator(IXmppChannelFactory factory) : base(factory)
         {
-            roster = new List<RosterItem>();            
+            roster = new ObservableCollection<RosterItem>();
             stanzaRouter = new StanzaRouter();            
         }
 
-        public IEnumerable<RosterItem> Contacts => roster;
+        public IEnumerable<RosterItem> Roster => roster;
 
         protected override void OnChannelCreated(IXmppChannel channel)
         {
@@ -31,7 +33,7 @@ namespace Redcat.Xmpp
             {
                 subscription = ((IObservable<XmlElement>)channel).Subscribe(stanzaRouter);
             }
-            rosterHandler = new RosterHandler(roster, channel);
+            rosterHandler = new RosterHandler(roster, channel) { SyncContext = SynchronizationContext.Current };
             subscriptionHandler = new SubscriptionHandler(channel);
             stanzaRouter.Subscribe(rosterHandler);
             stanzaRouter.Subscribe(subscriptionHandler);
@@ -39,18 +41,27 @@ namespace Redcat.Xmpp
 
         public void Send(Stanza stanza) => Channel.Send(stanza);
 
+        public void AddContact(RosterItem contact)
+        {
+            AddContact(contact.Jid, contact.Name);
+        }
+
         public void AddContact(JID jid, string name = null)
         {
-            rosterHandler.AddRosterItem(jid, name);
-            subscriptionHandler.RequestSubscription(jid);
+            rosterHandler.AddRosterItem(jid, name);            
         }
 
-        public void RemoveContact(JID jid)
+        public void RemoveContact(RosterItem contact)
         {
-            rosterHandler.RemoveRosterItem(jid);
+            RemoveContact(contact.Jid, contact.Name);
         }
 
-        public void LoadContacts()
+        public void RemoveContact(JID jid, string name = null)
+        {
+            rosterHandler.RemoveRosterItem(jid, name);
+        }
+
+        public void LoadRoster()
         {
             rosterHandler.RequestRosterItems();
         }

@@ -64,6 +64,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\MahApps.Metro.1.2.4.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -118,12 +119,19 @@
     <Compile Include="Program.cs" />
     <Compile Include="RedcatWpfViewPresenter.cs" />
     <Compile Include="Services\ConnectionSettingsRepository.cs" />
+    <Compile Include="Services\SaslCredentialsProvider.cs" />
     <Compile Include="Setup.cs" />
+    <Compile Include="Views\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainMenuView.xaml.cs">
       <DependentUpon>MainMenuView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\XmppCommunicatorView.xaml.cs">
+      <DependentUpon>XmppCommunicatorView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +167,10 @@
       <Project>{5ea90f4a-92f4-4b98-b669-866460de26a0}</Project>
       <Name>Redcat.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Redcat.Xmpp\Redcat.Xmpp.csproj">
+      <Project>{26fa8d28-ecc2-40af-96c1-04a9400b8a36}</Project>
+      <Name>Redcat.Xmpp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Redcat.App\Redcat.App.csproj">
       <Project>{5bfdbbc3-942c-47d3-8783-6b8fb16649e6}</Project>
       <Name>Redcat.App</Name>
@@ -173,6 +185,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainMenuView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -181,8 +197,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\XmppCommunicatorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup />
+  <Import Project="..\..\Redcat.Core.Net\Redcat.Core.Net.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

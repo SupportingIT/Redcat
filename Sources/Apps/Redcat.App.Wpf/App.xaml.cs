@@ -5,6 +5,7 @@ using MahApps.Metro.Controls;
 using MvvmCross.Platform;
 using MvvmCross.Core.ViewModels;
 using MvvmCross.Wpf.Views;
+using Redcat.App.ViewModels;
 
 namespace Redcat.App.Wpf
 {
@@ -26,6 +27,8 @@ namespace Redcat.App.Wpf
                         
             IMvxAppStart start = Mvx.Resolve<IMvxAppStart>();
             start.Start();
+            
+            presenter.Show(new MvxViewModelRequest<MainMenuViewModel>(null, null, null));
 
             isInitialized = true;
         }

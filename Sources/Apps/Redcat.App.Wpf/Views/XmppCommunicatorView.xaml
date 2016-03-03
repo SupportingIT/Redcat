@@ -1,0 +1,64 @@
+﻿<views:MvxWpfView x:Class="Redcat.App.Wpf.Views.XmppCommunicatorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:MvvmCross.Wpf.Views;assembly=MvvmCross.Wpf"
+             x:Name="Root"
+             xmlns:ma="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+             xmlns:rc="clr-namespace:Redcat.Xmpp;assembly=Redcat.Xmpp">
+    <views:MvxWpfView.Resources>
+        <rc:RosterItem x:Key="NewRosterItem" />
+        <ma:CustomDialog x:Key="AddRosterItemDialog">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.ColumnSpan="2">Add Contact</TextBlock>
+                <TextBlock Grid.Row="1">Name</TextBlock>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Source={StaticResource NewRosterItem}, Path=Name}" />
+                <TextBlock Grid.Row="2">Jid</TextBlock>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Source={StaticResource NewRosterItem}, Path=Jid}"/>
+                <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <Button Command="{Binding AddRosterItemCommand}" CommandParameter="{Binding Source={StaticResource NewRosterItem}}">OK</Button>
+                    <Button Click="CloseDialogButton_Click">Cancel</Button>
+                </StackPanel>
+            </Grid>
+        </ma:CustomDialog>
+    </views:MvxWpfView.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel>            
+            <ToolBar>
+                <Button Command="{Binding ConnectCommand}">Connect</Button>
+                <Button Click="AddItem_Click">Add item</Button>
+            </ToolBar>
+        </StackPanel>
+        <DataGrid x:Name="Roster" ItemsSource="{Binding Roster}" Grid.Row="2" IsReadOnly="True" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="JID" Binding="{Binding Jid}" />
+                <DataGridCheckBoxColumn Header="Pending subscription" Binding="{Binding Mode=OneWay}" />
+                <DataGridTextColumn Header="Subscription state" Binding="{Binding SubscriptionState}" />
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <ItemContainerTemplate>
+                            <StackPanel Orientation="Horizontal" x:Name="RosterItem">
+                                <Button>Edit</Button>
+                                <Button Command="{Binding RemoveRosterItemCommand}" CommandParameter="{Binding ElementName=RosterItem, Path=DataContext}" DataContext="{Binding ElementName=Roster, Path=DataContext}">Delete</Button>
+                            </StackPanel>
+                        </ItemContainerTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</views:MvxWpfView>
