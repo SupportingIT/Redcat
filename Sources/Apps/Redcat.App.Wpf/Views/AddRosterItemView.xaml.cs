@@ -2,9 +2,9 @@
 
 namespace Redcat.App.Wpf.Views
 {
-    public partial class XmppCommunicatorView : MvxWpfView
+    public partial class AddRosterItemView : MvxWpfView
     {
-        public XmppCommunicatorView()
+        public AddRosterItemView()
         {
             InitializeComponent();
         }

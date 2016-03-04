@@ -27,11 +27,11 @@ namespace Redcat.App.Wpf
         public override void Initialize()
         {
             base.Initialize();
-            Mvx.RegisterType<IConnectionSettingsRepository, ConnectionSettingsRepository>();
-            Mvx.RegisterType<XmppCommunicator, XmppCommunicator>();
+            Mvx.RegisterType<IConnectionSettingsRepository, ConnectionSettingsRepository>();            
             Mvx.RegisterType<IXmppChannelFactory, XmppChannelFactory>();
             Mvx.RegisterType<IStreamChannelFactory, TcpChannelFactory>();
             Mvx.RegisterType<Func<ISaslCredentials>>(() => new SaslCredentialsProvider().GetCredentials);
+            Mvx.RegisterSingleton(new XmppCommunicator(Mvx.Resolve<IXmppChannelFactory>()));
         }
     }
 }

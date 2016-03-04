@@ -1,6 +1,7 @@
 ﻿using MvvmCross.Core.ViewModels;
 using Redcat.App.Services;
 using Redcat.Xmpp;
+using System;
 using System.Collections.Generic;
 
 namespace Redcat.App.ViewModels
@@ -14,7 +15,7 @@ namespace Redcat.App.ViewModels
         {
             this.repository = repository;
             this.communicator = communicator;
-            AddRosterItemCommand = new MvxCommand<RosterItem>(AddRosterItem);
+            AddRosterItemCommand = new MvxCommand(AddRosterItem);
             ConnectCommand = new MvxCommand(Connect);
             RemoveRosterItemCommand = new MvxCommand<RosterItem>(RemoveRosterItem);
         }
@@ -33,9 +34,9 @@ namespace Redcat.App.ViewModels
             communicator.LoadRoster();
         }
 
-        private void AddRosterItem(RosterItem item)
+        private void AddRosterItem()
         {
-            communicator.AddContact(item);
+            ShowViewModel<AddRosterItemViewModel>();
         }
 
         private void RemoveRosterItem(RosterItem item)

@@ -3,6 +3,9 @@ using System.Windows;
 using System.Windows.Threading;
 using Redcat.App.Wpf.Views;
 using MvvmCross.Wpf.Views;
+using System.Collections.Generic;
+using System;
+using MvvmCross.Core.ViewModels;
 
 namespace Redcat.App.Wpf
 {
@@ -10,24 +13,49 @@ namespace Redcat.App.Wpf
     {
         private ContentControl mainContent;
         private ItemsControl mainMenu;
+        private Window dialogWindow;
         private Dispatcher dispatcher;
+        private List<Type> dialogViews;
 
-        public RedcatWpfViewPresenter(Dispatcher dispatcher, ContentControl mainContent, ItemsControl mainMenu)
+        public RedcatWpfViewPresenter(Dispatcher dispatcher, ContentControl mainContent, ItemsControl mainMenu, Window dialogWindow)
         {
+            dialogViews = new List<Type>();
+            this.dialogWindow = dialogWindow;
             this.dispatcher = dispatcher;
             this.mainContent = mainContent;
             this.mainMenu = mainMenu;
         }
 
-        public override void Present(FrameworkElement frameworkElement)
+        public void AddDialogView<T>()
         {
-            if (frameworkElement is MainMenuView)
+            dialogViews.Add(typeof(T));
+        }
+
+        public override void Present(FrameworkElement view)
+        {
+            if (IsDialogView(view))
             {
-                mainMenu.Items.Add(frameworkElement);
-                frameworkElement.Visibility = Visibility.Visible;                
+                dialogWindow.Content = view;
+                dialogWindow.ShowDialog();
                 return;
             }
-            mainContent.Content = frameworkElement;
-        }        
+            if (view is MainMenuView)
+            {
+                mainMenu.Items.Add(view);
+                view.Visibility = Visibility.Visible;                
+                return;
+            }
+            mainContent.Content = view;
+        }
+
+        private bool IsDialogView(FrameworkElement view)
+        {
+            return dialogViews.Contains(view.GetType());
+        }
+
+        public override void ChangePresentation(MvxPresentationHint hint)
+        {
+            base.ChangePresentation(hint);
+        }
     }
 }

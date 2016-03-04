@@ -6,6 +6,7 @@ using MvvmCross.Platform;
 using MvvmCross.Core.ViewModels;
 using MvvmCross.Wpf.Views;
 using Redcat.App.ViewModels;
+using Redcat.App.Wpf.Views;
 
 namespace Redcat.App.Wpf
 {
@@ -26,7 +27,7 @@ namespace Redcat.App.Wpf
             setup.Initialize();
                         
             IMvxAppStart start = Mvx.Resolve<IMvxAppStart>();
-            start.Start();
+            start.Start();            
             
             presenter.Show(new MvxViewModelRequest<MainMenuViewModel>(null, null, null));
 
@@ -38,7 +39,8 @@ namespace Redcat.App.Wpf
             ContentControl mainContent = (ContentControl)MainWindow.FindName("MainContent");
             WindowCommands mainMenu = new WindowCommands();
             ((MainWindow)MainWindow).RightWindowCommands = mainMenu;
-            var presenter = new RedcatWpfViewPresenter(Dispatcher, mainContent, mainMenu);
+            var presenter = new RedcatWpfViewPresenter(Dispatcher, mainContent, mainMenu, new DialogWindow());
+            presenter.AddDialogView<AddRosterItemView>();
             return presenter;
         }
     }
