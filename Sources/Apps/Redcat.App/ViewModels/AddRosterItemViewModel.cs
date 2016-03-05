@@ -22,6 +22,7 @@ namespace Redcat.App.ViewModels
         private void AddItem()
         {
             communicator.AddContact(Jid, Name);
+            Close(this);
         }
     }
 }

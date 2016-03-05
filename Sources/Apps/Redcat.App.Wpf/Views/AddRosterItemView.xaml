@@ -11,11 +11,11 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
+        <Grid.RowDefinitions>            
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto"/>
             <RowDefinition />
-        </Grid.RowDefinitions>
+        </Grid.RowDefinitions>        
         <TextBlock>Name</TextBlock>
         <TextBox Grid.Column="1" Text="{Binding Name}"></TextBox>
         <TextBlock Grid.Row="1">JID</TextBlock>

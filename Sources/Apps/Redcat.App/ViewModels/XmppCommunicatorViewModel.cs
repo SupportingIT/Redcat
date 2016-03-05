@@ -1,14 +1,15 @@
 ﻿using MvvmCross.Core.ViewModels;
 using Redcat.App.Services;
 using Redcat.Xmpp;
-using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Redcat.App.ViewModels
 {
     public class XmppCommunicatorViewModel : MvxViewModel
     {
         private IConnectionSettingsRepository repository;
+        private ICollection<XmppStreamItem> streamItems;
         private XmppCommunicator communicator;
 
         public XmppCommunicatorViewModel(XmppCommunicator communicator, IConnectionSettingsRepository repository)
@@ -18,9 +19,10 @@ namespace Redcat.App.ViewModels
             AddRosterItemCommand = new MvxCommand(AddRosterItem);
             ConnectCommand = new MvxCommand(Connect);
             RemoveRosterItemCommand = new MvxCommand<RosterItem>(RemoveRosterItem);
-        }
+            streamItems = new ObservableCollection<XmppStreamItem>();            
+        }        
 
-        public IEnumerable<RosterItem> Roster => communicator.Roster;
+        public IEnumerable<XmppStreamItem> StreamItems => streamItems;
 
         public IMvxCommand ConnectCommand { get; }
 
@@ -44,4 +46,21 @@ namespace Redcat.App.ViewModels
             communicator.RemoveContact(item);
         }
     }
+
+    public class XmppStreamItem
+    {
+        //private XmlElement element;
+        
+        public XmppStreamItem(XmppStreamDirection direction)
+        {
+            //this.element = element;
+            Direction = direction;
+        }
+
+        public XmppStreamDirection Direction { get; }
+
+        //public string Name => element.Name;
+    }
+
+    public enum XmppStreamDirection { Inbound, Outbound }
 }

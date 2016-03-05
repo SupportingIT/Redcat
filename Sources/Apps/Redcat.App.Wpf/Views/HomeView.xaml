@@ -14,6 +14,9 @@
         <StackPanel Margin="5" Grid.Row="0">
             <ma:Tile Title="XMPP" Command="{Binding ShowViewCommand}" />
             <ma:Tile Title="AMQP" />
-        </StackPanel>        
+        </StackPanel>
+        <ContentControl Grid.Column="1">
+            Some kinda welcom text
+        </ContentControl>
     </Grid>
 </views:MvxWpfView>

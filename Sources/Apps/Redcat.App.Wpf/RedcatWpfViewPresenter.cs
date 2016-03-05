@@ -55,6 +55,10 @@ namespace Redcat.App.Wpf
 
         public override void ChangePresentation(MvxPresentationHint hint)
         {
+            if (hint is MvxClosePresentationHint)
+            {
+                dialogWindow.Close();
+            }
             base.ChangePresentation(hint);
         }
     }

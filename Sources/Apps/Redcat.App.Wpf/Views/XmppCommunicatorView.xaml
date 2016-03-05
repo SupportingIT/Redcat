@@ -3,36 +3,37 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:MvvmCross.Wpf.Views;assembly=MvvmCross.Wpf"
              x:Name="Root"
-             xmlns:ma="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-             xmlns:rc="clr-namespace:Redcat.Xmpp;assembly=Redcat.Xmpp">    
+             xmlns:ma="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:rc="clr-namespace:Redcat.Xmpp;assembly=Redcat.Xmpp">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />            
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel>            
-            <ToolBar>
-                <Button Command="{Binding ConnectCommand}">Connect</Button>
-                <Button Command="{Binding AddRosterItemCommand}">Add item</Button>
-            </ToolBar>
-        </StackPanel>
-        <DataGrid x:Name="Roster" ItemsSource="{Binding Roster}" Grid.Row="2" IsReadOnly="True" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="JID" Binding="{Binding Jid}" />
-                <DataGridCheckBoxColumn Header="Pending subscription" Binding="{Binding Mode=OneWay}" />
-                <DataGridTextColumn Header="Subscription state" Binding="{Binding SubscriptionState}" />
-                <DataGridTemplateColumn>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <ItemContainerTemplate>
-                            <StackPanel Orientation="Horizontal" x:Name="RosterItem">
-                                <Button>Edit</Button>
-                                <Button Command="{Binding RemoveRosterItemCommand}" CommandParameter="{Binding ElementName=RosterItem, Path=DataContext}" DataContext="{Binding ElementName=Roster, Path=DataContext}">Delete</Button>
-                            </StackPanel>
-                        </ItemContainerTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+        <ToolBar IsManipulationEnabled="False">
+            <Button Command="{Binding ConnectCommand}" Content="{StaticResource appbar_connect}" ToolTip="Connect">
+                <Button.LayoutTransform>
+                    <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                </Button.LayoutTransform>
+            </Button>
+            <Button Command="{Binding AddRosterItemCommand}" Content="{StaticResource appbar_user_add}" ToolTip="Add Contact">
+                <Button.LayoutTransform>
+                    <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                </Button.LayoutTransform>
+            </Button>
+        </ToolBar>
+        <StackPanel Grid.Row="1">
+            <ListView ItemsSource="{Binding StreamItems}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn DisplayMemberBinding="{Binding Direction}" Header="Direction"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Name" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </StackPanel>        
     </Grid>
 </views:MvxWpfView>
