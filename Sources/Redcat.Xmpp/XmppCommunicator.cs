@@ -12,7 +12,8 @@ namespace Redcat.Xmpp
     {        
         private ICollection<RosterItem> roster;        
 
-        private RosterHandler rosterHandler;        
+        private RosterHandler rosterHandler;
+        private PresenceHandler presenceHandler;
         private StanzaRouter stanzaRouter;
         private SubscriptionHandler subscriptionHandler;
 
@@ -20,10 +21,18 @@ namespace Redcat.Xmpp
         {
             roster = new ObservableCollection<RosterItem>();                        
             rosterHandler = new RosterHandler(roster, Send);
+            presenceHandler = new PresenceHandler(Send);
+            subscriptionHandler = new SubscriptionHandler(Send);
             stanzaRouter = new StanzaRouter(OnIqStanzaReceived, OnPresenceStanzaReceived, OnMessageStanzaReceived);
         }
 
         public IEnumerable<RosterItem> Roster => roster;
+
+        public PresenceStatus PresenceStatus
+        {
+            get { return presenceHandler.PresenceStatus; }
+            set { SetPresenceStatus(value); }
+        }
 
         protected override void OnChannelCreated(IXmppChannel channel)
         {
@@ -38,11 +47,13 @@ namespace Redcat.Xmpp
         private void OnIqStanzaReceived(IqStanza iq)
         {
             rosterHandler.OnIqStanzaReceived(iq);
+            subscriptionHandler.OnRosterUpdated(roster);
             IqReceived?.Invoke(this, new IqStanzaEventArgs(iq));
         }
 
         private void OnPresenceStanzaReceived(PresenceStanza presence)
         {
+            subscriptionHandler.OnPresenceStanzaReceived(presence);
             PresenceReceived?.Invoke(this, new PresenceStanzaEventArgs(presence));
         }
 
@@ -67,6 +78,11 @@ namespace Redcat.Xmpp
         public void LoadContacts()
         {
             rosterHandler.RequestRosterItems();
+        }
+
+        public void SetPresenceStatus(PresenceStatus status)
+        {
+            presenceHandler.SetStatus(status);
         }
 
         public void WaitIncominMessage()

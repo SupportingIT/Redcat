@@ -53,6 +53,7 @@ namespace Redcat.Xmpp
         {
             RosterItem item = new RosterItem();
             item.Name = element.GetAttributeValue<string>("name");
+            item.SubscriptionState = ParseSubscriptionState(element.GetAttributeValue<string>("subscription"));
             object jid = element.GetAttributeValue<object>("jid");
 
             if (jid != null)
@@ -62,6 +63,14 @@ namespace Redcat.Xmpp
             }
 
             return item;
+        }
+
+        private SubscriptionState ParseSubscriptionState(string state)
+        {
+            if (state == "from") return SubscriptionState.From;
+            if (state == "to") return SubscriptionState.To;
+            if (state == "both") return SubscriptionState.Both;
+            return SubscriptionState.None;
         }
     }
 }

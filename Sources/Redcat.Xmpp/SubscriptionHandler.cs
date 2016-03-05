@@ -1,18 +1,18 @@
-﻿using Redcat.Core.Channels;
-using Redcat.Xmpp.Xml;
+﻿using Redcat.Xmpp.Xml;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Redcat.Xmpp
 {
-    public class SubscriptionHandler : IObserver<PresenceStanza>
+    public class SubscriptionHandler
     {
-        private IOutputChannel<XmlElement> channel;
+        private Action<Stanza> sendAction;
         private List<JID> incomingSubscriptions;
         
-        public SubscriptionHandler(IOutputChannel<XmlElement> channel)
+        public SubscriptionHandler(Action<Stanza> sendAction)
         {
-            this.channel = channel;
+            this.sendAction = sendAction;
             incomingSubscriptions = new List<JID>();
         }
 
@@ -21,29 +21,31 @@ namespace Redcat.Xmpp
         public void AcceptSubscription(JID subscriptionJid)
         {
             incomingSubscriptions.Remove(subscriptionJid);
-            channel.Send(Subscription.SubscriptionApprove(subscriptionJid));
+            sendAction(Subscription.SubscriptionApprove(subscriptionJid));
         }
 
         public void CancelSubscription(JID subscriber)
         {
             incomingSubscriptions.Remove(subscriber);
-            channel.Send(Subscription.SubscriptionReject(subscriber));
+            sendAction(Subscription.SubscriptionReject(subscriber));
         }
 
         public void RequestSubscription(JID subscriptionJid)
         {
-            channel.Send(Subscription.Request(subscriptionJid));
-        }
+            sendAction(Subscription.Request(subscriptionJid));
+        }             
 
-        public void OnCompleted()
-        { }
-
-        public void OnError(Exception error)
-        { }        
-
-        public void OnNext(PresenceStanza stanza)
+        public void OnPresenceStanzaReceived(PresenceStanza stanza)
         {
             if (stanza.IsSubscriptionRequest()) incomingSubscriptions.Add(stanza.From);
+        }
+
+        public void OnRosterUpdated(IEnumerable<RosterItem> roster)
+        {
+            foreach (var item in roster.Where(i => i.SubscriptionState == SubscriptionState.To))
+            {
+                incomingSubscriptions.Add(item.Jid);
+            }
         }
     }
 }

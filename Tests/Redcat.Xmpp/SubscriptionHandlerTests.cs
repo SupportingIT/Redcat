@@ -1,6 +1,5 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
-using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
 using System;
 
@@ -10,16 +9,16 @@ namespace Redcat.Xmpp.Tests
     public class SubscriptionHandlerTests
     {
         private SubscriptionHandler handler;
-        private IOutputChannel<XmlElement> channel;
+        private Action<Stanza> sendAction;
         private PresenceStanza stanza;
 
         [SetUp]
         public void SetUp()
         {
-            channel = A.Fake<IOutputChannel<XmlElement>>();
-            handler = new SubscriptionHandler(channel);
-            A.CallTo(() => channel.Send(A<XmlElement>._)).Invokes(c => {
-                stanza = (PresenceStanza)c.GetArgument<XmlElement>(0);
+            sendAction = A.Fake<Action<Stanza>>();
+            handler = new SubscriptionHandler(sendAction);
+            A.CallTo(() => sendAction.Invoke(A<Stanza>._)).Invokes(c => {
+                stanza = (PresenceStanza)c.GetArgument<Stanza>(0);
             });
         }
 
@@ -37,11 +36,11 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void SubscriptionRequest_Stanza_Adds_IncomingSubscriptions_Jid()
         {
-            SubscriptionHandler handler = new SubscriptionHandler(channel);
+            SubscriptionHandler handler = new SubscriptionHandler(sendAction);
             JID[] subscribers = { "user1@redcat", "user2@redcat" };
 
-            handler.OnNext(Subscription.IncomingRequest(subscribers[0]));
-            handler.OnNext(Subscription.IncomingRequest(subscribers[1]));
+            handler.OnPresenceStanzaReceived(Subscription.IncomingRequest(subscribers[0]));
+            handler.OnPresenceStanzaReceived(Subscription.IncomingRequest(subscribers[1]));
 
             CollectionAssert.Contains(handler.IncomingSubscriptions, subscribers[0]);
             CollectionAssert.Contains(handler.IncomingSubscriptions, subscribers[1]);
@@ -51,7 +50,7 @@ namespace Redcat.Xmpp.Tests
         public void AcceptSubscription_Sends_SubscriptionApprove_Stanza()
         {            
             JID subscriber = "user@redcat.org";
-            handler.OnNext(Subscription.IncomingRequest(subscriber));
+            handler.OnPresenceStanzaReceived(Subscription.IncomingRequest(subscriber));
 
             handler.AcceptSubscription(subscriber);
 
@@ -63,7 +62,7 @@ namespace Redcat.Xmpp.Tests
         public void CancelSubscription_Sends_SubscriptionApprove_Stanza()
         {
             JID subscriber = "user@redcat.org";
-            handler.OnNext(Subscription.IncomingRequest(subscriber));
+            handler.OnPresenceStanzaReceived(Subscription.IncomingRequest(subscriber));
 
             handler.CancelSubscription(subscriber);
 
