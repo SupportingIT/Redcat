@@ -56,11 +56,13 @@
     <Compile Include="Parsing\XmlElementBuilderBase.cs" />
     <Compile Include="Parsing\XmlLexer.cs" />
     <Compile Include="Parsing\XmppStreamParser.cs" />
+    <Compile Include="PresenceHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Channels\XmppChannelFactory.cs" />
     <Compile Include="Channels\XmppChannel.cs" />
     <Compile Include="RosterHandler.cs" />
     <Compile Include="RosterItem.cs" />
+    <Compile Include="StanzaEventArgs.cs" />
     <Compile Include="StanzaRouter.cs" />
     <Compile Include="StreamInitializer.cs" />
     <Compile Include="SubscriptionHandler.cs" />
@@ -73,7 +75,6 @@
     <Compile Include="Xml\Presence.cs" />
     <Compile Include="Xml\PresenceStanza.cs" />
     <Compile Include="Xml\Roster.cs" />
-    <Compile Include="Xml\RosterItem.cs" />
     <Compile Include="Xml\Stanza.cs" />
     <Compile Include="Xml\StreamFeatureExtensions.cs" />
     <Compile Include="Xml\Subscription.cs" />

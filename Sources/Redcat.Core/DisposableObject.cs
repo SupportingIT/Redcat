@@ -43,6 +43,12 @@ namespace Redcat.Core
 
         protected virtual void DisposeUnmanagedResources()
         { }
+
+        protected void RemoveSubscribers(Delegate eventSource)
+        {
+            var subscribers = eventSource.GetInvocationList();
+            foreach (var subscriber in subscribers) Delegate.RemoveAll(eventSource, subscriber);
+        }
     }
 
     public static class DisposableExtensions

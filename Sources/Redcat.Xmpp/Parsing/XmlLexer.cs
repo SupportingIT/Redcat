@@ -15,7 +15,7 @@ namespace Redcat.Xmpp.Parsing
         private static readonly string WhitespaceRegex = @"[\s\t]+";
         private static readonly string GenericXmlElementRegex = string.Format(@"({0})|({1})|({2})|({3})|({4})", XmlDeclarationRegexp, XmlStartTagRegex, XmlClosingTagRegex, XmlEnclosedTagRegex, XmlValueRegex);
 
-        private static readonly string XmlAttributeRegex = @"[\w-\:]+=('|"")[\w-\:]*\1";
+        private static readonly string XmlAttributeRegex = @"[\w-\:]+=('|"")[\w-\:@]*\1";
 
         private XmlLexerOptions options;
 

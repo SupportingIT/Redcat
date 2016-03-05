@@ -73,7 +73,9 @@ namespace Redcat.Core.Channels
             lock (messageQueue)
             {
                 if (messageQueue.Count == 1) bufferEvent.Reset();
-                T message = messageQueue.Dequeue();                
+                T message = messageQueue.Dequeue();
+                OnMessageReceived(message);
+                RiseOnNext(message);
                 return message;
             }
         }

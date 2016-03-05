@@ -15,7 +15,7 @@ namespace Redcat.Xmpp
 
         public bool PendingSubscription { get; }
 
-        public SubscriptionState SubscriptionState { get; }
+        public SubscriptionState SubscriptionState { get; internal set; }
 
         public string Version { get; }
 

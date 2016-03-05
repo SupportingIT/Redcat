@@ -6,7 +6,7 @@ using Redcat.Xmpp.Parsing;
 
 namespace Redcat.Xmpp.Channels
 {
-    public class XmppChannel : BufferChannel<XmlElement>, IXmppChannel, IXmppStream, IObserver<XmlElement>
+    public class XmppChannel : BufferChannel<XmlElement>, IReactiveXmppChannel, IXmppStream
     {
         private const int DefaultBufferSize = 1024;
         private IStreamChannel streamChannel;        
@@ -42,9 +42,7 @@ namespace Redcat.Xmpp.Channels
         {
             base.OnClosing();
             streamChannel.Close();
-        }
-
-        public void OnNext(XmlElement element) => Send(element);
+        }        
 
         internal void SetTlsContext()
         {
@@ -59,6 +57,7 @@ namespace Redcat.Xmpp.Channels
         public void Send(XmlElement message)
         {
             writer.Write(message);
+            OnMessageSended(message);
         }
 
         protected override void OnBufferUpdated()

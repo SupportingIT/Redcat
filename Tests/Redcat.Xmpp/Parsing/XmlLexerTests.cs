@@ -172,5 +172,16 @@ namespace Redcat.Xmpp.Tests.Parsing
 
             Assert.That(actualAttributes, Is.EquivalentTo(expectedAttributes));
         }
+
+        [Test]
+        public void GetTagAttributes_Parses_Jid()
+        {
+            string tag = "<item jid='user@home'>";
+            XmlToken token = lexer.GetTokens(tag).Single();
+            var attribute = XmlLexer.GetTagAttributes(token).Single();
+
+            Assert.That(attribute.Item1, Is.EqualTo("jid"));
+            Assert.That(attribute.Item2, Is.EqualTo("user@home"));
+        }
     }
 }

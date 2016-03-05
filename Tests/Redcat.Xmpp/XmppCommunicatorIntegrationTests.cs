@@ -58,12 +58,15 @@ namespace Redcat.Xmpp.Tests
             var settings = CreateConnectionSettings();
             communicator.Connect(settings);
 
-            communicator.LoadRoster();
-            //communicator.AddContact("user1@redcat", "User1");
+            communicator.LoadContacts();
+            //communicator.AddContact("user1@redcat", "User1", true);
             //communicator.RemoveContact("user1@redcat");
+            //communicator.SetPresenceStatus(PresenceStatus.Available);
+            //PresenceStanza stanza = Subscription.SubscriptionApprove("user1@redcat");
+            //communicator.Send(stanza);
             communicator.WaitIncominMessage();
 
-            //CollectionAssert.IsNotEmpty(communicator.Contacts);
+            //CollectionAssert.IsNotEmpty(communicator.IncomingSubscriptions);
         }
 
         private ConnectionSettings CreateConnectionSettings()

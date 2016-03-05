@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
+using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
 using System;
 
@@ -9,60 +10,39 @@ namespace Redcat.Xmpp.Tests
     public class StanzaRouterTests
     {
         [Test]
-        public void OnCompleted_Notifies_All_Stanza_Observers()
+        public void OnXmlElementReceived_Notifies_Iq_Handler()
         {
-            IObserver<IqStanza> iqObserver = A.Fake<IObserver<IqStanza>>();
-            IObserver<PresenceStanza> presenceObserver = A.Fake<IObserver<PresenceStanza>>();
-            IObserver<MessageStanza> messageObserver = A.Fake<IObserver<MessageStanza>>();
-            StanzaRouter router = new StanzaRouter();
-            router.Subscribe(iqObserver);
-            router.Subscribe(presenceObserver);
-            router.Subscribe(messageObserver);
-
-            router.OnCompleted();
-
-            A.CallTo(() => iqObserver.OnCompleted()).MustHaveHappened();
-            A.CallTo(() => presenceObserver.OnCompleted()).MustHaveHappened();
-            A.CallTo(() => messageObserver.OnCompleted()).MustHaveHappened();
-        }
-
-        [Test]
-        public void OnNext_Notifies_All_Iq_Observers()
-        {
-            var observers = A.CollectionOfFake<IObserver<IqStanza>>(2);
-            StanzaRouter router = new StanzaRouter();
-            foreach (var observer in observers) router.Subscribe(observer);
+            IqStanzaHandler handler = A.Fake<IqStanzaHandler>();
+            StanzaRouter router = new StanzaRouter(handler, null, null);
             IqStanza iq = Iq.Get();
 
-            router.OnNext(iq);
+            router.OnXmlElementReceived(router, new ChannelMessageEventArgs<XmlElement>(iq));
 
-            foreach (var observer in observers) A.CallTo(() => observer.OnNext(iq)).MustHaveHappened();
+            A.CallTo(() => handler.Invoke(iq)).MustHaveHappened();
         }
 
         [Test]
-        public void OnNext_Notifies_All_Presence_Observers()
+        public void OnXmlElementReceived_Notifies_Presence_Handler()
         {
-            var observers = A.CollectionOfFake<IObserver<PresenceStanza>>(2);
-            StanzaRouter router = new StanzaRouter();
-            foreach (var observer in observers) router.Subscribe(observer);
+            PresenceStanzaHandler handler = A.Fake<PresenceStanzaHandler>();
+            StanzaRouter router = new StanzaRouter(null, handler, null);            
             PresenceStanza presence = Presence.Available();
 
-            router.OnNext(presence);
+            router.OnXmlElementReceived(router, new ChannelMessageEventArgs<XmlElement>(presence));
 
-            foreach (var observer in observers) A.CallTo(() => observer.OnNext(presence)).MustHaveHappened();
+            A.CallTo(() => handler.Invoke(presence)).MustHaveHappened();
         }
 
         [Test]
-        public void OnNext_Notifies_All_Message_Observers()
+        public void OnXmlElementReceived_Notifies_Message_Handler()
         {
-            var observers = A.CollectionOfFake<IObserver<MessageStanza>>(2);
-            StanzaRouter router = new StanzaRouter();
-            foreach (var observer in observers) router.Subscribe(observer);
+            MessageStanzaHandler handler = A.Fake<MessageStanzaHandler>();
+            StanzaRouter router = new StanzaRouter(null, null, handler);            
             MessageStanza stanza = new MessageStanza();
 
-            router.OnNext(stanza);
+            router.OnXmlElementReceived(router, new ChannelMessageEventArgs<XmlElement>(stanza));
 
-            foreach (var observer in observers) A.CallTo(() => observer.OnNext(stanza)).MustHaveHappened();
+            A.CallTo(() => handler.Invoke(stanza)).MustHaveHappened();
         }
     }
 }

@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,18 +12,18 @@ namespace Redcat.Xmpp.Tests
     public class RosterHandlerTests
     {
         private ICollection<RosterItem> roster;
-        private IOutputChannel<XmlElement> channel;
+        private Action<Stanza> stanzaSender;
         private RosterHandler handler;
         private IqStanza iq;
 
         [SetUp]
         public void SetUp()
         {
-            roster = new List<RosterItem>();            
-            channel = A.Fake<IOutputChannel<XmlElement>>();
-            handler = new RosterHandler(roster, channel);
+            roster = new List<RosterItem>();
+            stanzaSender = A.Fake<Action<Stanza>>();
+            handler = new RosterHandler(roster, stanzaSender);
             iq = null;
-            A.CallTo(() => channel.Send(A<IqStanza>._)).Invokes(c =>
+            A.CallTo(() => stanzaSender.Invoke(A<IqStanza>._)).Invokes(c =>
             {
                 iq = c.GetArgument<IqStanza>(0);
             });
@@ -58,7 +59,7 @@ namespace Redcat.Xmpp.Tests
         }
 
         [Test]
-        public void OnNext_Fills_Roster_If_Roster_Result_Stanza_Received()
+        public void OnIqStanzaReceived_Fills_Roster_If_Roster_Result_Stanza_Received()
         {
             var items = Enumerable.Range(0, 5).Select(i =>
             {
@@ -70,13 +71,13 @@ namespace Redcat.Xmpp.Tests
             IqStanza stanza = Iq.Result();
             stanza.AddRosterQuery().AddChilds(items);
 
-            handler.OnNext(stanza);
+            handler.OnIqStanzaReceived(stanza);
 
             Assert.That(roster.Count, Is.EqualTo(items.Length));
         }
 
         [Test]
-        public void OnNext_Adds_RosterItem_If_Roster_Push_Received()
+        public void OnIqStanzaReceived_Adds_RosterItem_If_Roster_Push_Received()
         {
             JID jid = "Amy@home";
             IqStanza iq = Iq.Set();
@@ -85,7 +86,7 @@ namespace Redcat.Xmpp.Tests
             item.SetAttributeValue("jid", jid);
             iq.AddRosterQuery().AddChild(item);
 
-            handler.OnNext(iq);
+            handler.OnIqStanzaReceived(iq);
 
             var rosterItem = roster.Single();
             Assert.That(rosterItem.Name, Is.EqualTo("Amy"));

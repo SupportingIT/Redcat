@@ -1,56 +1,30 @@
-﻿using Redcat.Core;
+﻿using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
-using System;
-using System.Collections.Generic;
 
 namespace Redcat.Xmpp
 {
-    public class StanzaRouter : IObserver<XmlElement>, IObservable<IqStanza>, IObservable<PresenceStanza>, IObservable<MessageStanza>
+    public class StanzaRouter
     {
-        private ICollection<IObserver<IqStanza>> iqObservers;
-        private ICollection<IObserver<PresenceStanza>> presenceObservers;
-        private ICollection<IObserver<MessageStanza>> messageObservers;
+        private IqStanzaHandler iqHandler;
+        private PresenceStanzaHandler presenceHandler;
+        private MessageStanzaHandler messageHandler;
 
-        public StanzaRouter()
+        public StanzaRouter(IqStanzaHandler iqHandler, PresenceStanzaHandler presenceHandler, MessageStanzaHandler messageHandler)
         {
-            iqObservers = new List<IObserver<IqStanza>>();
-            presenceObservers = new List<IObserver<PresenceStanza>>();
-            messageObservers = new List<IObserver<MessageStanza>>();
+            this.iqHandler = iqHandler;
+            this.presenceHandler = presenceHandler;
+            this.messageHandler = messageHandler;
         }
 
-        public void OnCompleted()
+        public void OnXmlElementReceived(object sender, ChannelMessageEventArgs<XmlElement> args)
         {
-            iqObservers.OnCompleted();
-            presenceObservers.OnCompleted();
-            messageObservers.OnCompleted();
-        }
-
-        public void OnError(Exception error)
-        { }
-
-        public void OnNext(XmlElement element)
-        {
-            if (element is IqStanza) iqObservers.OnNext((IqStanza)element);
-            if (element is PresenceStanza) presenceObservers.OnNext((PresenceStanza)element);
-            if (element is MessageStanza) messageObservers.OnNext((MessageStanza)element);
-        }
-
-        public IDisposable Subscribe(IObserver<PresenceStanza> observer)
-        {
-            if (observer == null) throw new ArgumentNullException(nameof(observer));
-            return presenceObservers.Subscribe(observer);
-        }
-
-        public IDisposable Subscribe(IObserver<IqStanza> observer)
-        {
-            if (observer == null) throw new ArgumentNullException(nameof(observer));
-            return iqObservers.Subscribe(observer);
-        }
-
-        public IDisposable Subscribe(IObserver<MessageStanza> observer)
-        {
-            if (observer == null) throw new ArgumentNullException(nameof(observer));
-            return messageObservers.Subscribe(observer);
+            if (args.Message is IqStanza && iqHandler != null) iqHandler((IqStanza)args.Message);
+            if (args.Message is PresenceStanza && presenceHandler != null) presenceHandler((PresenceStanza)args.Message);
+            if (args.Message is MessageStanza && messageHandler != null) messageHandler((MessageStanza)args.Message);
         }
     }
+
+    public delegate void IqStanzaHandler(IqStanza stanza);
+    public delegate void PresenceStanzaHandler(PresenceStanza stanza);
+    public delegate void MessageStanzaHandler(MessageStanza stanza);
 }

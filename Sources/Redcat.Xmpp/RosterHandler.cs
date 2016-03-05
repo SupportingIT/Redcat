@@ -1,72 +1,59 @@
-﻿using Redcat.Core.Channels;
-using Redcat.Xmpp.Xml;
+﻿using Redcat.Xmpp.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Redcat.Xmpp
 {
-    public class RosterHandler : IObserver<IqStanza>
+    public class RosterHandler
     {
         private ICollection<RosterItem> roster;
-        private IOutputChannel<XmlElement> channel;
-
-        public RosterHandler(ICollection<RosterItem> roster, IOutputChannel<XmlElement> channel)
+        private Action<Stanza> stanzaSender;
+        
+        public RosterHandler(ICollection<RosterItem> roster, Action<Stanza> stanzaSender)
         {
             this.roster = roster;
-            this.channel = channel;
+            this.stanzaSender = stanzaSender;
         }
-
-        public SynchronizationContext SyncContext { get; set; }
 
         public void RequestRosterItems()
         {
-            channel.Send(Roster.Request());
+            stanzaSender(Roster.Request());
         }
 
         public void AddRosterItem(JID jid, string name = null)
         {
-            channel.Send(Roster.AddItem(jid, name));
+            stanzaSender(Roster.AddItem(jid, name));
         }
 
-        public void RemoveRosterItem(JID jid, string name = null)
+        public void RemoveRosterItem(JID jid)
         {
-            channel.Send(Roster.RemoveItem(jid, name));
-        }
+            stanzaSender(Roster.RemoveItem(jid));
+        }        
 
-        public void OnCompleted()
-        { }
-
-        public void OnError(Exception error)
-        { }
-
-        public void OnNext(IqStanza stanza)
+        public void OnIqStanzaReceived(IqStanza value)
         {
-            if (SyncContext != null) SyncContext.Send(s => OnNextIq(stanza), null);
-            else OnNextIq(stanza);         
-        }
+            if (!value.IsRosterIq()) return;
 
-        private void OnNextIq(IqStanza stanza)
-        {
-            if (stanza.IsRosterPush())
+            if (value.IsRosterPush())
             {
-                var item = ParseItem(stanza.GetRosterItems().First());
+                var item = ParseItem(value.GetRosterItems().First());
                 roster.Add(item);
             }
 
-            if (stanza.IsRosterResponse())
+            if (value.IsResult())
             {
-                var items = stanza.GetRosterItems().Select(i => ParseItem(i));
+                var items = value.GetRosterItems().Select(i => ParseItem(i));
                 roster.Clear();
                 foreach (var item in items) roster.Add(item);
-            }
+            }            
         }
 
         private RosterItem ParseItem(XmlElement element)
         {
             RosterItem item = new RosterItem();
             item.Name = element.GetAttributeValue<string>("name");
+            item.SubscriptionState = ParseSubscriptionState(element.GetAttributeValue<string>("subscription"));
             object jid = element.GetAttributeValue<object>("jid");
 
             if (jid != null)
@@ -76,6 +63,14 @@ namespace Redcat.Xmpp
             }
 
             return item;
+        }
+
+        private SubscriptionState ParseSubscriptionState(string state)
+        {
+            if (state == "from") return SubscriptionState.From;
+            if (state == "to") return SubscriptionState.To;
+            if (state == "both") return SubscriptionState.Both;
+            return SubscriptionState.None;
         }
     }
 }

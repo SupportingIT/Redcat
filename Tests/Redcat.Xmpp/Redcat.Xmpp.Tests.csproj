@@ -87,6 +87,7 @@
     <Compile Include="Xml\XmlElementExtensionsTests.cs" />
     <Compile Include="Xml\XmlElementTests.cs" />
     <Compile Include="XmppCommunicatorIntegrationTests.cs" />
+    <Compile Include="XmppCommunicatorTests.cs" />
     <Compile Include="XmppStreamReaderTests.cs" />
     <Compile Include="XmppStreamWriterTests.cs" />
   </ItemGroup>
