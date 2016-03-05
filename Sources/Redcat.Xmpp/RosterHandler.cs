@@ -1,46 +1,40 @@
-﻿using Redcat.Core;
-using Redcat.Core.Channels;
-using Redcat.Xmpp.Xml;
+﻿using Redcat.Xmpp.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Redcat.Xmpp
 {
-    public class RosterHandler : IObserver<IqStanza>
+    public class RosterHandler
     {
         private ICollection<RosterItem> roster;
-        private IOutputChannel<XmlElement> channel;
-
-        public RosterHandler(ICollection<RosterItem> roster, IOutputChannel<XmlElement> channel)
+        private Action<Stanza> stanzaSender;
+        
+        public RosterHandler(ICollection<RosterItem> roster, Action<Stanza> stanzaSender)
         {
             this.roster = roster;
-            this.channel = channel;
+            this.stanzaSender = stanzaSender;
         }
 
         public void RequestRosterItems()
         {
-            channel.Send(Roster.Request());
+            stanzaSender(Roster.Request());
         }
 
         public void AddRosterItem(JID jid, string name = null)
         {
-            channel.Send(Roster.AddItem(jid, name));
+            stanzaSender(Roster.AddItem(jid, name));
         }
 
         public void RemoveRosterItem(JID jid)
         {
-            channel.Send(Roster.RemoveItem(jid));
-        }
+            stanzaSender(Roster.RemoveItem(jid));
+        }        
 
-        public void OnCompleted()
-        { }
-
-        public void OnError(Exception error)
-        { }
-
-        public void OnNext(IqStanza value)
+        public void OnIqStanzaReceived(IqStanza value)
         {
+            if (!value.IsRosterIq()) return;
+
             if (value.IsRosterPush())
             {
                 var item = ParseItem(value.GetRosterItems().First());

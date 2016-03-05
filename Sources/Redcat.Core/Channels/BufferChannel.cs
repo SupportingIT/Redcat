@@ -70,6 +70,7 @@ namespace Redcat.Core.Channels
             {
                 if (messageQueue.Count == 1) bufferEvent.Reset();
                 T message = messageQueue.Dequeue();
+                OnMessageReceived(message);
                 RiseOnNext(message);
                 return message;
             }

@@ -5,6 +5,11 @@ namespace Redcat.Xmpp.Xml
 {
     public static class Roster
     {
+        public static bool IsRosterIq(this IqStanza iq)
+        {
+            return iq.HasChild("query", Namespaces.Roster);
+        }
+
         public static IqStanza Request(JID from = null)
         {
             IqStanza iq = Iq.Get();
@@ -24,7 +29,7 @@ namespace Redcat.Xmpp.Xml
 
         public static bool IsRosterRequest(this IqStanza iq)
         {
-            return iq.IsGet() && iq.HasChild("query", Namespaces.Roster);
+            return iq.IsGet() && iq.IsRosterIq();
         }
 
         public static bool IsRosterResponse(this IqStanza iq)

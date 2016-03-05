@@ -2,8 +2,8 @@
 
 namespace Redcat.Core.Channels
 {
-    public interface IReactiveInputChannel<T> : IObservable<T>
+    public interface IReactiveInputChannel<T> : IChannel
     {
-        void Receive();
+        event EventHandler<ChannelMessageEventArgs<T>> MessageReceived;
     }
 }

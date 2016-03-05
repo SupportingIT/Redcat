@@ -4,13 +4,13 @@ using Redcat.Xmpp.Channels;
 using Redcat.Xmpp.Xml;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Redcat.Xmpp
 {
     public class XmppCommunicator : SingleChannelCommunicator<IXmppChannel>
     {        
-        private ICollection<RosterItem> roster;
-        private IDisposable subscription;
+        private ICollection<RosterItem> roster;        
 
         private RosterHandler rosterHandler;        
         private StanzaRouter stanzaRouter;
@@ -18,31 +18,45 @@ namespace Redcat.Xmpp
 
         public XmppCommunicator(IXmppChannelFactory factory) : base(factory)
         {
-            roster = new List<RosterItem>();            
-            stanzaRouter = new StanzaRouter();            
+            roster = new ObservableCollection<RosterItem>();                        
+            rosterHandler = new RosterHandler(roster, Send);
+            stanzaRouter = new StanzaRouter(OnIqStanzaReceived, OnPresenceStanzaReceived, OnMessageStanzaReceived);
         }
 
-        public IEnumerable<RosterItem> Contacts => roster;
+        public IEnumerable<RosterItem> Roster => roster;
 
         protected override void OnChannelCreated(IXmppChannel channel)
         {
             base.OnChannelCreated(channel);
-            if (channel is IObservable<XmlElement>)
+            
+            if (channel is IReactiveXmppChannel)
             {
-                subscription = ((IObservable<XmlElement>)channel).Subscribe(stanzaRouter);
+                ((IReactiveXmppChannel)channel).MessageReceived += stanzaRouter.OnXmlElementReceived;
             }
-            rosterHandler = new RosterHandler(roster, channel);
-            subscriptionHandler = new SubscriptionHandler(channel);
-            stanzaRouter.Subscribe(rosterHandler);
-            stanzaRouter.Subscribe(subscriptionHandler);
+        }        
+
+        private void OnIqStanzaReceived(IqStanza iq)
+        {
+            rosterHandler.OnIqStanzaReceived(iq);
+            IqReceived?.Invoke(this, new IqStanzaEventArgs(iq));
+        }
+
+        private void OnPresenceStanzaReceived(PresenceStanza presence)
+        {
+            PresenceReceived?.Invoke(this, new PresenceStanzaEventArgs(presence));
+        }
+
+        private void OnMessageStanzaReceived(MessageStanza message)
+        {
+            MessageReceived?.Invoke(this, new MessageStanzaEventArgs(message));
         }
 
         public void Send(Stanza stanza) => Channel.Send(stanza);
 
-        public void AddContact(JID jid, string name = null)
+        public void AddContact(JID jid, string name = null, bool subscribePresence = false)
         {
             rosterHandler.AddRosterItem(jid, name);
-            subscriptionHandler.RequestSubscription(jid);
+            if (subscribePresence) subscriptionHandler.RequestSubscription(jid);
         }
 
         public void RemoveContact(JID jid)
@@ -61,5 +75,17 @@ namespace Redcat.Xmpp
             if (channel == null) throw new InvalidOperationException();
             channel.Receive();
         }
+
+        protected override void DisposeManagedResources()
+        {
+            base.DisposeManagedResources();
+            RemoveSubscribers(IqReceived);
+            RemoveSubscribers(PresenceReceived);
+            RemoveSubscribers(MessageReceived);
+        }
+
+        public event EventHandler<IqStanzaEventArgs> IqReceived;
+        public event EventHandler<PresenceStanzaEventArgs> PresenceReceived;
+        public event EventHandler<MessageStanzaEventArgs> MessageReceived;
     }
 }
