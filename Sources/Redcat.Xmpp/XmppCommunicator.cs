@@ -24,6 +24,7 @@ namespace Redcat.Xmpp
             presenceHandler = new PresenceHandler(Send);
             subscriptionHandler = new SubscriptionHandler(Send);
             stanzaRouter = new StanzaRouter(OnIqStanzaReceived, OnPresenceStanzaReceived, OnMessageStanzaReceived);
+            stanzaRouter.SyncContext = System.Threading.SynchronizationContext.Current;
         }
 
         public IEnumerable<RosterItem> Roster => roster;
@@ -62,7 +63,16 @@ namespace Redcat.Xmpp
             MessageReceived?.Invoke(this, new MessageStanzaEventArgs(message));
         }
 
-        public void Send(Stanza stanza) => Channel.Send(stanza);
+        public void Send(Stanza stanza)
+        {
+            Channel.Send(stanza);
+            OnStanzaSended(stanza);
+        }
+
+        private void OnStanzaSended(Stanza stanza)
+        {
+            StanzaSended?.Invoke(this, new StanzaEventArgs<Stanza>(stanza));
+        }
 
         public void AddContact(JID jid, string name = null, bool subscribePresence = false)
         {
@@ -103,5 +113,6 @@ namespace Redcat.Xmpp
         public event EventHandler<IqStanzaEventArgs> IqReceived;
         public event EventHandler<PresenceStanzaEventArgs> PresenceReceived;
         public event EventHandler<MessageStanzaEventArgs> MessageReceived;
+        public event EventHandler<StanzaEventArgs<Stanza>> StanzaSended;
     }
 }

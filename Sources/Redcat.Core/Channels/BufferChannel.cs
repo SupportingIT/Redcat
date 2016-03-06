@@ -42,10 +42,12 @@ namespace Redcat.Core.Channels
             {
                 buffer.Write(value.Array, value.Offset, value.Count);
                 OnBufferUpdated();
-                if (messageQueue.Count > 0 && !bufferEvent.IsSet)
+                if (messageQueue.Count > 0)
                 {
-                    RiseOnNext(messageQueue.Peek());
-                    bufferEvent.Set();
+                    T message = messageQueue.Peek();
+                    OnMessageReceived(message);
+                    RiseOnNext(message);
+                    if (!bufferEvent.IsSet) bufferEvent.Set();
                 }
             }
         }

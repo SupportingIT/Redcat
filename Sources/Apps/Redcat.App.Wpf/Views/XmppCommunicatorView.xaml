@@ -7,25 +7,42 @@
              xmlns:rc="clr-namespace:Redcat.Xmpp;assembly=Redcat.Xmpp">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />            
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <ToolBar IsManipulationEnabled="False">
+        <ToolBar IsManipulationEnabled="False" Grid.ColumnSpan="2">
             <Button Command="{Binding ConnectCommand}" Content="{StaticResource appbar_connect}" ToolTip="Connect">
                 <Button.LayoutTransform>
                     <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
                 </Button.LayoutTransform>
             </Button>
-            <Button Command="{Binding AddRosterItemCommand}" Content="{StaticResource appbar_user_add}" ToolTip="Add Contact">
+            <Button Command="{Binding AddRosterItemCommand}" Content="{StaticResource appbar_user_add}" ToolTip="Add Contact" IsEnabled="{Binding IsConnected}">
                 <Button.LayoutTransform>
                     <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
                 </Button.LayoutTransform>
             </Button>
+            <ma:SplitButton SelectedItem="{Binding SelectedPresence}" ItemsSource="{Binding PresenceStatuses}" DisplayMemberPath="DisplayText" IsEnabled="{Binding IsConnected}">                
+            </ma:SplitButton>
         </ToolBar>
-        <StackPanel Grid.Row="1">
+        <ListBox Grid.Row="1" ItemsSource="{Binding Roster}">
+            <ListBox.ItemTemplate>
+                <ItemContainerTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                        <TextBlock Text="{Binding Jid}" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Subscription:</TextBlock>
+                            <TextBlock Text="{Binding SubscriptionState}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ItemContainerTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Grid.Column="1" Grid.Row="1">
             <ListView ItemsSource="{Binding StreamItems}">
                 <ListView.View>
                     <GridView>

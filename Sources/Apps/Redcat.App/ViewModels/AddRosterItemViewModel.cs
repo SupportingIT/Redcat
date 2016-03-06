@@ -11,11 +11,14 @@ namespace Redcat.App.ViewModels
         {
             this.communicator = communicator;
             AddItemCommand = new MvxCommand(AddItem);
+            RequestSubscription = true;
         }
 
         public string Name { get; set; }
 
         public JID Jid { get; set; }
+
+        public bool RequestSubscription { get; set; }
 
         public IMvxCommand AddItemCommand { get; }
 
