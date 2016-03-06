@@ -1,10 +1,12 @@
 ﻿<views:MvxWpfView x:Class="Redcat.App.Wpf.Views.XmppCommunicatorView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:views="clr-namespace:MvvmCross.Wpf.Views;assembly=MvvmCross.Wpf"
-             x:Name="Root"
+             xmlns:views="clr-namespace:MvvmCross.Wpf.Views;assembly=MvvmCross.Wpf"             
              xmlns:ma="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:rc="clr-namespace:Redcat.Xmpp;assembly=Redcat.Xmpp">
+             xmlns:rc="clr-namespace:Redcat.Xmpp;assembly=Redcat.Xmpp"
+             x:Name="Root">
+    <views:MvxWpfView.Resources>
+    </views:MvxWpfView.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
@@ -28,7 +30,7 @@
             <ma:SplitButton SelectedItem="{Binding SelectedPresence}" ItemsSource="{Binding PresenceStatuses}" DisplayMemberPath="DisplayText" IsEnabled="{Binding IsConnected}">                
             </ma:SplitButton>
         </ToolBar>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Roster}">
+        <ListBox x:Name="RosterList" Grid.Row="1" ItemsSource="{Binding Roster}">
             <ListBox.ItemTemplate>
                 <ItemContainerTemplate>
                     <StackPanel>
@@ -41,13 +43,17 @@
                     </StackPanel>
                 </ItemContainerTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
+        </ListBox>        
         <StackPanel Grid.Column="1" Grid.Row="1">
             <ListView ItemsSource="{Binding StreamItems}">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn DisplayMemberBinding="{Binding Direction}" Header="Direction"/>
                         <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Name" />
+                        <GridViewColumn DisplayMemberBinding="{Binding Type}" Header="Type" />
+                        <GridViewColumn DisplayMemberBinding="{Binding Id}" Header="Id" />
+                        <GridViewColumn DisplayMemberBinding="{Binding From}" Header="From" />
+                        <GridViewColumn DisplayMemberBinding="{Binding To}" Header="To" />
                     </GridView>
                 </ListView.View>
             </ListView>

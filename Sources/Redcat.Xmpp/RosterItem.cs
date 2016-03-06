@@ -1,11 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Redcat.Xmpp
 {
     public class RosterItem
     {
+        private SubscriptionHandler handler;
+
         public RosterItem()
         { }
+
+        internal RosterItem(SubscriptionHandler handler)
+        {
+            this.handler = handler;
+        }
 
         public string Name { get; set; }
 
@@ -18,6 +26,11 @@ namespace Redcat.Xmpp
         public SubscriptionState SubscriptionState { get; internal set; }
 
         public string Version { get; }
+
+        public void ApproveSubscription()
+        {
+            throw new NotImplementedException();
+        }
 
         public override string ToString()
         {

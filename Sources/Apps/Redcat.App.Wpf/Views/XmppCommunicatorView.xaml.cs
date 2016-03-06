@@ -1,4 +1,5 @@
 ﻿using MvvmCross.Wpf.Views;
+using Redcat.App.ViewModels;
 
 namespace Redcat.App.Wpf.Views
 {
@@ -8,5 +9,7 @@ namespace Redcat.App.Wpf.Views
         {
             InitializeComponent();
         }
+
+        public new XmppCommunicatorViewModel ViewModel => base.ViewModel as XmppCommunicatorViewModel;        
     }
 }

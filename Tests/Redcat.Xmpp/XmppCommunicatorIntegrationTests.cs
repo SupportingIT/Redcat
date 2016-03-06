@@ -50,7 +50,7 @@ namespace Redcat.Xmpp.Tests
             communicator.Disconnect();
         }
 
-        [Ignore]
+        //[Ignore]
         [Test]
         public void TestRosterRequest()
         {
@@ -59,11 +59,8 @@ namespace Redcat.Xmpp.Tests
             communicator.Connect(settings);
 
             communicator.LoadContacts();
-            //communicator.AddContact("user1@redcat", "User1", true);
-            //communicator.RemoveContact("user1@redcat");
-            //communicator.SetPresenceStatus(PresenceStatus.Available);
-            //PresenceStanza stanza = Subscription.SubscriptionApprove("user1@redcat");
-            //communicator.Send(stanza);
+            communicator.SetPresenceStatus(PresenceStatus.Available);
+            communicator.SendMessage("user1@redcat", "Hello:)");
             communicator.WaitIncominMessage();
 
             //CollectionAssert.IsNotEmpty(communicator.IncomingSubscriptions);

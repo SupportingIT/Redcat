@@ -2,8 +2,10 @@
 using Redcat.App.Services;
 using Redcat.Xmpp;
 using Redcat.Xmpp.Xml;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 
 namespace Redcat.App.ViewModels
@@ -12,32 +14,47 @@ namespace Redcat.App.ViewModels
     {
         private IConnectionSettingsRepository repository;        
         private XmppCommunicator communicator;
-        private PresenceStatusItem selectedPresence;
-        private ICollection<XmppStreamItem> streamItems;
+        private PresenceStatusViewModel selectedPresence;
+        private ICollection<RosterItemViewModel> rosterItems;
+        private ICollection<XmppElementViewModel> streamItems;
 
         public XmppCommunicatorViewModel(XmppCommunicator communicator, IConnectionSettingsRepository repository)
         {
             this.repository = repository;
             this.communicator = communicator;
-            streamItems = new ObservableCollection<XmppStreamItem>();
+            streamItems = new ObservableCollection<XmppElementViewModel>();
+            rosterItems = new ObservableCollection<RosterItemViewModel>();
             AttachEventHandlers(communicator);
             InitializeCommands();
-            InitializePresenceProperties();            
+            InitializePresenceProperties();
+            if (communicator.Roster is INotifyCollectionChanged)
+            {
+                ((INotifyCollectionChanged)communicator.Roster).CollectionChanged += (s, e) =>
+                {
+                    streamItems.Clear();
+                    foreach(var item in (IEnumerable<RosterItem>)s)
+                    {
+                        rosterItems.Add(new RosterItemViewModel(item));
+                    }
+                };
+            }
         }
 
         private void AttachEventHandlers(XmppCommunicator communicator)
         {
-            communicator.IqReceived += (s, args) => streamItems.Add(XmppStreamItem.Inbound(args.Stanza));
-            communicator.PresenceReceived += (s, args) => streamItems.Add(XmppStreamItem.Inbound(args.Stanza));
-            communicator.MessageReceived += (s, args) => streamItems.Add(XmppStreamItem.Inbound(args.Stanza));
-            communicator.StanzaSended += (s, args) => streamItems.Add(XmppStreamItem.Outbound(args.Stanza));
+            communicator.IqReceived += (s, args) => streamItems.Add(XmppElementViewModel.Inbound(args.Stanza));
+            communicator.PresenceReceived += (s, args) => streamItems.Add(XmppElementViewModel.Inbound(args.Stanza));
+            communicator.MessageReceived += (s, args) => streamItems.Add(XmppElementViewModel.Inbound(args.Stanza));
+            communicator.StanzaSended += (s, args) => streamItems.Add(XmppElementViewModel.Outbound(args.Stanza));
         }
 
         private void InitializeCommands()
         {
-            AddRosterItemCommand = new MvxCommand(AddRosterItem);
             ConnectCommand = new MvxCommand(Connect);
+            AddRosterItemCommand = new MvxCommand(AddRosterItem);            
             RemoveRosterItemCommand = new MvxCommand<RosterItem>(RemoveRosterItem);
+            ApproveInboundSubscriptionCommand = new MvxCommand<RosterItem>(ApproveInboundSubscription);
+            SubscribeForPresenceCommand = new MvxCommand<RosterItem>(SubscribeForPresence);
         }
 
         private void InitializePresenceProperties()
@@ -46,14 +63,14 @@ namespace Redcat.App.ViewModels
             SelectedPresence = PresenceStatuses.First();
         }
 
-        private IEnumerable<PresenceStatusItem> GetPresenceStatuses()
+        private IEnumerable<PresenceStatusViewModel> GetPresenceStatuses()
         {
-            return new PresenceStatusItem[]
+            return new PresenceStatusViewModel[]
             {
-                new PresenceStatusItem("Offline", PresenceStatus.Unavaliable),
-                new PresenceStatusItem("Available", PresenceStatus.Available),
-                new PresenceStatusItem("Away", PresenceStatus.Away),
-                new PresenceStatusItem("Chat", PresenceStatus.Chat)
+                new PresenceStatusViewModel("Offline", PresenceStatus.Unavaliable),
+                new PresenceStatusViewModel("Available", PresenceStatus.Available),
+                new PresenceStatusViewModel("Away", PresenceStatus.Away),
+                new PresenceStatusViewModel("Chat", PresenceStatus.Chat)
             };
         }
 
@@ -61,7 +78,7 @@ namespace Redcat.App.ViewModels
 
         public IEnumerable<RosterItem> Roster => communicator.Roster;
 
-        public PresenceStatusItem SelectedPresence
+        public PresenceStatusViewModel SelectedPresence
         {
             get { return selectedPresence; }
             set
@@ -71,16 +88,20 @@ namespace Redcat.App.ViewModels
             }
         }
 
-        public IEnumerable<PresenceStatusItem> PresenceStatuses { get; private set; }
+        public IEnumerable<PresenceStatusViewModel> PresenceStatuses { get; private set; }
 
-        public IEnumerable<XmppStreamItem> StreamItems => streamItems;
+        public IEnumerable<XmppElementViewModel> StreamItems => streamItems;
 
         public IMvxCommand ConnectCommand { get; private set; }
 
         public IMvxCommand AddRosterItemCommand { get; private set; }
 
         public IMvxCommand RemoveRosterItemCommand { get; private set; }
-        
+
+        public IMvxCommand ApproveInboundSubscriptionCommand { get; private set; }
+
+        public IMvxCommand SubscribeForPresenceCommand { get; private set; }
+
         private void Connect()
         {
             communicator.Connect(repository.Get());
@@ -98,11 +119,43 @@ namespace Redcat.App.ViewModels
         {
             //communicator.RemoveContact(item);
         }
+
+        private void ApproveInboundSubscription(RosterItem item)
+        {
+            communicator.AutorizeContact(item);
+        }
+
+        private void SubscribeForPresence(RosterItem item)
+        {
+            communicator.SubscribeForPresence(item);
+        }
     }
 
-    public class PresenceStatusItem
+    public class RosterItemViewModel
     {
-        public PresenceStatusItem(string displayText, PresenceStatus status)
+        private RosterItem item;
+
+        public RosterItemViewModel(RosterItem item)
+        {
+            this.item = item;
+            ApproveSubscriptionCommand = new MvxCommand(() => { throw new NotImplementedException(); });
+            SubscribeForPresenceCommand = new MvxCommand(() => { throw new NotImplementedException(); });
+        }
+
+        public string Name => item.Name;
+
+        public JID Jid => item.Jid;
+
+        public SubscriptionState SubscriptionState => item.SubscriptionState;
+
+        public IMvxCommand ApproveSubscriptionCommand { get; }
+
+        public IMvxCommand SubscribeForPresenceCommand { get; }
+    }
+
+    public class PresenceStatusViewModel
+    {
+        public PresenceStatusViewModel(string displayText, PresenceStatus status)
         {
             DisplayText = displayText;
             Status = status;
@@ -112,11 +165,11 @@ namespace Redcat.App.ViewModels
         public PresenceStatus Status { get; }
     }
 
-    public class XmppStreamItem
+    public class XmppElementViewModel
     {
         private XmlElement element;
         
-        public XmppStreamItem(XmlElement element, XmppStreamDirection direction)
+        public XmppElementViewModel(XmlElement element, XmppStreamDirection direction)
         {
             this.element = element;
             Direction = direction;
@@ -126,8 +179,18 @@ namespace Redcat.App.ViewModels
 
         public string Name => element.Name;
 
-        public static XmppStreamItem Inbound(XmlElement element) => new XmppStreamItem(element, XmppStreamDirection.Inbound);
-        public static XmppStreamItem Outbound(XmlElement element) => new XmppStreamItem(element, XmppStreamDirection.Outbound);
+        protected Stanza Stanza => element as Stanza;
+
+        public string Type => Stanza?.Type;
+
+        public object Id => Stanza?.Id;
+
+        public JID From => Stanza?.From;
+
+        public JID To => Stanza?.To;
+
+        public static XmppElementViewModel Inbound(XmlElement element) => new XmppElementViewModel(element, XmppStreamDirection.Inbound);
+        public static XmppElementViewModel Outbound(XmlElement element) => new XmppElementViewModel(element, XmppStreamDirection.Outbound);
     }
 
     public enum XmppStreamDirection { Inbound, Outbound }

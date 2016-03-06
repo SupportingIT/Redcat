@@ -90,9 +90,24 @@ namespace Redcat.Xmpp
             rosterHandler.RequestRosterItems();
         }
 
+        public void AutorizeContact(RosterItem contact)
+        {
+            subscriptionHandler.AcceptSubscription(contact.Jid);
+        }
+
+        public void SubscribeForPresence(RosterItem contact)
+        {
+            subscriptionHandler.RequestSubscription(contact.Jid);
+        }
+
         public void SetPresenceStatus(PresenceStatus status)
         {
             presenceHandler.SetStatus(status);
+        }
+
+        public void SendMessage(JID to, string message)
+        {
+            Send(Message.Chat(to, message));
         }
 
         public void WaitIncominMessage()

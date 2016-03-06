@@ -71,6 +71,7 @@
     <Compile Include="Xml\Iq.cs" />
     <Compile Include="Xml\IqQuery.cs" />
     <Compile Include="Xml\IqStanza.cs" />
+    <Compile Include="Xml\Message.cs" />
     <Compile Include="Xml\MessageStanza.cs" />
     <Compile Include="Xml\Presence.cs" />
     <Compile Include="Xml\PresenceStanza.cs" />
