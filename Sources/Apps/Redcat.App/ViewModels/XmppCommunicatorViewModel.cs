@@ -2,10 +2,8 @@
 using Redcat.App.Services;
 using Redcat.Xmpp;
 using Redcat.Xmpp.Xml;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 
 namespace Redcat.App.ViewModels
@@ -14,30 +12,17 @@ namespace Redcat.App.ViewModels
     {
         private IConnectionSettingsRepository repository;        
         private XmppCommunicator communicator;
-        private PresenceStatusViewModel selectedPresence;
-        private ICollection<RosterItemViewModel> rosterItems;
+        private PresenceStatusViewModel selectedPresence;        
         private ICollection<XmppElementViewModel> streamItems;
 
         public XmppCommunicatorViewModel(XmppCommunicator communicator, IConnectionSettingsRepository repository)
         {
             this.repository = repository;
             this.communicator = communicator;
-            streamItems = new ObservableCollection<XmppElementViewModel>();
-            rosterItems = new ObservableCollection<RosterItemViewModel>();
+            streamItems = new ObservableCollection<XmppElementViewModel>();            
             AttachEventHandlers(communicator);
             InitializeCommands();
-            InitializePresenceProperties();
-            if (communicator.Roster is INotifyCollectionChanged)
-            {
-                ((INotifyCollectionChanged)communicator.Roster).CollectionChanged += (s, e) =>
-                {
-                    streamItems.Clear();
-                    foreach(var item in (IEnumerable<RosterItem>)s)
-                    {
-                        rosterItems.Add(new RosterItemViewModel(item));
-                    }
-                };
-            }
+            InitializePresenceProperties();            
         }
 
         private void AttachEventHandlers(XmppCommunicator communicator)
@@ -51,10 +36,12 @@ namespace Redcat.App.ViewModels
         private void InitializeCommands()
         {
             ConnectCommand = new MvxCommand(Connect);
-            AddRosterItemCommand = new MvxCommand(AddRosterItem);            
-            RemoveRosterItemCommand = new MvxCommand<RosterItem>(RemoveRosterItem);
-            ApproveInboundSubscriptionCommand = new MvxCommand<RosterItem>(ApproveInboundSubscription);
-            SubscribeForPresenceCommand = new MvxCommand<RosterItem>(SubscribeForPresence);
+            LoadRosterCommand = new MvxCommand(LoadRoster);
+            AddRosterItemCommand = new MvxCommand(AddRosterItem);
+            EditRosterItemCommand = new MvxCommand(EditRosterItem);
+            RemoveRosterItemCommand = new MvxCommand(RemoveRosterItem);
+            ApproveInboundSubscriptionCommand = new MvxCommand(ApproveInboundSubscription);
+            SubscribeForPresenceCommand = new MvxCommand(SubscribeForPresence);
         }
 
         private void InitializePresenceProperties()
@@ -88,15 +75,21 @@ namespace Redcat.App.ViewModels
             }
         }
 
+        public RosterItem SelectedRosterItem { get; set; }
+
         public IEnumerable<PresenceStatusViewModel> PresenceStatuses { get; private set; }
 
         public IEnumerable<XmppElementViewModel> StreamItems => streamItems;
 
         public IMvxCommand ConnectCommand { get; private set; }
 
+        public IMvxCommand LoadRosterCommand { get; private set; }
+
         public IMvxCommand AddRosterItemCommand { get; private set; }
 
-        public IMvxCommand RemoveRosterItemCommand { get; private set; }
+        public IMvxCommand EditRosterItemCommand { get; private set; }
+
+        public IMvxCommand RemoveRosterItemCommand { get; private set; }        
 
         public IMvxCommand ApproveInboundSubscriptionCommand { get; private set; }
 
@@ -105,9 +98,12 @@ namespace Redcat.App.ViewModels
         private void Connect()
         {
             communicator.Connect(repository.Get());
-            RaisePropertyChanged(nameof(IsConnected));
-            communicator.LoadContacts();
-            communicator.SetPresenceStatus(SelectedPresence.Status);            
+            RaisePropertyChanged(nameof(IsConnected));            
+        }
+
+        private void LoadRoster()
+        {
+            communicator.LoadRoster();
         }
 
         private void AddRosterItem()
@@ -115,54 +111,29 @@ namespace Redcat.App.ViewModels
             ShowViewModel<AddRosterItemViewModel>();
         }
 
-        private void RemoveRosterItem(RosterItem item)
+        private void EditRosterItem()
         {
-            //communicator.RemoveContact(item);
+            if (SelectedRosterItem == null) return;            
+            ShowViewModel<EditRosterItemViewModel>(new { jid = SelectedRosterItem.Jid.ToString() });
         }
 
-        private void ApproveInboundSubscription(RosterItem item)
+        private void RemoveRosterItem()
         {
-            communicator.AutorizeContact(item);
+            if (SelectedRosterItem == null) return;
+            communicator.RemoveRosterItem(SelectedRosterItem.Jid);
         }
 
-        private void SubscribeForPresence(RosterItem item)
+        private void ApproveInboundSubscription()
         {
-            communicator.SubscribeForPresence(item);
-        }
-    }
-
-    public class RosterItemViewModel
-    {
-        private RosterItem item;
-
-        public RosterItemViewModel(RosterItem item)
-        {
-            this.item = item;
-            ApproveSubscriptionCommand = new MvxCommand(() => { throw new NotImplementedException(); });
-            SubscribeForPresenceCommand = new MvxCommand(() => { throw new NotImplementedException(); });
+            if (SelectedRosterItem == null) return;
+            communicator.ApproveInboundSubscription(SelectedRosterItem);            
         }
 
-        public string Name => item.Name;
-
-        public JID Jid => item.Jid;
-
-        public SubscriptionState SubscriptionState => item.SubscriptionState;
-
-        public IMvxCommand ApproveSubscriptionCommand { get; }
-
-        public IMvxCommand SubscribeForPresenceCommand { get; }
-    }
-
-    public class PresenceStatusViewModel
-    {
-        public PresenceStatusViewModel(string displayText, PresenceStatus status)
+        private void SubscribeForPresence()
         {
-            DisplayText = displayText;
-            Status = status;
+            if (SelectedRosterItem == null) return;
+            communicator.SubscribeForPresence(SelectedRosterItem);
         }
-
-        public string DisplayText { get; }
-        public PresenceStatus Status { get; }
     }
 
     public class XmppElementViewModel

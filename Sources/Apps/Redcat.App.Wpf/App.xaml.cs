@@ -41,6 +41,7 @@ namespace Redcat.App.Wpf
             ((MainWindow)MainWindow).RightWindowCommands = mainMenu;
             var presenter = new RedcatWpfViewPresenter(Dispatcher, mainContent, mainMenu, new DialogWindow());
             presenter.AddDialogView<AddRosterItemView>();
+            presenter.AddDialogView<EditRosterItemView>();
             return presenter;
         }
     }

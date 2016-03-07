@@ -24,7 +24,7 @@ namespace Redcat.App.ViewModels
 
         private void AddItem()
         {
-            communicator.AddContact(Jid, Name);
+            communicator.AddRosterItem(Jid, Name);
             Close(this);
         }
     }

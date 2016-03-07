@@ -58,7 +58,7 @@ namespace Redcat.Xmpp.Tests
             var settings = CreateConnectionSettings();
             communicator.Connect(settings);
 
-            communicator.LoadContacts();
+            communicator.LoadRoster();
             communicator.SetPresenceStatus(PresenceStatus.Available);
             communicator.SendMessage("user1@redcat", "Hello:)");
             communicator.WaitIncominMessage();

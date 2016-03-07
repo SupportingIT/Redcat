@@ -57,7 +57,7 @@ namespace Redcat.App.Wpf
         {
             if (hint is MvxClosePresentationHint)
             {
-                dialogWindow.Close();
+                dialogWindow.Hide();
             }
             base.ChangePresentation(hint);
         }

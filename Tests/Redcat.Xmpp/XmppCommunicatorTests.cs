@@ -43,7 +43,7 @@ namespace Redcat.Xmpp.Tests
             {
                 rosterIq = (IqStanza)c.GetArgument<XmlElement>(0);
             });
-            communicator.AddContact(jid, "User");
+            communicator.AddRosterItem(jid, "User");
 
             Assert.That(rosterIq.IsRosterIq(), Is.True);
         }
@@ -56,7 +56,7 @@ namespace Redcat.Xmpp.Tests
             {
                 rosterIq = (IqStanza)c.GetArgument<XmlElement>(0);
             });
-            communicator.RemoveContact(jid);
+            communicator.RemoveRosterItem(jid);
 
             Assert.That(rosterIq.IsRosterIq(), Is.True);
         }
@@ -69,7 +69,7 @@ namespace Redcat.Xmpp.Tests
             {
                 rosterIq = (IqStanza)c.GetArgument<XmlElement>(0);
             });
-            communicator.LoadContacts();
+            communicator.LoadRoster();
 
             Assert.That(rosterIq.IsRosterRequest(), Is.True);
         }

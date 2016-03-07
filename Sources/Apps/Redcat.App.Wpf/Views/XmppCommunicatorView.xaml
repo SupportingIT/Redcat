@@ -21,16 +21,41 @@
                 <Button.LayoutTransform>
                     <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
                 </Button.LayoutTransform>
-            </Button>
-            <Button Command="{Binding AddRosterItemCommand}" Content="{StaticResource appbar_user_add}" ToolTip="Add Contact" IsEnabled="{Binding IsConnected}">
+            </Button>            
+            <ma:SplitButton SelectedItem="{Binding SelectedPresence}" ItemsSource="{Binding PresenceStatuses}" DisplayMemberPath="DisplayText" IsEnabled="{Binding IsConnected}">                
+            </ma:SplitButton>
+            <Button Command="{Binding LoadRosterCommand}" Content="{StaticResource appbar_group}" ToolTip="Load Roster" IsEnabled="{Binding IsConnected}">
                 <Button.LayoutTransform>
                     <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
                 </Button.LayoutTransform>
             </Button>
-            <ma:SplitButton SelectedItem="{Binding SelectedPresence}" ItemsSource="{Binding PresenceStatuses}" DisplayMemberPath="DisplayText" IsEnabled="{Binding IsConnected}">                
-            </ma:SplitButton>
+            <Button Command="{Binding AddRosterItemCommand}" Content="{StaticResource appbar_user_add}" ToolTip="Add Roster Item" IsEnabled="{Binding IsConnected}">
+                <Button.LayoutTransform>
+                    <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                </Button.LayoutTransform>
+            </Button>
+            <Button Command="{Binding EditRosterItemCommand}" Content="{StaticResource appbar_edit}" ToolTip="Edit Roster Item" IsEnabled="{Binding IsConnected}">
+                <Button.LayoutTransform>
+                    <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                </Button.LayoutTransform>
+            </Button>
+            <Button Command="{Binding RemoveRosterItemCommand}" Content="{StaticResource appbar_user_minus}" ToolTip="Remove Roster Item" IsEnabled="{Binding IsConnected}">
+                <Button.LayoutTransform>
+                    <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                </Button.LayoutTransform>
+            </Button>
+            <Button Command="{Binding ApproveInboundSubscriptionCommand}" Content="{StaticResource appbar_people_checkbox}" ToolTip="Approve Subscription" IsEnabled="{Binding IsConnected}">
+                <Button.LayoutTransform>
+                    <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                </Button.LayoutTransform>
+            </Button>
+            <Button Command="{Binding SubscribeForPresenceCommand}" Content="{StaticResource appbar_people_arrow_right}" ToolTip="Subscribe For Presence" IsEnabled="{Binding IsConnected}">
+                <Button.LayoutTransform>
+                    <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                </Button.LayoutTransform>
+            </Button>
         </ToolBar>
-        <ListBox x:Name="RosterList" Grid.Row="1" ItemsSource="{Binding Roster}">
+        <ListBox x:Name="RosterList" Grid.Row="1" ItemsSource="{Binding Roster}" SelectedItem="{Binding SelectedRosterItem}">
             <ListBox.ItemTemplate>
                 <ItemContainerTemplate>
                     <StackPanel>

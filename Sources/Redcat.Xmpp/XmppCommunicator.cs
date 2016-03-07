@@ -74,23 +74,23 @@ namespace Redcat.Xmpp
             StanzaSended?.Invoke(this, new StanzaEventArgs<Stanza>(stanza));
         }
 
-        public void AddContact(JID jid, string name = null, bool subscribePresence = false)
+        public void AddRosterItem(JID jid, string name = null, bool subscribePresence = false)
         {
             rosterHandler.AddRosterItem(jid, name);
             if (subscribePresence) subscriptionHandler.RequestSubscription(jid);
         }
 
-        public void RemoveContact(JID jid)
+        public void RemoveRosterItem(JID jid)
         {
             rosterHandler.RemoveRosterItem(jid);
         }
 
-        public void LoadContacts()
+        public void LoadRoster()
         {
             rosterHandler.RequestRosterItems();
         }
 
-        public void AutorizeContact(RosterItem contact)
+        public void ApproveInboundSubscription(RosterItem contact)
         {
             subscriptionHandler.AcceptSubscription(contact.Jid);
         }
