@@ -45,6 +45,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Sources\Redcat.Amqp\Redcat.Amqp.csproj">
+      <Project>{3906abb1-9c62-4095-bc51-e345cc2d4c7e}</Project>
+      <Name>Redcat.Amqp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Sources\Redcat.Core\Redcat.Core.csproj">
       <Project>{5ea90f4a-92f4-4b98-b669-866460de26a0}</Project>
       <Name>Redcat.Core</Name>
