@@ -1,19 +1,25 @@
 ﻿using MvvmCross.Core.ViewModels;
+using Redcat.App.Models;
+using System;
+using System.Collections.Generic;
 
 namespace Redcat.App.ViewModels
 {
     public class HomeViewModel : MvxViewModel
     {
         public HomeViewModel()
-        {            
-            ShowViewCommand = new MvxCommand(ShowView);
+        {
+            ProtocolModules = new List<ProtocolModule> { new ProtocolModule("XMPP", typeof(XmppCommunicatorViewModel)) };
+            ShowProtocolModuleCommand = new MvxCommand<ProtocolModule>(ShowProtocolModule);
         }        
 
-        public IMvxCommand ShowViewCommand { get; }
+        public IEnumerable<ProtocolModule> ProtocolModules { get; }
 
-        private void ShowView()
+        public IMvxCommand ShowProtocolModuleCommand { get; }
+
+        private void ShowProtocolModule(ProtocolModule module)
         {
-            ShowViewModel<XmppCommunicatorViewModel>();
+            ShowViewModel(module.HomeViewModel);
         }
     }    
 }
