@@ -42,11 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmqpCommunicator.cs" />
+    <Compile Include="AmqpDataWriter.cs" />
     <Compile Include="AmqpFrame.cs" />
     <Compile Include="Channels\AmqpChannel.cs" />
     <Compile Include="Channels\AmqpChannelFactory.cs" />
     <Compile Include="Channels\IAmqpChannel.cs" />
     <Compile Include="Channels\IAmqpChannelFactory.cs" />
+    <Compile Include="DataTypeCodes.cs" />
     <Compile Include="Frame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
