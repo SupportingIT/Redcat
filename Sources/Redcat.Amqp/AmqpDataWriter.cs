@@ -40,13 +40,16 @@ namespace Redcat.Amqp
         }
 
         public void Write(sbyte value)
-        {
-            throw new NotImplementedException();
+        {            
+            stream.WriteByte(DataTypeCodes.Byte);
+            stream.WriteByte((byte)value);
         }
 
         public void Write(short value)
         {
-            throw new NotImplementedException();
+            stream.WriteByte(DataTypeCodes.Short);
+            stream.WriteByte((byte)((value & 0xff00) >> 8));
+            stream.WriteByte((byte)((value & 0x00ff)));
         }
 
         public void Write(ushort value)
@@ -58,22 +61,53 @@ namespace Redcat.Amqp
 
         public void Write(int value)
         {
-            throw new NotImplementedException();
+            stream.WriteByte(DataTypeCodes.Int);
+            stream.WriteByte((byte)((value & 0xff000000) >> 24));
+            stream.WriteByte((byte)((value & 0x00ff0000) >> 16));
+            stream.WriteByte((byte)((value & 0x0000ff00) >> 8));
+            stream.WriteByte((byte)((value & 0x000000ff)));
         }
 
         public void Write(uint value)
         {
-            throw new NotImplementedException();
+            stream.WriteByte(DataTypeCodes.UInt);
+            stream.WriteByte((byte)((value & 0xff000000) >> 24));
+            stream.WriteByte((byte)((value & 0x00ff0000) >> 16));
+            stream.WriteByte((byte)((value & 0x0000ff00) >> 8));
+            stream.WriteByte((byte)((value & 0x000000ff)));
         }
 
         public void Write(long value)
         {
-            throw new NotImplementedException();
+            stream.WriteByte(DataTypeCodes.Long);
+
+            unchecked
+            {
+                stream.WriteByte((byte)((value & (long)0xff00000000000000) >> 56));
+            }
+            stream.WriteByte((byte)((value & 0x00ff000000000000) >> 48));
+            stream.WriteByte((byte)((value & 0x0000ff0000000000) >> 40));
+            stream.WriteByte((byte)((value & 0x000000ff00000000) >> 32));
+
+            stream.WriteByte((byte)((value & 0x00000000ff000000) >> 24));
+            stream.WriteByte((byte)((value & 0x0000000000ff0000) >> 16));
+            stream.WriteByte((byte)((value & 0x000000000000ff00) >> 8));
+            stream.WriteByte((byte)((value & 0x00000000000000ff)));
         }
 
         public void Write(ulong value)
         {
-            throw new NotImplementedException();
+            stream.WriteByte(DataTypeCodes.ULong);
+
+            stream.WriteByte((byte)((value & 0xff00000000000000) >> 56));
+            stream.WriteByte((byte)((value & 0x00ff000000000000) >> 48));
+            stream.WriteByte((byte)((value & 0x0000ff0000000000) >> 40));
+            stream.WriteByte((byte)((value & 0x000000ff00000000) >> 32));
+
+            stream.WriteByte((byte)((value & 0x00000000ff000000) >> 24));
+            stream.WriteByte((byte)((value & 0x0000000000ff0000) >> 16));
+            stream.WriteByte((byte)((value & 0x000000000000ff00) >> 8));
+            stream.WriteByte((byte)((value & 0x00000000000000ff)));
         }
 
         public void Write(float value)
