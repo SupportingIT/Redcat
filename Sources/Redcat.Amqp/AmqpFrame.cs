@@ -4,15 +4,13 @@
     {
         public const byte AmqpFrameType = 0x00;
 
-        public AmqpFrame(string performative) : base(AmqpFrameType)
+        public AmqpFrame(object payload) : base(AmqpFrameType)
         {
-            Performative = performative;
+            Payload = payload;
         }
 
-        public ushort Channel { get; set; }
+        public ushort Channel { get; set; }        
 
-        public string Performative { get; }
-
-        public object Payload { get; set; }
+        public object Payload { get; }
     }
 }

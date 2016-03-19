@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Redcat.Amqp.Tests
 {
@@ -141,12 +143,36 @@ namespace Redcat.Amqp.Tests
         {
             unchecked
             {
-                long value = (long)0xa0a1a2a3a4a5a6a7;
+                long value = (long)0xf0a1a2a3a4a5a6a7;
 
                 writer.Write(value);
 
-                VerifyWrittenBytes(DataTypeCodes.Long, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7);
+                VerifyWrittenBytes(DataTypeCodes.Long, 0xf0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7);
             }
+        }
+
+        [Test]
+        public void Write_StringValueLessThen255Characters_Test()
+        {
+            string value = "Hi World";
+            List<byte> expectedBytes = new List<byte> { DataTypeCodes.Str8, (byte)value.Length };
+            expectedBytes.AddRange(Encoding.UTF8.GetBytes(value));
+
+            writer.Write(value);
+
+            VerifyWrittenBytes(expectedBytes.ToArray());
+        }
+
+        [Test]
+        public void Write_StringValueMoreThen255Characters_Test()
+        {
+            string value = new string(Enumerable.Range(0, 0x123).Select(i => 'A').ToArray());
+            List<byte> expectedBytes = new List<byte> { DataTypeCodes.Str32, 0x00, 0x00, 0x01, 0x23 };
+            expectedBytes.AddRange(Encoding.UTF8.GetBytes(value));
+
+            writer.Write(value);
+
+            VerifyWrittenBytes(expectedBytes.ToArray());
         }
 
         private void VerifyWrittenBytes(params byte[] expectedBytes)
