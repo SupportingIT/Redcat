@@ -4,10 +4,10 @@ namespace Redcat.Amqp.Serializers
 {
     public class AmqpFrameSerializer
     {
-        private PayloadSerializer payloadSerializer;
+        private IPayloadSerializer payloadSerializer;
         private Stream stream;
 
-        public AmqpFrameSerializer(Stream stream, PayloadSerializer payloadSerializer)
+        public AmqpFrameSerializer(Stream stream, IPayloadSerializer payloadSerializer)
         {
             this.payloadSerializer = payloadSerializer;
             this.stream = stream;
@@ -34,7 +34,7 @@ namespace Redcat.Amqp.Serializers
 
         private void SerializePayload(Stream stream, object payload)
         {
-            payloadSerializer.Invoke(stream, payload);
+            payloadSerializer.Serialize(stream, payload);
         }
 
         private void SerializeHeader(Stream stream, uint size, byte offset, ushort channel)
@@ -44,7 +44,5 @@ namespace Redcat.Amqp.Serializers
             stream.WriteByte(AmqpFrame.AmqpFrameType);
             stream.Write(channel);
         }
-    }
-
-    public delegate void PayloadSerializer(Stream stream, object payload);
+    }    
 }

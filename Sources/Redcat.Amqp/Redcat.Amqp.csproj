@@ -56,7 +56,8 @@
     <Compile Include="Performatives\Open.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializers\AmqpFrameSerializer.cs" />
-    <Compile Include="Serializers\PayloadSerializers.cs" />
+    <Compile Include="Serializers\IPayloadSerializer.cs" />
+    <Compile Include="Serializers\PayloadSerializer.cs" />
     <Compile Include="Serializers\StreamExtensions.cs" />
   </ItemGroup>
   <ItemGroup />

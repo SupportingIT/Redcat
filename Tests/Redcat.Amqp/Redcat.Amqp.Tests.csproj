@@ -46,6 +46,7 @@
     <Compile Include="AmqpIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializers\AmqpFrameSerializerTests.cs" />
+    <Compile Include="Serializers\PayloadSerializerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
