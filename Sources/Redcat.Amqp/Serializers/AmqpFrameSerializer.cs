@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 
 namespace Redcat.Amqp.Serializers
 {
     public class AmqpFrameSerializer
-    {        
+    {
+        private PayloadSerializer payloadSerializer;
         private Stream stream;
 
-        private IDictionary<Type, PayloadSerializer> payloadSerializers;
-
-        public AmqpFrameSerializer(Stream stream)
+        public AmqpFrameSerializer(Stream stream, PayloadSerializer payloadSerializer)
         {
-            payloadSerializers = new Dictionary<Type, PayloadSerializer>();
+            this.payloadSerializer = payloadSerializer;
             this.stream = stream;
-        }
-
-        public void AddPayloadSerializer(Type payloadType, PayloadSerializer serializer)
-        {
-            payloadSerializers.Add(payloadType, serializer);
         }
 
         public void Serialize(AmqpFrame frame)
@@ -37,13 +29,12 @@ namespace Redcat.Amqp.Serializers
 
         private bool CanSerializePayload(object payload)
         {
-            return payload != null && payloadSerializers.ContainsKey(payload.GetType());
+            return payload != null;
         }
 
         private void SerializePayload(Stream stream, object payload)
         {
-            var serializer = payloadSerializers[payload.GetType()];
-            serializer.Invoke(stream, payload);
+            payloadSerializer.Invoke(stream, payload);
         }
 
         private void SerializeHeader(Stream stream, uint size, byte offset, ushort channel)
