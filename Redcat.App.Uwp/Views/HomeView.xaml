@@ -1,0 +1,10 @@
+﻿<mvx:MvxWindowsPage
+    x:Class="Redcat.App.Uwp.Views.HomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mvx="using:MvvmCross.WindowsUWP.Views">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    </Grid>
+</mvx:MvxWindowsPage>
