@@ -175,6 +175,18 @@ namespace Redcat.Amqp.Tests
             VerifyWrittenBytes(expectedBytes.ToArray());
         }
 
+        [Test]
+        public void WriteDescriptor_Test()
+        {
+            string descriptor = "some:descriptor";
+            List<byte> expectedBytes = new List<byte> { DataTypeCodes.Descriptor, 0xA1, (byte)descriptor.Length };
+            expectedBytes.AddRange(Encoding.UTF8.GetBytes(descriptor));
+
+            writer.WriteDescriptor(descriptor);
+
+            VerifyWrittenBytes(expectedBytes.ToArray());
+        }
+
         private void VerifyWrittenBytes(params byte[] expectedBytes)
         {
             byte[] actualBytes = stream.ToArray();

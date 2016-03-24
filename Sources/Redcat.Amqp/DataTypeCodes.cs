@@ -2,6 +2,8 @@
 {
     public static class DataTypeCodes
     {
+        public const byte Descriptor = 0x00;
+
         public const byte Null = 0x40;
         public const byte TrueValue = 0x41;
         public const byte FalseValue = 0x42;

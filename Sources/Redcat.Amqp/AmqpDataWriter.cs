@@ -141,5 +141,11 @@ namespace Redcat.Amqp
             var strBytes = encoding.GetBytes(value);
             stream.Write(strBytes, 0, strBytes.Length);
         }
+
+        public void WriteDescriptor(string descriptor)
+        {
+            stream.WriteByte(DataTypeCodes.Descriptor);
+            Write(descriptor);
+        }
     }
 }

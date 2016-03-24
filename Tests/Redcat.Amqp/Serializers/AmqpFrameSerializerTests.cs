@@ -46,20 +46,38 @@ namespace Redcat.Amqp.Tests.Serializers
         [Test]
         public void Serialize_Serializes_Payload()
         {
-            byte[] payload = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
-            AmqpFrame frame = new AmqpFrame(payload);
+            byte[] payload = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };            
+            ConfigurePayloadSerializer(payload);
+            List<byte> expectedBytes = new List<byte> { 0x00, 0x00, 0x00, 0x0e, 0x2, 0x00, 0x00, 0x00 };
+            expectedBytes.AddRange(payload);
+
+            serializer.Serialize(new AmqpFrame(payload));
+                        
+            CollectionAssert.AreEqual(expectedBytes, stream.ToArray());
+        }
+
+        [Test]
+        public void Serialize_Can_Serialize_More_Then_One_Frame()
+        {
+            byte[] payload = { 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6 };
+            ConfigurePayloadSerializer(payload);
+            List<byte> expectedBytes = new List<byte> { 0x00, 0x00, 0x00, 0x0e, 0x2, 0x00, 0x00, 0x00 };
+            expectedBytes.AddRange(payload);
+            expectedBytes.AddRange(expectedBytes);
+
+            serializer.Serialize(new AmqpFrame(payload));
+            serializer.Serialize(new AmqpFrame(payload));
+
+            CollectionAssert.AreEqual(expectedBytes, stream.ToArray());
+        }
+
+        private void ConfigurePayloadSerializer(byte[] payload)
+        {
             A.CallTo(() => payloadSerializer.Serialize(A<Stream>._, payload)).Invokes(c =>
             {
                 var stream = c.GetArgument<Stream>(0);
                 stream.Write(payload, 0, payload.Length);
             });
-            List<byte> expectedBytes = new List<byte> { 0x00, 0x00, 0x00, 0x0e, 0x2, 0x00, 0x00, 0x00 };
-            expectedBytes.AddRange(payload);
-
-            serializer.Serialize(frame);
-
-            var actualBytes = stream.ToArray();
-            CollectionAssert.AreEqual(expectedBytes, actualBytes);
         }
     }
 }
