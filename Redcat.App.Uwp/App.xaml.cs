@@ -1,9 +1,12 @@
 ﻿using MvvmCross.Core.ViewModels;
 using MvvmCross.Platform;
 using Redcat.App.Uwp.Views;
+using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Redcat.App.Uwp
 {
@@ -24,14 +27,34 @@ namespace Redcat.App.Uwp
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
-            var homeView = new HomeView();
-            Setup setup = new Setup(homeView.Frame);
-            setup.Initialize();
+            Frame rootFrame = Window.Current.Content as Frame;
 
-            var start = Mvx.Resolve<IMvxAppStart>();
-            start.Start();
-            
+            if (rootFrame == null)
+            {            
+                rootFrame = new Frame();
+                rootFrame.NavigationFailed += OnNavigationFailed;
+
+                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                {                    
+                }
+                                
+                Window.Current.Content = rootFrame;
+            }
+
+            if (rootFrame.Content == null)
+            {                
+                Setup setup = new Setup(rootFrame);
+                setup.Initialize();
+
+                var start = Mvx.Resolve<IMvxAppStart>();
+                start.Start();
+            }
             Window.Current.Activate();
+        }
+
+        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        {
+            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
         private void OnSuspending(object sender, SuspendingEventArgs e)
