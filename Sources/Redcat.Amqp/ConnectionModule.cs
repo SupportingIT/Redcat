@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Redcat.Amqp.Performatives;
+using System;
 
 namespace Redcat.Amqp
 {
@@ -12,7 +13,10 @@ namespace Redcat.Amqp
         }
 
         public void OpenConnection()
-        { }
+        {
+            Open open = new Open { ContainerId = "my-container" };
+            sendAction(new AmqpFrame(open));
+        }
 
         public void CloseConnection()
         { }

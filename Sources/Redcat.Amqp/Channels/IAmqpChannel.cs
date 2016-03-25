@@ -2,7 +2,7 @@
 
 namespace Redcat.Amqp.Channels
 {
-    public interface IAmqpChannel : IOutputChannel<Frame>
+    public interface IAmqpChannel : IOutputChannel<AmqpFrame>
     {
     }
 }

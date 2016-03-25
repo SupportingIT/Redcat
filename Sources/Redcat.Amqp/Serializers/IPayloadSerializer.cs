@@ -4,6 +4,6 @@ namespace Redcat.Amqp.Serializers
 {
     public interface IPayloadSerializer
     {
-        void Serialize(Stream stream, object payload);
+        void Serialize(AmqpDataWriter writer, object payload);
     }
 }

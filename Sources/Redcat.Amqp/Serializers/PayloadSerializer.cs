@@ -1,7 +1,6 @@
 ﻿using Redcat.Amqp.Performatives;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Redcat.Amqp.Serializers
 {
@@ -23,16 +22,32 @@ namespace Redcat.Amqp.Serializers
             payloadWriters[typeof(T)] = writer.Write;
         }
 
-        public void Serialize(Stream stream, object payload)
+        public void Serialize(AmqpDataWriter writer, object payload)
         {
-            
+            if (!payloadWriters.ContainsKey(payload.GetType())) throw new InvalidOperationException();
+            var payloadWriter = payloadWriters[payload.GetType()];            
+            payloadWriter.Invoke(writer, payload);
         }
 
         public static void SerializeOpenPerformative(AmqpDataWriter writer, Open performative)
-        { }
+        {                        
+            SerializeComposite(writer, Descriptors.Open, performative.ContainerId,
+                                                         performative.Hostname,
+                                                         performative.MaxFrameSize,
+                                                         performative.MaxChannel,
+                                                         performative.IdleTimeout);
+        }
 
         public static void SerializeClosePerformative(AmqpDataWriter writer, Close performative)
-        { }
+        {
+            SerializeComposite(writer, Descriptors.Close, performative.Error);
+        }
+
+        private static void SerializeComposite(AmqpDataWriter writer, string descriptor, params object[] list)
+        {
+            writer.WriteDescriptor(descriptor);
+            writer.WriteList(list);
+        }
     }
 
     internal class PayloadWriterAdapter<T>
@@ -45,7 +60,9 @@ namespace Redcat.Amqp.Serializers
         }
 
         public void Write(AmqpDataWriter writer, object payload)
-        { }
+        {
+            serializeAction(writer, (T)payload);
+        }
     }
 
     internal delegate void PayloadWriter<T>(AmqpDataWriter writer, T payload);
