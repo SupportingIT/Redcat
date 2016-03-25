@@ -40,7 +40,7 @@ namespace Redcat.Amqp.Tests.Serializers
             AmqpFrame frame = new AmqpFrame(payload);
             serializer.Serialize(frame);
 
-            A.CallTo(() => payloadSerializer.Serialize(A<Stream>._, payload)).MustHaveHappened();
+            A.CallTo(() => payloadSerializer.Serialize(A<AmqpDataWriter>._, payload)).MustHaveHappened();
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace Redcat.Amqp.Tests.Serializers
 
         private void ConfigurePayloadSerializer(byte[] payload)
         {
-            A.CallTo(() => payloadSerializer.Serialize(A<Stream>._, payload)).Invokes(c =>
+            A.CallTo(() => payloadSerializer.Serialize(A<AmqpDataWriter>._, payload)).Invokes(c =>
             {
                 var stream = c.GetArgument<Stream>(0);
                 stream.Write(payload, 0, payload.Length);

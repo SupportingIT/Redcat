@@ -187,6 +187,32 @@ namespace Redcat.Amqp.Tests
             VerifyWrittenBytes(expectedBytes.ToArray());
         }
 
+        [Test]
+        public void WriteArray_AnySetOfObjects_Test()
+        {
+            short[] array = { 9, 8, 7 };
+            List<byte> expectedBytes = new List<byte> { DataTypeCodes.Array32, 0, 0, 0, 6, 0, 0, 0, 3, 0, 9, 0, 8, 0, 7 };
+
+            writer.WriteArray(array);
+                        
+            VerifyWrittenBytes(expectedBytes.ToArray());
+        }
+
+        [Test]
+        public void WriteList_AnySetOfObjects_Test()
+        {
+            object[] list = { 4, "Str", 8L };
+            List<byte> expectedBytes = new List<byte> { DataTypeCodes.List8, 15 };
+            expectedBytes.AddRange(new byte[] { DataTypeCodes.Int, 0, 0, 0, 4 });
+            expectedBytes.AddRange(new byte[] { DataTypeCodes.Str8, 3 });
+            expectedBytes.AddRange(Encoding.UTF8.GetBytes("Str"));
+            expectedBytes.AddRange(new byte[] { DataTypeCodes.Long, 0, 0, 0, 0, 0, 0, 0, 8 });
+
+            writer.WriteList(list);
+                        
+            VerifyWrittenBytes(expectedBytes.ToArray());
+        }
+
         private void VerifyWrittenBytes(params byte[] expectedBytes)
         {
             byte[] actualBytes = stream.ToArray();
