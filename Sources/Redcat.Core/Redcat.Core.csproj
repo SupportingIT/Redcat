@@ -39,10 +39,13 @@
     <Compile Include="Channels\CompositeChannelFactory.cs" />
     <Compile Include="Channels\IAsyncChannel.cs" />
     <Compile Include="Channels\IChannel.cs" />
+    <Compile Include="Channels\IDeserializer.cs" />
     <Compile Include="Channels\IReactiveChannel.cs" />
+    <Compile Include="Channels\ISerializer.cs" />
     <Compile Include="Channels\IStreamChannel.cs" />
     <Compile Include="Channels\ObservableChannel.cs" />
-    <Compile Include="Channels\MessageReceiver.cs" />
+    <Compile Include="Channels\ReactiveDeserializerBase.cs" />
+    <Compile Include="Channels\ReactiveChannelBase.cs" />
     <Compile Include="Contact.cs" />
     <Compile Include="ContactController.cs" />
     <Compile Include="DisposableObject.cs" />
