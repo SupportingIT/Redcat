@@ -66,6 +66,7 @@
     <Compile Include="StanzaRouter.cs" />
     <Compile Include="StreamInitializer.cs" />
     <Compile Include="SubscriptionHandler.cs" />
+    <Compile Include="XmlElementDeserializer.cs" />
     <Compile Include="Xml\Bind.cs" />
     <Compile Include="Xml\DatagramElement.cs" />
     <Compile Include="Xml\Iq.cs" />

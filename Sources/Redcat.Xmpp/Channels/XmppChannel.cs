@@ -6,80 +6,31 @@ using Redcat.Xmpp.Parsing;
 
 namespace Redcat.Xmpp.Channels
 {
-    public class XmppChannel : BufferChannel<XmlElement>, IReactiveXmppChannel, IXmppStream
+    public class XmppChannel : ReactiveChannelBase<XmlElement>, IReactiveXmppChannel, IXmppStream
     {
         private const int DefaultBufferSize = 1024;
-        private IStreamChannel streamChannel;        
-        private IDisposable subscription;
-        private IXmlParser parser;
 
-        private XmppStreamWriter writer;
+        public XmppChannel(IReactiveStreamChannel streamChannel, ConnectionSettings settings) : base(streamChannel, settings)
+        { }
 
-        private NegotiationContext context;
-
-        public XmppChannel(IStreamChannel streamChannel, ConnectionSettings settings) : base(DefaultBufferSize, settings)
+        public XmlElement Read()
         {
-            if (streamChannel == null) throw new ArgumentNullException(nameof(streamChannel));
-            parser = new XmppStreamParser();
-            this.streamChannel = streamChannel;
-            if (streamChannel is IObservable<ArraySegment<byte>>)
-            {
-                subscription = ((IObservable<ArraySegment<byte>>)streamChannel).Subscribe(this);
-            }
-        }        
-
-        public Func<IXmppStream, NegotiationContext> Initializer { get; set; }
-
-        protected override void OnOpening()
-        {
-            base.OnOpening();
-            streamChannel.Open();
-            writer = new XmppStreamWriter(streamChannel.GetStream());
-            context = Initializer?.Invoke(this);
+            throw new NotImplementedException();
         }
 
-        protected override void OnClosing()
+        public void Write(XmlElement element)
         {
-            base.OnClosing();
-            streamChannel.Close();
-        }        
-
-        internal void SetTlsContext()
-        {
-            if (!(streamChannel is ISecureStreamChannel)) throw new InvalidOperationException();
-            writer = new XmppStreamWriter(((ISecureStreamChannel)streamChannel).GetSecuredStream());
+            throw new NotImplementedException();
         }
 
-        public XmlElement Read() => Receive();
-
-        public void Write(XmlElement element) => Send(element);
-
-        public void Send(XmlElement message)
+        protected override IReactiveDeserializer<XmlElement> CreateDeserializer()
         {
-            writer.Write(message);
-            OnMessageSended(message);
+            throw new NotImplementedException();
         }
 
-        protected override void OnBufferUpdated()
+        protected override ISerializer<XmlElement> CreateSerializer()
         {
-            for (int i = Buffer.Count - 1; i >= 0; i--)
-            {
-                if (Buffer[i] == '>')
-                {
-                    var elements = parser.Parse(Buffer.ToString(0, i + 1));
-                    EnqueueMessages(elements);
-                    Buffer.Discard(i + 1);
-                    break;
-                }
-            }
-        }
-
-        protected override void DisposeManagedResources()
-        {
-            base.DisposeManagedResources();
-            if (subscription != null) subscription.Dispose();
-            streamChannel.DisposeIfDisposable();
-            writer.Dispose();
+            throw new NotImplementedException();
         }
     }
 }

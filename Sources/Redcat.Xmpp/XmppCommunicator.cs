@@ -34,16 +34,6 @@ namespace Redcat.Xmpp
             set { SetPresenceStatus(value); }
         }
 
-        protected override void OnChannelCreated(IXmppChannel channel)
-        {
-            base.OnChannelCreated(channel);
-            
-            if (channel is IReactiveXmppChannel)
-            {
-                ((IReactiveXmppChannel)channel).MessageReceived += stanzaRouter.OnXmlElementReceived;
-            }
-        }        
-
         private void OnIqStanzaReceived(IqStanza iq)
         {
             rosterHandler.OnIqStanzaReceived(iq);

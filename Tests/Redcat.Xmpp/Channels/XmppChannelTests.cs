@@ -20,12 +20,13 @@ namespace Redcat.Xmpp.Tests.Channels
             IStreamChannel streamChannel = CreateStreamChannel();
             var initializer = A.Fake<Action<IXmppStream>>();
 
-            XmppChannel channel = new XmppChannel(streamChannel, settings);
+            XmppChannel channel = new XmppChannel(null, settings);
             //channel.Initializer = initializer;
 
             channel.Open();
 
             //A.CallTo(() => initializer.Invoke(A<IXmppStream>._)).MustHaveHappened();
+            Assert.Fail();
         }
 
         private IStreamChannel CreateStreamChannel()

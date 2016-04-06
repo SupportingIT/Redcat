@@ -18,9 +18,9 @@ namespace Redcat.Xmpp.Channels
 
         public IXmppChannel CreateChannel(ConnectionSettings settings)
         {            
-            IStreamChannel streamChannel = streamChannelFactory.CreateChannel(settings);
-            XmppChannel channel = new XmppChannel(streamChannel, settings);
-            channel.Initializer = CreateInitializer(channel.SetTlsContext, settings, credentialsProvider);
+            //IStreamChannel streamChannel = streamChannelFactory.CreateChannel(settings);
+            XmppChannel channel = new XmppChannel(null, settings);
+            //channel.Initializer = CreateInitializer(channel.SetTlsContext, settings, credentialsProvider);
             return channel;
         }
 
