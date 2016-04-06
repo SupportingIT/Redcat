@@ -9,17 +9,36 @@ namespace Redcat.Core.Tests.Chanels
     [TestFixture]
     public class ReactiveChannelBaseTests
     {
+        private IReactiveStreamChannel streamChannel;
+        private TestReactiveChannel channel;
+        private Stream stream;
+
+        private FakeDeserializer deserializer;
+        private ISerializer<string> serializer;
+
+        [SetUp]
+        public void SetUp()
+        {
+            streamChannel = A.Fake<IReactiveStreamChannel>();
+            stream = A.Fake<Stream>();
+            A.CallTo(() => streamChannel.GetStream()).Returns(stream);
+            deserializer = new FakeDeserializer();
+            serializer = A.Fake<ISerializer<string>>();
+            channel = new TestReactiveChannel(streamChannel) { DeserializerFake = deserializer, SerializerFake = serializer };
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Send_Throws_Exception_If_Channel_Does_Not_Open()
+        {
+            channel.Send("Hello guys:)");
+        }
+
         [Test]
         public void Send_Serializes_Message_Into_Stream()
-        {
-            var deserializer = A.Fake<IReactiveDeserializer<string>>();
-            var serializer = A.Fake<ISerializer<string>>();
-            var streamChannel = A.Fake<IReactiveStreamChannel>();
-            var stream = A.Fake<Stream>();
-            A.CallTo(() => streamChannel.GetStream()).Returns(stream);
-
-            var channel = new TestReactiveChannel(streamChannel) { Deserializer = deserializer, Serializer = serializer };
+        {            
             string message = "Hello world";
+            channel.Open();
             channel.Send(message);
 
             A.CallTo(() => serializer.Serialize(stream, message)).MustHaveHappened();
@@ -27,8 +46,15 @@ namespace Redcat.Core.Tests.Chanels
 
         [Test]
         public void Rises_Received_Event_After_Deserialized()
-        {
-            Assert.Fail();
+        {            
+            string actualMessage = null;
+
+            channel.Open();
+            channel.Received += (s, m) => { actualMessage = m; };
+            string message = "Hello space";
+            deserializer.RiseDeserialized(message);
+
+            Assert.That(actualMessage, Is.EqualTo(message));
         }
     }
 
@@ -37,12 +63,24 @@ namespace Redcat.Core.Tests.Chanels
         public TestReactiveChannel(IReactiveStreamChannel streamChannel) : base(streamChannel, new ConnectionSettings())
         { }
 
-        public IReactiveDeserializer<string> Deserializer { get; set; }
+        public IReactiveDeserializer<string> DeserializerFake { get; set; }
 
-        public ISerializer<string> Serializer { get; set; }
+        public ISerializer<string> SerializerFake { get; set; }
 
-        protected override IReactiveDeserializer<string> CreateDeserializer() => Deserializer;
+        protected override IReactiveDeserializer<string> CreateDeserializer() => DeserializerFake;
 
-        protected override ISerializer<string> CreateSerializer() => Serializer;
+        protected override ISerializer<string> CreateSerializer() => SerializerFake;
+    }
+
+    public class FakeDeserializer : IReactiveDeserializer<string>
+    {
+        public event Action<string> Deserialized;
+
+        public void Read(ArraySegment<byte> binaryData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RiseDeserialized(string message) => Deserialized?.Invoke(message);
     }
 }

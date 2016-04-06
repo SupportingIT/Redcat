@@ -13,9 +13,7 @@ namespace Redcat.Core.Channels
         protected ReactiveChannelBase(IReactiveStreamChannel streamChannel, ConnectionSettings settings) : base(settings)
         {
             this.streamChannel = streamChannel;
-        }
-
-        protected IReactiveDeserializer<T> Deserializer => deserializer;
+        }        
 
         protected abstract IReactiveDeserializer<T> CreateDeserializer();
 
@@ -43,6 +41,21 @@ namespace Redcat.Core.Channels
         {
             base.OnOpening();
             streamChannel.Open();
+            InitializeDeserializer();
+        }
+
+        private void InitializeDeserializer()
+        {
+            if (deserializer == null)
+            {
+                deserializer = CreateDeserializer();
+                deserializer.Deserialized += OnMessageDeserialized;
+            }
+        }
+
+        private void OnMessageDeserialized(T message)
+        {
+            Received?.Invoke(this, message);
         }
 
         protected override void OnClosing()
@@ -53,7 +66,13 @@ namespace Redcat.Core.Channels
 
         public void Send(T message)
         {
+            if (State != ChannelState.Open) throw new InvalidOperationException("Channel must be opend before sending messages");
             Serializer.Serialize(Stream, message);
+        }
+
+        protected void SetSecureStream()
+        {
+            throw new NotImplementedException();
         }
 
         public event EventHandler<T> Received;

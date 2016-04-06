@@ -13,8 +13,6 @@ namespace Redcat.Core.Channels
         Stream GetSecuredStream();
     }
 
-    public interface IReactiveStreamChannel : IStreamChannel
-    {
-        event EventHandler<ArraySegment<byte>> Received;
-    }
+    public interface IReactiveStreamChannel : IStreamChannel, IReactiveInputChannel<ArraySegment<byte>>
+    { }
 }
