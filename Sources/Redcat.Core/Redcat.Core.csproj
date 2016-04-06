@@ -44,6 +44,7 @@
     <Compile Include="Channels\ISerializer.cs" />
     <Compile Include="Channels\IStreamChannel.cs" />
     <Compile Include="Channels\ObservableChannel.cs" />
+    <Compile Include="Channels\ReactiveChannelAdapter.cs" />
     <Compile Include="Channels\ReactiveDeserializerBase.cs" />
     <Compile Include="Channels\ReactiveChannelBase.cs" />
     <Compile Include="CommunicatorBase.cs" />
