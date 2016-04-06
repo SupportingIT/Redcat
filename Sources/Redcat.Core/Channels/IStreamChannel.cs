@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Redcat.Core.Channels
 {
@@ -11,4 +12,7 @@ namespace Redcat.Core.Channels
     {
         Stream GetSecuredStream();
     }
+
+    public interface IReactiveStreamChannel : IStreamChannel, IReactiveInputChannel<ArraySegment<byte>>
+    { }
 }
