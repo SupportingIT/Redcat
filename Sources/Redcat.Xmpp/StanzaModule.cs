@@ -3,13 +3,13 @@ using Redcat.Xmpp.Xml;
 
 namespace Redcat.Xmpp
 {
-    public class StanzaRouter
+    public class StanzaModule
     {
         private IqStanzaHandler iqHandler;
         private PresenceStanzaHandler presenceHandler;
         private MessageStanzaHandler messageHandler;
 
-        public StanzaRouter(IqStanzaHandler iqHandler, PresenceStanzaHandler presenceHandler, MessageStanzaHandler messageHandler)
+        public StanzaModule(IqStanzaHandler iqHandler, PresenceStanzaHandler presenceHandler, MessageStanzaHandler messageHandler)
         {
             this.iqHandler = iqHandler;
             this.presenceHandler = presenceHandler;

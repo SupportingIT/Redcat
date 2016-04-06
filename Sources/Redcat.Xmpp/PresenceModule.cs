@@ -3,12 +3,12 @@ using System;
 
 namespace Redcat.Xmpp
 {
-    public class PresenceHandler
+    public class PresenceModule
     {
         private Action<Stanza> sendStanza;
         private PresenceStatus status;
 
-        public PresenceHandler(Action<Stanza> sendStanza)
+        public PresenceModule(Action<Stanza> sendStanza)
         {
             this.sendStanza = sendStanza;
         }

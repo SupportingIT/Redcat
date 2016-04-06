@@ -41,7 +41,5 @@ namespace Redcat.Xmpp.Channels
             sasl.AddAuthenticator("PLAIN", Authenticators.Plain);
             return sasl;
         }
-
-        public event EventHandler<XmppChannel> ChannelCreated;
     }    
 }

@@ -66,7 +66,6 @@
     <Compile Include="ByteBufferTests.cs" />
     <Compile Include="Chanels\ReactivechannelAdapterTests.cs" />
     <Compile Include="Chanels\ReactiveChannelBaseTests.cs" />
-    <Compile Include="CommunicatorTests.cs" />
     <Compile Include="ObserverExtensionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySetTests.cs" />

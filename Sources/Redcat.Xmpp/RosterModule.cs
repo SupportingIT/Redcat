@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace Redcat.Xmpp
 {
-    public class RosterHandler
+    public class RosterModule
     {
         private ICollection<RosterItem> roster;
         private Action<Stanza> stanzaSender;
         
-        public RosterHandler(ICollection<RosterItem> roster, Action<Stanza> stanzaSender)
+        public RosterModule(ICollection<RosterItem> roster, Action<Stanza> stanzaSender)
         {
             this.roster = roster;
             this.stanzaSender = stanzaSender;

@@ -56,17 +56,17 @@
     <Compile Include="Parsing\XmlElementBuilderBase.cs" />
     <Compile Include="Parsing\XmlLexer.cs" />
     <Compile Include="Parsing\XmppStreamParser.cs" />
-    <Compile Include="PresenceHandler.cs" />
+    <Compile Include="PresenceModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Channels\XmppChannelFactory.cs" />
     <Compile Include="Channels\XmppChannel.cs" />
-    <Compile Include="RosterHandler.cs" />
+    <Compile Include="RosterModule.cs" />
     <Compile Include="RosterItem.cs" />
     <Compile Include="StanzaEventArgs.cs" />
-    <Compile Include="StanzaRouter.cs" />
+    <Compile Include="StanzaModule.cs" />
     <Compile Include="StreamInitializer.cs" />
-    <Compile Include="SubscriptionHandler.cs" />
-    <Compile Include="XmlElementDeserializer.cs" />
+    <Compile Include="SubscriptionModule.cs" />
+    <Compile Include="Channels\XmlElementDeserializer.cs" />
     <Compile Include="Xml\Bind.cs" />
     <Compile Include="Xml\DatagramElement.cs" />
     <Compile Include="Xml\Iq.cs" />
@@ -85,8 +85,6 @@
     <Compile Include="Xml\StreamHeader.cs" />
     <Compile Include="Xml\XmlElementExtensions.cs" />
     <Compile Include="XmppCommunicator.cs" />
-    <Compile Include="XmppStream.cs" />
-    <Compile Include="XmppStreamReader.cs" />
     <Compile Include="XmppStreamWriter.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -10,22 +10,21 @@ namespace Redcat.Xmpp.Channels
     {
         private const int DefaultBufferSize = 1024;
 
+        private ReactiveChannelAdapter<XmlElement> channelAdapter;
+
         public XmppChannel(IReactiveStreamChannel streamChannel, ConnectionSettings settings) : base(streamChannel, settings)
-        { }
-
-        public XmlElement Read()
         {
-            throw new NotImplementedException();
+            channelAdapter = new ReactiveChannelAdapter<XmlElement>(this);
         }
 
-        public void Write(XmlElement element)
-        {
-            throw new NotImplementedException();
-        }
+        public XmlElement Read() => channelAdapter.Receive();
+
+        public void Write(XmlElement element) => Send(element);
 
         protected override IReactiveDeserializer<XmlElement> CreateDeserializer()
         {
-            throw new NotImplementedException();
+            IXmlParser parser = new XmppStreamParser();
+            return new XmlElementDeserializer(parser, DefaultBufferSize);
         }
 
         protected override ISerializer<XmlElement> CreateSerializer()

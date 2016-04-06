@@ -1,9 +1,8 @@
-﻿using System;
-using Redcat.Core.Channels;
+﻿using Redcat.Core.Channels;
 using Redcat.Xmpp.Xml;
 using Redcat.Xmpp.Parsing;
 
-namespace Redcat.Xmpp
+namespace Redcat.Xmpp.Channels
 {
     public class XmlElementDeserializer : ReactiveDeserializerBase<XmlElement>
     {
@@ -11,6 +10,7 @@ namespace Redcat.Xmpp
 
         public XmlElementDeserializer(IXmlParser parser, int bufferSize) : base(bufferSize)
         {
+            this.parser = parser;
         }
 
         protected override void OnBufferUpdated()

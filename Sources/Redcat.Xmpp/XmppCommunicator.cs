@@ -12,18 +12,18 @@ namespace Redcat.Xmpp
     {        
         private ICollection<RosterItem> roster;        
 
-        private RosterHandler rosterHandler;
-        private PresenceHandler presenceHandler;
-        private StanzaRouter stanzaRouter;
-        private SubscriptionHandler subscriptionHandler;
+        private RosterModule rosterHandler;
+        private PresenceModule presenceHandler;
+        private StanzaModule stanzaRouter;
+        private SubscriptionModule subscriptionHandler;
 
         public XmppCommunicator(IXmppChannelFactory factory) : base(factory)
         {
             roster = new ObservableCollection<RosterItem>();                        
-            rosterHandler = new RosterHandler(roster, Send);
-            presenceHandler = new PresenceHandler(Send);
-            subscriptionHandler = new SubscriptionHandler(Send);
-            stanzaRouter = new StanzaRouter(OnIqStanzaReceived, OnPresenceStanzaReceived, OnMessageStanzaReceived);
+            rosterHandler = new RosterModule(roster, Send);
+            presenceHandler = new PresenceModule(Send);
+            subscriptionHandler = new SubscriptionModule(Send);
+            stanzaRouter = new StanzaModule(OnIqStanzaReceived, OnPresenceStanzaReceived, OnMessageStanzaReceived);
         }
 
         public IEnumerable<RosterItem> Roster => roster;

@@ -58,6 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Channels\XmlElementDeserializerTest.cs" />
     <Compile Include="ContactControllerTests.cs" />
     <Compile Include="JidTests.cs" />
     <Compile Include="Negotiators\BindNegotiatorTests.cs" />
@@ -71,10 +72,10 @@
     <Compile Include="Parsing\XmppStreamParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Channels\XmppChannelTests.cs" />
-    <Compile Include="RosterHandlerTests.cs" />
-    <Compile Include="StanzaRouterTests.cs" />
+    <Compile Include="RosterModuleTests.cs" />
+    <Compile Include="StanzaModuleTests.cs" />
     <Compile Include="StreamInitializerTests.cs" />
-    <Compile Include="SubscriptionHandlerTests.cs" />
+    <Compile Include="SubscriptionModuleTests.cs" />
     <Compile Include="TestXmppStream.cs" />
     <Compile Include="Xml\DatagramElementTests.cs" />
     <Compile Include="Xml\IqTest.cs" />
@@ -88,7 +89,6 @@
     <Compile Include="Xml\XmlElementTests.cs" />
     <Compile Include="XmppCommunicatorIntegrationTests.cs" />
     <Compile Include="XmppCommunicatorTests.cs" />
-    <Compile Include="XmppStreamReaderTests.cs" />
     <Compile Include="XmppStreamWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>

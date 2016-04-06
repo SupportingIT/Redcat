@@ -9,11 +9,11 @@ using System.Linq;
 namespace Redcat.Xmpp.Tests
 {
     [TestFixture]
-    public class RosterHandlerTests
+    public class RosterModuleTests
     {
         private ICollection<RosterItem> roster;
         private Action<Stanza> stanzaSender;
-        private RosterHandler handler;
+        private RosterModule handler;
         private IqStanza iq;
 
         [SetUp]
@@ -21,7 +21,7 @@ namespace Redcat.Xmpp.Tests
         {
             roster = new List<RosterItem>();
             stanzaSender = A.Fake<Action<Stanza>>();
-            handler = new RosterHandler(roster, stanzaSender);
+            handler = new RosterModule(roster, stanzaSender);
             iq = null;
             A.CallTo(() => stanzaSender.Invoke(A<IqStanza>._)).Invokes(c =>
             {

@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace Redcat.Xmpp
 {
-    public class SubscriptionHandler
+    public class SubscriptionModule
     {
         private Action<Stanza> sendAction;
         private List<JID> incomingSubscriptions;
         
-        public SubscriptionHandler(Action<Stanza> sendAction)
+        public SubscriptionModule(Action<Stanza> sendAction)
         {
             this.sendAction = sendAction;
             incomingSubscriptions = new List<JID>();

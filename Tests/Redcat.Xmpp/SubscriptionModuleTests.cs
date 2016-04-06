@@ -6,9 +6,9 @@ using System;
 namespace Redcat.Xmpp.Tests
 {
     [TestFixture]
-    public class SubscriptionHandlerTests
+    public class SubscriptionModuleTests
     {
-        private SubscriptionHandler handler;
+        private SubscriptionModule handler;
         private Action<Stanza> sendAction;
         private PresenceStanza stanza;
 
@@ -16,7 +16,7 @@ namespace Redcat.Xmpp.Tests
         public void SetUp()
         {
             sendAction = A.Fake<Action<Stanza>>();
-            handler = new SubscriptionHandler(sendAction);
+            handler = new SubscriptionModule(sendAction);
             A.CallTo(() => sendAction.Invoke(A<Stanza>._)).Invokes(c => {
                 stanza = (PresenceStanza)c.GetArgument<Stanza>(0);
             });
@@ -36,7 +36,7 @@ namespace Redcat.Xmpp.Tests
         [Test]
         public void SubscriptionRequest_Stanza_Adds_IncomingSubscriptions_Jid()
         {
-            SubscriptionHandler handler = new SubscriptionHandler(sendAction);
+            SubscriptionModule handler = new SubscriptionModule(sendAction);
             JID[] subscribers = { "user1@redcat", "user2@redcat" };
 
             handler.OnPresenceStanzaReceived(Subscription.IncomingRequest(subscribers[0]));

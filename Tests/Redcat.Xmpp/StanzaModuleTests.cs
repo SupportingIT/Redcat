@@ -7,13 +7,13 @@ using System;
 namespace Redcat.Xmpp.Tests
 {
     [TestFixture]
-    public class StanzaRouterTests
+    public class StanzaModuleTests
     {
         [Test]
         public void OnXmlElementReceived_Notifies_Iq_Handler()
         {
             IqStanzaHandler handler = A.Fake<IqStanzaHandler>();
-            StanzaRouter router = new StanzaRouter(handler, null, null);
+            StanzaModule router = new StanzaModule(handler, null, null);
             IqStanza iq = Iq.Get();
 
             router.OnXmlElementReceived(router, new ChannelMessageEventArgs<XmlElement>(iq));
@@ -25,7 +25,7 @@ namespace Redcat.Xmpp.Tests
         public void OnXmlElementReceived_Notifies_Presence_Handler()
         {
             PresenceStanzaHandler handler = A.Fake<PresenceStanzaHandler>();
-            StanzaRouter router = new StanzaRouter(null, handler, null);            
+            StanzaModule router = new StanzaModule(null, handler, null);            
             PresenceStanza presence = Presence.Available();
 
             router.OnXmlElementReceived(router, new ChannelMessageEventArgs<XmlElement>(presence));
@@ -37,7 +37,7 @@ namespace Redcat.Xmpp.Tests
         public void OnXmlElementReceived_Notifies_Message_Handler()
         {
             MessageStanzaHandler handler = A.Fake<MessageStanzaHandler>();
-            StanzaRouter router = new StanzaRouter(null, null, handler);            
+            StanzaModule router = new StanzaModule(null, null, handler);            
             MessageStanza stanza = new MessageStanza();
 
             router.OnXmlElementReceived(router, new ChannelMessageEventArgs<XmlElement>(stanza));
