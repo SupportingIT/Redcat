@@ -1,10 +1,11 @@
-﻿using Cirrious.CrossCore;
-using Cirrious.MvvmCross.ViewModels;
-using Cirrious.MvvmCross.Wpf.Views;
-using System.Windows;
+﻿using System.Windows;
 using System;
-using Redcat.App.ViewModels;
 using System.Windows.Controls;
+using MahApps.Metro.Controls;
+using MvvmCross.Platform;
+using MvvmCross.Core.ViewModels;
+using MvvmCross.Wpf.Views;
+using Redcat.App.ViewModels;
 using Redcat.App.Wpf.Views;
 
 namespace Redcat.App.Wpf
@@ -24,10 +25,11 @@ namespace Redcat.App.Wpf
             IMvxWpfViewPresenter presenter = CreatePresenter();
             Setup setup = new Setup(Dispatcher, presenter);
             setup.Initialize();
-            InitializeMainMenu();
                         
             IMvxAppStart start = Mvx.Resolve<IMvxAppStart>();
-            start.Start();
+            start.Start();            
+            
+            presenter.Show(new MvxViewModelRequest<MainMenuViewModel>(null, null, null));
 
             isInitialized = true;
         }
@@ -35,18 +37,12 @@ namespace Redcat.App.Wpf
         private IMvxWpfViewPresenter CreatePresenter()
         {
             ContentControl mainContent = (ContentControl)MainWindow.FindName("MainContent");
-            Window dialogWindow = Resources["DialogWindow"] as Window;
-            var presenter = new RedcatWpfViewPresenter(Dispatcher, mainContent, dialogWindow);            
-
+            WindowCommands mainMenu = new WindowCommands();
+            ((MainWindow)MainWindow).RightWindowCommands = mainMenu;
+            var presenter = new RedcatWpfViewPresenter(Dispatcher, mainContent, mainMenu, new DialogWindow());
+            presenter.AddDialogView<AddRosterItemView>();
+            presenter.AddDialogView<EditRosterItemView>();
             return presenter;
-        }
-
-        private void InitializeMainMenu()
-        {
-            ContentControl mainMenu = (ContentControl)MainWindow.FindName("MainMenu");
-            IMvxSimpleWpfViewLoader loader = Mvx.Resolve<IMvxSimpleWpfViewLoader>();
-            var mainMenuView = loader.CreateView(new MvxViewModelRequest { ViewModelType = typeof(MainMenuViewModel) });
-            mainMenu.Content = mainMenuView;
         }
     }
 }

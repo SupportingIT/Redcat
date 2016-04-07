@@ -31,7 +31,7 @@ namespace Redcat.Core.Net
             base.OnOpening();
             if (socket == null) socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(Settings.Host, Settings.Port);
-            stream = GetStream();            
+            stream = GetStream();
             StartListen();
         }
 

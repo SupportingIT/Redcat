@@ -1,4 +1,4 @@
-﻿using Cirrious.MvvmCross.ViewModels;
+﻿using MvvmCross.Core.ViewModels;
 
 namespace Redcat.App.ViewModels
 {
@@ -6,6 +6,14 @@ namespace Redcat.App.ViewModels
     {
         public HomeViewModel()
         {            
+            ShowViewCommand = new MvxCommand(ShowView);
         }        
-    }
+
+        public IMvxCommand ShowViewCommand { get; }
+
+        private void ShowView()
+        {
+            ShowViewModel<XmppCommunicatorViewModel>();
+        }
+    }    
 }

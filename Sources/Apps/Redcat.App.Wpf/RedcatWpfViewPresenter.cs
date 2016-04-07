@@ -1,43 +1,51 @@
-﻿using Cirrious.MvvmCross.Wpf.Views;
-using System.Windows.Controls;
-using System;
+﻿using System.Windows.Controls;
 using System.Windows;
-using System.Collections.Generic;
-using Cirrious.MvvmCross.Views;
 using System.Windows.Threading;
-using Cirrious.MvvmCross.ViewModels;
+using Redcat.App.Wpf.Views;
+using MvvmCross.Wpf.Views;
+using System.Collections.Generic;
+using System;
+using MvvmCross.Core.ViewModels;
 
 namespace Redcat.App.Wpf
 {
     public class RedcatWpfViewPresenter : MvxWpfViewPresenter
     {
         private ContentControl mainContent;
-        private ICollection<Type> dialogViews;
-        private Dispatcher dispatcher;
+        private ItemsControl mainMenu;
         private Window dialogWindow;
+        private Dispatcher dispatcher;
+        private List<Type> dialogViews;
 
-        public RedcatWpfViewPresenter(Dispatcher dispatcher, ContentControl mainContent, Window dialogWindow)
+        public RedcatWpfViewPresenter(Dispatcher dispatcher, ContentControl mainContent, ItemsControl mainMenu, Window dialogWindow)
         {
+            dialogViews = new List<Type>();
+            this.dialogWindow = dialogWindow;
             this.dispatcher = dispatcher;
             this.mainContent = mainContent;
-            this.dialogWindow = dialogWindow;
-            dialogViews = new List<Type>();            
-        }        
+            this.mainMenu = mainMenu;
+        }
 
-        public void AddDialogView<T>() where T : IMvxView
+        public void AddDialogView<T>()
         {
             dialogViews.Add(typeof(T));
         }
 
-        public override void Present(FrameworkElement frameworkElement)
+        public override void Present(FrameworkElement view)
         {
-            if (IsDialogView(frameworkElement))
+            if (IsDialogView(view))
             {
-                ShowDialogView(frameworkElement);                
+                dialogWindow.Content = view;
+                dialogWindow.ShowDialog();
                 return;
             }
-
-            mainContent.Content = frameworkElement;
+            if (view is MainMenuView)
+            {
+                mainMenu.Items.Add(view);
+                view.Visibility = Visibility.Visible;                
+                return;
+            }
+            mainContent.Content = view;
         }
 
         private bool IsDialogView(FrameworkElement view)
@@ -45,22 +53,13 @@ namespace Redcat.App.Wpf
             return dialogViews.Contains(view.GetType());
         }
 
-        private void ShowDialogView(FrameworkElement view)
-        {
-            dispatcher.InvokeAsync(() => {
-                dialogWindow.Content = view;
-                if (!dialogWindow.IsVisible) dialogWindow.ShowDialog();
-                return;
-            });
-        }        
-
         public override void ChangePresentation(MvxPresentationHint hint)
         {
+            if (hint is MvxClosePresentationHint)
+            {
+                dialogWindow.Hide();
+            }
             base.ChangePresentation(hint);
-        }
-
-        private void ShowProtocolSettingsView(FrameworkElement view)
-        {
         }
     }
 }

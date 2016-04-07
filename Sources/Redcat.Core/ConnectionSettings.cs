@@ -2,13 +2,8 @@
 {
     public class ConnectionSettings : PropertySet
     {
-        public string ConnectionName { get; set; }
-
-        public string ChannelType
-        {
-            get { return GetString("ChannelType"); }
-            set { Set("ChannelType", value); }
-        }
+        public string Name { get; set; }
+                
         public string Domain
         {
             get { return GetString("Domain"); }

@@ -58,11 +58,12 @@ namespace Redcat.Xmpp.Xml
             return stanza;
         }
 
-        public static IqStanza RemoveItem(JID jid)
+        public static IqStanza RemoveItem(JID jid, string name = null)
         {
             IqStanza stanza = Iq.Set();
             XmlElement item = new XmlElement("item");
-            item.SetAttributeValue("jid", jid);
+            if (name != null) item.SetAttributeValue("name", name);
+            if (jid != null) item.SetAttributeValue("jid", jid);
             item.SetAttributeValue("subscription", "remove");            
             stanza.AddRosterQuery().AddChild(item);
             return stanza;
