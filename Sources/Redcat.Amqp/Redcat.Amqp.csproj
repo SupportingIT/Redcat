@@ -46,6 +46,7 @@
     <Compile Include="AmqpFrame.cs" />
     <Compile Include="Channels\AmqpChannel.cs" />
     <Compile Include="Channels\AmqpChannelFactory.cs" />
+    <Compile Include="Channels\AmqpFrameDeserializer.cs" />
     <Compile Include="Channels\IAmqpChannel.cs" />
     <Compile Include="Channels\IAmqpChannelFactory.cs" />
     <Compile Include="ConnectionModule.cs" />

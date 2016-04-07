@@ -1,23 +1,22 @@
-﻿using System.IO;
+﻿using Redcat.Core.Channels;
+using System.IO;
 
 namespace Redcat.Amqp.Serializers
 {
-    public class AmqpFrameSerializer
+    public class AmqpFrameSerializer : ISerializer<AmqpFrame>
     {        
         private IPayloadSerializer payloadSerializer;
-        private MemoryStream buffer;
-        private Stream stream;
+        private MemoryStream buffer;        
         private AmqpDataWriter writer;
 
-        public AmqpFrameSerializer(Stream stream, IPayloadSerializer payloadSerializer)
+        public AmqpFrameSerializer(IPayloadSerializer payloadSerializer)
         {
             buffer = new MemoryStream();
-            this.payloadSerializer = payloadSerializer;
-            this.stream = stream;
+            this.payloadSerializer = payloadSerializer;            
             writer = new AmqpDataWriter(buffer);
         }
 
-        public void Serialize(AmqpFrame frame)
+        public void Serialize(Stream stream, AmqpFrame frame)
         {            
             uint size = 8;
 

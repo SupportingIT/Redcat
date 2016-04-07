@@ -2,11 +2,11 @@
 
 namespace Redcat.Core.Channels
 {
-    public abstract class MessageDeserializerBase<T> : IReactiveDeserializer<T>
+    public abstract class ReactiveDeserializerBase<T> : IReactiveDeserializer<T>
     {
         private ByteBuffer buffer;
 
-        protected MessageDeserializerBase(int bufferSize)
+        protected ReactiveDeserializerBase(int bufferSize)
         {
             buffer = new ByteBuffer(bufferSize);            
         }

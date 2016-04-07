@@ -1,39 +1,23 @@
-﻿using Redcat.Amqp.Serializers;
-using Redcat.Core;
-using Redcat.Core.Channels;
-using System;
-using System.IO;
+﻿using Redcat.Core.Channels;
 using System.Linq;
+using System;
+using Redcat.Core;
+using Redcat.Amqp.Serializers;
 
 namespace Redcat.Amqp.Channels
 {
-    public class AmqpChannel : BufferChannel<AmqpFrame>, IAmqpChannel
+    public class AmqpChannel : ReactiveChannelBase<AmqpFrame>, IAmqpChannel
     {        
         private readonly byte[] amqpHeader = { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 0, 1, 0, 0 };
 
-        private AmqpFrameSerializer serializer;
-        private IStreamChannel streamChannel;
-        private Stream stream;
-
-        public AmqpChannel(IStreamChannel streamChannel, ConnectionSettings settings, int bufferSize) : base(bufferSize, settings)
-        {
-            this.streamChannel = streamChannel;
-        }
-
-        protected override void OnOpen()
-        {
-            base.OnOpen();
-            streamChannel.Open();
-            stream = streamChannel.GetStream();
-            serializer = new AmqpFrameSerializer(stream, new PayloadSerializer());
-            InitializeChannel();
-        }
+        public AmqpChannel(IReactiveStreamChannel streamChannel, ConnectionSettings settings) : base(streamChannel, settings)
+        { }
 
         private void InitializeChannel()
         {
             byte[] response = new byte[8];
-            stream.Write(amqpHeader, 0, amqpHeader.Length);
-            stream.Read(response, 0, 8);
+            Stream.Write(amqpHeader, 0, amqpHeader.Length);
+            Stream.Read(response, 0, 8);
             if (!IsValidAmqpHeader(response)) throw new InvalidOperationException();
         }
 
@@ -42,20 +26,15 @@ namespace Redcat.Amqp.Channels
             return amqpHeader.SequenceEqual(header);
         }
 
-        protected override void OnBufferUpdated()
+        protected override IReactiveDeserializer<AmqpFrame> CreateDeserializer()
         {
-            base.OnBufferUpdated();
+            return new AmqpFrameDeserializer();
         }
 
-        protected override void OnClosing()
+        protected override ISerializer<AmqpFrame> CreateSerializer()
         {
-            base.OnClosing();
-            streamChannel.Close();
-        }
-
-        public void Send(AmqpFrame frame)
-        {
-            serializer.Serialize(frame);
+            IPayloadSerializer payloadSerializer = new PayloadSerializer();
+            return new AmqpFrameSerializer(payloadSerializer);
         }
     }
 }

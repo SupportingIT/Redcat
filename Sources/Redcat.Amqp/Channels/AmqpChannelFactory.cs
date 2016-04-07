@@ -16,7 +16,7 @@ namespace Redcat.Amqp.Channels
         public IAmqpChannel CreateChannel(ConnectionSettings settings)
         {
             IStreamChannel streamChannel = streamChannelFactory.CreateChannel(settings);
-            return new AmqpChannel(streamChannel, settings, BufferSize);
+            return new AmqpChannel(null, settings);
         }
     }
 }
