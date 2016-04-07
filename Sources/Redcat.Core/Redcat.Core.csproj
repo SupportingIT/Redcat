@@ -47,13 +47,11 @@
     <Compile Include="Channels\ReactiveChannelAdapter.cs" />
     <Compile Include="Channels\ReactiveDeserializerBase.cs" />
     <Compile Include="Channels\ReactiveChannelBase.cs" />
-    <Compile Include="Contact.cs" />
-    <Compile Include="ContactController.cs" />
+    <Compile Include="CommunicatorBase.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ICommunicator.cs" />
     <Compile Include="ObserverExtensions.cs" />
     <Compile Include="SingleChannelCommunicator.cs" />
-    <Compile Include="Communicator.cs" />
     <Compile Include="ConnectionSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySet.cs" />

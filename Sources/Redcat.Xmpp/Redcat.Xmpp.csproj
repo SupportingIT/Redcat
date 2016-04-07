@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Channels\IXmppChannelFactory.cs" />
     <Compile Include="ConnectionSettingExtension.cs" />
     <Compile Include="IFeatureNegatiator.cs" />
     <Compile Include="IXmppStream.cs" />
@@ -45,34 +46,45 @@
     <Compile Include="Negotiators\RegistrationNegotiator.cs" />
     <Compile Include="Negotiators\SaslAuthentificator.cs" />
     <Compile Include="Negotiators\SaslNegotiator.cs" />
+    <Compile Include="Negotiators\SessionNegotiator.cs" />
     <Compile Include="Negotiators\TlsNegotiator.cs" />
     <Compile Include="Parsing\DelegateBuilder.cs" />
     <Compile Include="Parsing\IXmlElementBuilder.cs" />
     <Compile Include="Parsing\IXmlParser.cs" />
+    <Compile Include="Parsing\StanzaBuilder.cs" />
     <Compile Include="Parsing\XmlElementBuilder.cs" />
     <Compile Include="Parsing\XmlElementBuilderBase.cs" />
     <Compile Include="Parsing\XmlLexer.cs" />
     <Compile Include="Parsing\XmppStreamParser.cs" />
+    <Compile Include="PresenceHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Channels\XmppChannelFactory.cs" />
     <Compile Include="Channels\XmppChannel.cs" />
+    <Compile Include="RosterHandler.cs" />
+    <Compile Include="RosterItem.cs" />
+    <Compile Include="StanzaEventArgs.cs" />
+    <Compile Include="StanzaRouter.cs" />
     <Compile Include="StreamInitializer.cs" />
+    <Compile Include="SubscriptionHandler.cs" />
     <Compile Include="Xml\Bind.cs" />
     <Compile Include="Xml\DatagramElement.cs" />
     <Compile Include="Xml\Iq.cs" />
     <Compile Include="Xml\IqQuery.cs" />
     <Compile Include="Xml\IqStanza.cs" />
+    <Compile Include="Xml\Message.cs" />
+    <Compile Include="Xml\MessageStanza.cs" />
     <Compile Include="Xml\Presence.cs" />
     <Compile Include="Xml\PresenceStanza.cs" />
     <Compile Include="Xml\Roster.cs" />
-    <Compile Include="Xml\RosterItem.cs" />
     <Compile Include="Xml\Stanza.cs" />
     <Compile Include="Xml\StreamFeatureExtensions.cs" />
+    <Compile Include="Xml\Subscription.cs" />
     <Compile Include="Xml\Tls.cs" />
     <Compile Include="Xml\XmlElement.cs" />
     <Compile Include="Xml\Namespaces.cs" />
     <Compile Include="Xml\StreamHeader.cs" />
     <Compile Include="Xml\XmlElementExtensions.cs" />
+    <Compile Include="XmppCommunicator.cs" />
     <Compile Include="XmppStream.cs" />
     <Compile Include="XmppStreamReader.cs" />
     <Compile Include="XmppStreamWriter.cs" />

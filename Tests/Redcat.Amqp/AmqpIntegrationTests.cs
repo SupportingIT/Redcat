@@ -1,11 +1,11 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Redcat.Core;
 using Redcat.Core.Net;
-using System.IO;
+using Redcat.Amqp.Channels;
 
 namespace Redcat.Amqp.Tests
 {
+    [Category("Integration")]
     [TestFixture]
     public class AmqpIntegrationTests
     {
@@ -13,12 +13,16 @@ namespace Redcat.Amqp.Tests
         public void Amqp_Connection_Test()
         {
             ConnectionSettings settings = CreateConnectionSettings();
-            TcpChannel channel = new TcpChannel(10, settings);
-            channel.Open();
-            Stream stream = channel.GetStream();
-            byte[] header = { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 0, 1, 0, 0 };
-            stream.Write(header, 0, 8);
-            var response = channel.ReceiveAsync().Result.Array;
+            var communicator = CreateCommunicator();
+            communicator.Connect(settings);
+            communicator.Disconnect();
+        }
+
+        private AmqpCommunicator CreateCommunicator()
+        {
+            TcpChannelFactory tcpFactory = new TcpChannelFactory();
+            AmqpChannelFactory amqpFactory = new AmqpChannelFactory(tcpFactory);
+            return new AmqpCommunicator(amqpFactory);
         }
 
         private ConnectionSettings CreateConnectionSettings()

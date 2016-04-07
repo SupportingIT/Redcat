@@ -1,0 +1,27 @@
+﻿<views:MvxWpfView x:Class="Redcat.App.Wpf.Views.AddRosterItemView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:MvvmCross.Wpf.Views;assembly=MvvmCross.Wpf"
+             xmlns:local="clr-namespace:Redcat.App.Wpf">
+    <views:MvxWpfView.Resources>
+        <local:JidValueConverter x:Key="JidConverter" />
+    </views:MvxWpfView.Resources>
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>            
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto"/>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>        
+        <TextBlock>Name</TextBlock>
+        <TextBox Grid.Column="1" Text="{Binding Name}"></TextBox>
+        <TextBlock Grid.Row="1">JID</TextBlock>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Jid, Converter={StaticResource JidConverter}}"></TextBox>
+        <CheckBox IsChecked="{Binding RequestSubscription}" Grid.Row="2" Grid.ColumnSpan="2">Request subscription</CheckBox>
+        <Button Command="{Binding AddItemCommand}" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" IsDefault="True">Add</Button>        
+    </Grid>
+</views:MvxWpfView>

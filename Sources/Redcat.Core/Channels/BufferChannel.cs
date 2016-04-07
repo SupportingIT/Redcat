@@ -42,7 +42,13 @@ namespace Redcat.Core.Channels
             {
                 buffer.Write(value.Array, value.Offset, value.Count);
                 OnBufferUpdated();
-                if (messageQueue.Count > 0 && !bufferEvent.IsSet) bufferEvent.Set();
+                if (messageQueue.Count > 0)
+                {
+                    T message = messageQueue.Peek();
+                    OnMessageReceived(message);
+                    RiseOnNext(message);
+                    if (!bufferEvent.IsSet) bufferEvent.Set();
+                }
             }
         }
 
@@ -70,6 +76,7 @@ namespace Redcat.Core.Channels
             {
                 if (messageQueue.Count == 1) bufferEvent.Reset();
                 T message = messageQueue.Dequeue();
+                OnMessageReceived(message);
                 RiseOnNext(message);
                 return message;
             }

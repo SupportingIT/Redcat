@@ -8,14 +8,14 @@ namespace Redcat.Core.Tests
     [TestFixture]
     public class SingleChannelCommunicatorTests
     {
-        private IChannelFactory channelFactory;
-        private SingleChannelCommunicator communicator;
+        private IChannelFactory<IChannel> channelFactory;
+        private SingleChannelCommunicator<IChannel> communicator;
 
         [SetUp]
         public void SetUp()
         {
-            channelFactory = A.Fake<IChannelFactory>();
-            communicator = new SingleChannelCommunicator(channelFactory);
+            channelFactory = A.Fake<IChannelFactory<IChannel>>();
+            communicator = new SingleChannelCommunicator<IChannel>(channelFactory);
         }
 
         [Test]
@@ -46,6 +46,14 @@ namespace Redcat.Core.Tests
         }
 
         [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Connect_Throws_Exception_If_Connected()
+        {
+            communicator.Connect(new ConnectionSettings());
+            communicator.Connect(new ConnectionSettings());
+        }
+
+        [Test]
         public void Disconnect_Closes_Created_Channel()
         {
             IChannel channel = A.Fake<IChannel>();
@@ -55,46 +63,7 @@ namespace Redcat.Core.Tests
             communicator.Disconnect();
 
             A.CallTo(() => channel.Close()).MustHaveHappened();
+            Assert.That(communicator.IsConnected, Is.False);
         }
-
-        [Test]
-        public void Disconnect_Does_Nothing_If_Channel_Is_Null()
-        {
-            A.CallTo(() => channelFactory.CreateChannel(A<ConnectionSettings>._)).Returns(null);
-
-            communicator.Disconnect();
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void Send_Throws_Exception_If_Message_Is_Null()
-        {
-            communicator.Connect(new ConnectionSettings());
-            communicator.Send<string>(null);
-        }
-
-        [Test]
-        public void Send_Uses_Channel_To_Send_Message()
-        {
-            IOutputChannel<string> channel = A.Fake<IOutputChannel<string>>();
-            A.CallTo(() => channelFactory.CreateChannel(A<ConnectionSettings>._)).Returns(channel);
-
-            communicator.Connect(new ConnectionSettings());
-            communicator.Send("Hello world");
-
-            A.CallTo(() => channel.Send("Hello world")).MustHaveHappened();
-        }
-        
-        [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Send_Throws_Exception_If_Channel_Doesnt_Support_Message_Type()
-        {
-            var channel = A.Fake<IOutputChannel<string>>();
-            A.CallTo(() => channelFactory.CreateChannel(A<ConnectionSettings>._)).Returns(channel);
-
-            communicator.Connect(new ConnectionSettings());
-
-            communicator.Send(new object());
-        }        
     }
 }

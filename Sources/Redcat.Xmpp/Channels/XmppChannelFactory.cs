@@ -1,39 +1,37 @@
 ﻿using Redcat.Core;
 using Redcat.Core.Channels;
 using Redcat.Xmpp.Negotiators;
-using Redcat.Xmpp.Xml;
 using System;
-using StreamChannelFactory = Redcat.Core.Channels.IChannelFactory<Redcat.Core.Channels.IStreamChannel>;
 
 namespace Redcat.Xmpp.Channels
 {
-    public class XmppChannelFactory : IChannelFactory
+    public class XmppChannelFactory : IXmppChannelFactory
     {
-        private StreamChannelFactory streamChannelFactory;
+        private IStreamChannelFactory streamChannelFactory;
         private Func<ISaslCredentials> credentialsProvider;
 
-        public XmppChannelFactory(StreamChannelFactory streamChannelFactory, Func<ISaslCredentials> credentialsProvider)
+        public XmppChannelFactory(IStreamChannelFactory streamChannelFactory, Func<ISaslCredentials> credentialsProvider)
         {
             this.streamChannelFactory = streamChannelFactory;
             this.credentialsProvider = credentialsProvider;
         }
 
-        public IChannel CreateChannel(ConnectionSettings settings)
+        public IXmppChannel CreateChannel(ConnectionSettings settings)
         {            
             IStreamChannel streamChannel = streamChannelFactory.CreateChannel(settings);
             XmppChannel channel = new XmppChannel(streamChannel, settings);
             channel.Initializer = CreateInitializer(channel.SetTlsContext, settings, credentialsProvider);
-            
             return channel;
         }
 
-        private Action<IXmppStream> CreateInitializer(Action setTlsContext, ConnectionSettings settings, Func<ISaslCredentials> credentialsProvider)
+        private Func<IXmppStream, NegotiationContext> CreateInitializer(Action setTlsContext, ConnectionSettings settings, Func<ISaslCredentials> credentialsProvider)
         {
             StreamInitializer initializer = new StreamInitializer(settings);
             initializer.Negotiators.Add(CreateSaslNegotiator(credentialsProvider));
             initializer.Negotiators.Add(new TlsNegotiator(setTlsContext));
             initializer.Negotiators.Add(new BindNegotiator());
-            initializer.Negotiators.Add(new RegistrationNegotiator());
+            initializer.Negotiators.Add(new SessionNegotiator());
+            //initializer.Negotiators.Add(new RegistrationNegotiator());
             return initializer.Init;
         }
 
@@ -43,5 +41,7 @@ namespace Redcat.Xmpp.Channels
             sasl.AddAuthenticator("PLAIN", Authenticators.Plain);
             return sasl;
         }
+
+        public event EventHandler<XmppChannel> ChannelCreated;
     }    
 }

@@ -1,13 +1,12 @@
-﻿<Window x:Class="Redcat.App.Wpf.MainWindow"
+﻿<ma:MetroWindow x:Class="Redcat.App.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Width="800" Height="600">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <ContentControl x:Name="MainMenu" />
-        <ContentControl x:Name="MainContent" Grid.Row="1" />
-    </Grid>
-</Window>
+        xmlns:ma="http://metro.mahapps.com/winfx/xaml/controls"
+        Width="800" Height="600" Title="Redcat Communicator"
+        ResizeMode="CanResizeWithGrip"
+        SaveWindowPosition="True"        
+        WindowTransitionsEnabled="False"
+        BorderBrush="{DynamicResource AccentColorBrush}"
+        BorderThickness="1" xmlns:local="clr-namespace:Redcat.App.Wpf.Views">
+    <ContentControl x:Name="MainContent" />
+</ma:MetroWindow>

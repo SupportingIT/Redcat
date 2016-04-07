@@ -179,8 +179,7 @@ namespace Redcat.Xmpp.Tests
             stream.EnqueueResponse(Parse(headerXml));
             EnqueueFeaturesResponse();
 
-            //initializer.Init(stream);
-            Assert.Fail("Unfinished tests");
+            initializer.Init(stream);            
         }
 
         private IFeatureNegatiator CreateNegotiator(bool canNeogatiateAny, bool neogatiatesAny = false)
@@ -195,8 +194,8 @@ namespace Redcat.Xmpp.Tests
         {
             if (enqueueHeader) EnqueueResponseHeader();
             if (enqueueEmptyFeatures) EnqueueFeaturesResponse();
-            Assert.Fail("Unfinished tests");
-            //initializer.Init(stream);
+            
+            initializer.Init(stream);
         }
 
         private void EnqueueResponse(bool includeHeader, params XmlElement[] features)

@@ -1,7 +1,14 @@
-﻿namespace Redcat.Xmpp.Xml
+﻿using System;
+
+namespace Redcat.Xmpp.Xml
 {
     public class DatagramElement : XmlElement
     {
+        private static Func<object> IdGenerator = () =>
+        {
+            return DateTime.Now.Ticks.ToString("x");
+        };
+
         public DatagramElement(string name, string xmlns = null) : base(name, xmlns)
         {
         }
@@ -28,6 +35,12 @@
         {
             get { return GetAttributeValue<string>("xml:lang"); }
             set { SetAttributeValue("xml:lang", value); }
+        }
+
+        public DatagramElement NewId()
+        {
+            Id = IdGenerator.Invoke();
+            return this;
         }
     }
 }

@@ -32,6 +32,7 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{4514a85c-097b-4189-8716-ca4539347cc1}*SharedItemsImports = 4
+		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{c2791a6d-17a1-460c-88c5-7a3ae9ea27d0}*SharedItemsImports = 4
 		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{18ba6fa0-2351-4bd7-80b3-db93e4a71fd6}*SharedItemsImports = 13
 		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{95e7b813-6d63-49bc-83c2-bc47b9dda5d8}*SharedItemsImports = 4
 	EndGlobalSection

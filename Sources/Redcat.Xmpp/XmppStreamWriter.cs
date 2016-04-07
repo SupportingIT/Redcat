@@ -29,7 +29,9 @@ namespace Redcat.Xmpp
             writer.Flush();
         }
 
-        public void Write(XmlElement element)
+        public void Write(XmlElement element) => Write(element, true);
+
+        private void Write(XmlElement element, bool flush)
         {
             string closingChars = " />";
             if (IsStreamHeader(element))
@@ -43,7 +45,7 @@ namespace Redcat.Xmpp
             
             if (element.HasContent) WriteContent(element);
             else writer.Write(closingChars);
-            writer.Flush();
+            if (flush) writer.Flush();
         }
 
         private bool IsStreamHeader(XmlElement element)
@@ -86,7 +88,7 @@ namespace Redcat.Xmpp
         {
             if (element.HasChilds)
             {
-                foreach (var child in element.Childs) Write(child);
+                foreach (var child in element.Childs) Write(child, false);
             }
         }
 
