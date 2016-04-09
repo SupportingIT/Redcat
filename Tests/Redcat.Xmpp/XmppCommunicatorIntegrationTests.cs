@@ -28,7 +28,7 @@ namespace Redcat.Xmpp.Tests
         {
             container.RegisterSingleton<XmppCommunicator>();
             container.RegisterSingleton<IXmppChannelFactory, XmppChannelFactory>();
-            container.RegisterSingleton<IStreamChannelFactory, TcpChannelFactory>();
+            //container.RegisterSingleton<IStreamChannelFactory, TcpChannelFactory>();
             container.RegisterSingleton<Func<ISaslCredentials>>(() => GetCredentials);
         }
 

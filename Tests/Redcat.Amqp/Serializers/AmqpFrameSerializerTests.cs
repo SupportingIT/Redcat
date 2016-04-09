@@ -18,7 +18,7 @@ namespace Redcat.Amqp.Tests.Serializers
         {
             stream = new MemoryStream();
             payloadSerializer = A.Fake<IPayloadSerializer>();
-            serializer = new AmqpFrameSerializer(stream, payloadSerializer);
+            serializer = new AmqpFrameSerializer(payloadSerializer);
         }
 
         [Test]

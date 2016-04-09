@@ -20,9 +20,7 @@ namespace Redcat.Amqp.Tests
 
         private AmqpCommunicator CreateCommunicator()
         {
-            TcpChannelFactory tcpFactory = new TcpChannelFactory();
-            AmqpChannelFactory amqpFactory = new AmqpChannelFactory(tcpFactory);
-            return new AmqpCommunicator(amqpFactory);
+            return null;
         }
 
         private ConnectionSettings CreateConnectionSettings()

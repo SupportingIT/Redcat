@@ -4,12 +4,10 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace Redcat.Core.Net
 {
-    public class TcpChannel : ObservableChannel<ArraySegment<byte>>, IInputChannel<ArraySegment<byte>>, ISecureStreamChannel, IAsyncInputChannel<ArraySegment<byte>>, IObservable<ArraySegment<byte>>
+    public class TcpChannel : ChannelBase, IReactiveStreamChannel
     {
         private Stream stream;
 
@@ -21,7 +19,19 @@ namespace Redcat.Core.Net
 
         public TcpChannel(int bufferSize, ConnectionSettings settings) : base(settings)
         {
+            args = new SocketAsyncEventArgs();
+            args.SetBuffer(new byte[0], 0, 0);
+            args.Completed += OnReceiveCompleted;
+
             buffer = new byte[bufferSize];
+            socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+        }
+
+        private void OnReceiveCompleted(object sender, SocketAsyncEventArgs args)
+        {
+            int readed = stream.Read(buffer, 0, buffer.Length);
+            Received?.Invoke(this, new ArraySegment<byte>(buffer, 0, readed));
+            if (isListening) ReceiveAsync();
         }
 
         public bool AcceptAllCertificates { get; set; }
@@ -29,26 +39,18 @@ namespace Redcat.Core.Net
         protected override void OnOpening()
         {
             base.OnOpening();
-            if (socket == null) socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(Settings.Host, Settings.Port);
-            stream = GetStream();
-            StartListen();
         }
 
         protected override void OnClosing()
         {
             base.OnClosing();
-            stream.Close();
             socket.Close();
-            stream = null;
         }
 
         public Stream GetStream()
         {
-            if (stream == null)
-            {
-                stream = new NetworkStream(socket);
-            }
+            if (stream == null) stream = new NetworkStream(socket);
             return stream;
         }
 
@@ -56,66 +58,12 @@ namespace Redcat.Core.Net
         {
             if (!(stream is SslStream))
             {
-                StopListening();
-                SslStream ssl = new SslStream(stream, true, ValidateServerCertificate);                
+                SslStream ssl = new SslStream(stream, false, ValidateServerCertificate);
                 ssl.AuthenticateAsClient(Settings.Host);
                 stream = ssl;
-                StartListen();
             }
 
             return stream;
-        }
-
-        public ArraySegment<byte> Receive()
-        {
-            int byteCount = stream.Read(buffer, 0, buffer.Length);
-            return new ArraySegment<byte>(buffer, 0, byteCount);
-        }
-
-        public async Task<ArraySegment<byte>> ReceiveAsync()
-        {
-            int byteCount = await stream.ReadAsync(buffer, 0, buffer.Length);
-            return new ArraySegment<byte>(buffer, 0, byteCount);
-        }
-
-        private void StartListen()
-        {
-            if (args == null)
-            {
-                args = new SocketAsyncEventArgs();
-                args.BufferList = new List<ArraySegment<byte>> { new ArraySegment<byte>(new byte[0], 0, 0) };
-                args.Completed += OnDataReceived;
-            }
-            isListening = true;
-            DoReceive();
-        }
-
-        private void StopListening()
-        {            
-            isListening = false;
-        }
-
-        private void OnDataReceived(object sender, SocketAsyncEventArgs args)
-        {
-            if (!isListening) return;
-            try
-            {
-                RiseOnNext(Receive());
-            }
-            catch (IOException e)
-            {
-                if (isListening && !socket.Connected) return;
-                throw e;
-            }
-            DoReceive();
-        }
-
-        private void DoReceive()
-        {
-            if (!socket.ReceiveAsync(args))
-            {
-                OnDataReceived(socket, args);
-            }
         }
 
         private bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
@@ -132,15 +80,21 @@ namespace Redcat.Core.Net
             return sslPolicyErrors == SslPolicyErrors.None;
         }
 
+        public void ReceiveAsync()
+        {
+            socket.ReceiveAsync(args);
+        }
+
         protected override void DisposeManagedResources()
         {
-            base.DisposeManagedResources();            
+            base.DisposeManagedResources();
             args.Dispose();
             stream.Dispose();
             socket.Dispose();
         }
 
         public event EventHandler<CertificateValidationEventArgs> CertificateValidation;
+        public event EventHandler<ArraySegment<byte>> Received;
     }
 
     public class CertificateValidationEventArgs : EventArgs

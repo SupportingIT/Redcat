@@ -12,4 +12,7 @@
 
     public interface IStreamChannelFactory : IChannelFactory<IStreamChannel>
     { }
+
+    public interface IReactiveStreamChannelFactory : IChannelFactory<IReactiveStreamChannel>
+    { }
 }

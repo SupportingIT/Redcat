@@ -110,8 +110,7 @@ namespace Redcat.Xmpp.Tests
         }
 
         private void RiseStanzaEvent(Stanza stanza)
-        {
-            channel.MessageReceived += Raise.With(new ChannelMessageEventArgs<XmlElement>(stanza));
+        {            
         }
 
         #endregion
