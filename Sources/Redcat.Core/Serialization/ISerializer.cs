@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Redcat.Core.Channels
+namespace Redcat.Core.Serializaton
 {
     public interface ISerializer<T>
     {

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using Redcat.Core.Channels;
 using FakeItEasy;
 using System.IO;
+using Redcat.Core.Serializaton;
 
 namespace Redcat.Core.Tests.Chanels
 {

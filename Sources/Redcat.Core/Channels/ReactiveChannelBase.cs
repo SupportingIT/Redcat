@@ -1,46 +1,19 @@
-﻿using System;
-using System.IO;
+﻿using Redcat.Core.Serializaton;
+using System;
 
 namespace Redcat.Core.Channels
 {
-    public abstract class ReactiveChannelBase<T> : ChannelBase, IOutputChannel<T>
+    public abstract class ReactiveChannelBase<TMessage, TSerializer, TDeserializer> : OutputChannelBase<TMessage, TSerializer> where TSerializer : ISerializer<TMessage> 
+                                                                                      where TDeserializer : IReactiveDeserializer<TMessage>
     {
-        private IReactiveDeserializer<T> deserializer;
-        private ISerializer<T> serializer;
-        private IReactiveStreamChannel streamChannel;
-        private Stream stream;
+        private TDeserializer deserializer;
 
-        protected ReactiveChannelBase(IReactiveStreamChannel streamChannel, ConnectionSettings settings) : base(settings)
-        {
-            this.streamChannel = streamChannel;
-        }        
-
-        protected abstract IReactiveDeserializer<T> CreateDeserializer();
-
-        protected ISerializer<T> Serializer
-        {
-            get
-            {
-                if (serializer == null) serializer = CreateSerializer();
-                return serializer;
-            }
-        }
-
-        protected abstract ISerializer<T> CreateSerializer();
-
-        protected Stream Stream
-        {
-            get
-            {
-                if (stream == null) stream = streamChannel.GetStream();
-                return stream;
-            }
-        }
+        protected ReactiveChannelBase(ConnectionSettings settings) : base(settings)
+        { }                
 
         protected override void OnOpening()
         {
             base.OnOpening();
-            streamChannel.Open();
             InitializeDeserializer();
         }
 
@@ -53,28 +26,13 @@ namespace Redcat.Core.Channels
             }
         }
 
-        private void OnMessageDeserialized(T message)
+        protected abstract TDeserializer CreateDeserializer();
+
+        private void OnMessageDeserialized(TMessage message)
         {
             Received?.Invoke(this, message);
         }
 
-        protected override void OnClosing()
-        {
-            base.OnClosing();
-            streamChannel.Close();            
-        }
-
-        public void Send(T message)
-        {
-            if (State != ChannelState.Open) throw new InvalidOperationException("Channel must be opend before sending messages");
-            Serializer.Serialize(Stream, message);
-        }
-
-        protected void SetSecureStream()
-        {
-            throw new NotImplementedException();
-        }
-
-        public event EventHandler<T> Received;
+        public event EventHandler<TMessage> Received;
     }
 }

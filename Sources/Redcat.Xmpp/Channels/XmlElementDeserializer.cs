@@ -1,6 +1,6 @@
-﻿using Redcat.Core.Channels;
-using Redcat.Xmpp.Xml;
+﻿using Redcat.Xmpp.Xml;
 using Redcat.Xmpp.Parsing;
+using Redcat.Core.Serializaton;
 
 namespace Redcat.Xmpp.Channels
 {
