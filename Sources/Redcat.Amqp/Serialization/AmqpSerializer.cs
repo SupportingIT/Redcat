@@ -1,15 +1,16 @@
 ﻿using Redcat.Core.Channels;
 using System.IO;
+using System;
 
-namespace Redcat.Amqp.Serializers
+namespace Redcat.Amqp.Serialization
 {
-    public class AmqpFrameSerializer : ISerializer<AmqpFrame>
+    public class AmqpSerializer : ISerializer<AmqpFrame>, ISerializer<ProtocolHeader>
     {        
         private IPayloadSerializer payloadSerializer;
         private MemoryStream buffer;        
         private AmqpDataWriter writer;
 
-        public AmqpFrameSerializer(IPayloadSerializer payloadSerializer)
+        public AmqpSerializer(IPayloadSerializer payloadSerializer)
         {
             buffer = new MemoryStream();
             this.payloadSerializer = payloadSerializer;            
@@ -44,6 +45,24 @@ namespace Redcat.Amqp.Serializers
             stream.WriteByte(offset);
             stream.WriteByte(AmqpFrame.AmqpFrameType);
             stream.Write(channel);
+        }
+
+        public void Serialize(Stream stream, ProtocolHeader header)
+        {
+            stream.WriteByte((byte)'A');
+            stream.WriteByte((byte)'M');
+            stream.WriteByte((byte)'Q');
+            stream.WriteByte((byte)'P');
+
+            stream.WriteByte((byte)header.ProtocolType);
+            SerializeProtocolVersion(stream, header.Version);
+        }
+
+        private void SerializeProtocolVersion(Stream stream, Version version)
+        {
+            stream.WriteByte((byte)version.Major);
+            stream.WriteByte((byte)version.Minor);
+            stream.WriteByte((byte)version.Build);
         }
     }    
 }

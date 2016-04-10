@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Redcat.Amqp.Serializers
+namespace Redcat.Amqp.Serialization
 {
     public static class StreamExtensions
     {

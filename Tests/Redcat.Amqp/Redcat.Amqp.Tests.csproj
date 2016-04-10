@@ -42,11 +42,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AmqpDataWriterTests.cs" />
+    <Compile Include="Serialization\AmqpDataWriterTests.cs" />
     <Compile Include="AmqpIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serializers\AmqpFrameSerializerTests.cs" />
-    <Compile Include="Serializers\PayloadSerializerTests.cs" />
+    <Compile Include="Serialization\AmqpDeserializerTests.cs" />
+    <Compile Include="Serialization\AmqpSerializerTests.cs" />
+    <Compile Include="Serialization\PayloadSerializerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

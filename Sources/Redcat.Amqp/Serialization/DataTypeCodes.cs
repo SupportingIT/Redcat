@@ -1,4 +1,4 @@
-﻿namespace Redcat.Amqp
+﻿namespace Redcat.Amqp.Serialization
 {
     public static class DataTypeCodes
     {

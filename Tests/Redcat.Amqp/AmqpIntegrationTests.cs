@@ -9,7 +9,7 @@ namespace Redcat.Amqp.Tests
     [TestFixture]
     public class AmqpIntegrationTests
     {
-        [Test, Ignore]
+        [Test]
         public void Amqp_Connection_Test()
         {
             ConnectionSettings settings = CreateConnectionSettings();
@@ -20,7 +20,9 @@ namespace Redcat.Amqp.Tests
 
         private AmqpCommunicator CreateCommunicator()
         {
-            return null;
+            TcpChannelFactory streamFactory = new TcpChannelFactory() { AcceptAllCertificates = true };
+            AmqpChannelFactory factory = new AmqpChannelFactory(streamFactory);
+            return new AmqpCommunicator(factory);
         }
 
         private ConnectionSettings CreateConnectionSettings()

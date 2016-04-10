@@ -3,7 +3,7 @@ using System;
 
 namespace Redcat.Core.Net
 {
-    public class TcpChannelFactory : IChannelFactory<IReactiveStreamChannel>
+    public class TcpChannelFactory : IReactiveStreamChannelFactory
     {
         private const int DefaultBufferSize = 1024;
 

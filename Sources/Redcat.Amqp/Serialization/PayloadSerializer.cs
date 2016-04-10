@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Redcat.Amqp.Serializers
+namespace Redcat.Amqp.Serialization
 {
     public class PayloadSerializer : IPayloadSerializer
     {

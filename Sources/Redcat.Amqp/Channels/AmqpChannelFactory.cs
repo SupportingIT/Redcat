@@ -5,18 +5,17 @@ namespace Redcat.Amqp.Channels
 {
     public class AmqpChannelFactory : IAmqpChannelFactory
     {
-        private const int BufferSize = 10000;
-        private IStreamChannelFactory streamChannelFactory;
+        private IReactiveStreamChannelFactory streamChannelFactory;
 
-        public AmqpChannelFactory(IStreamChannelFactory streamChannelFactory)
+        public AmqpChannelFactory(IReactiveStreamChannelFactory streamChannelFactory)
         {
             this.streamChannelFactory = streamChannelFactory;
         }
 
         public IAmqpChannel CreateChannel(ConnectionSettings settings)
         {
-            IStreamChannel streamChannel = streamChannelFactory.CreateChannel(settings);
-            return new AmqpChannel(null, settings);
+            IReactiveStreamChannel streamChannel = streamChannelFactory.CreateChannel(settings);
+            return new AmqpChannel(streamChannel, settings);
         }
     }
 }

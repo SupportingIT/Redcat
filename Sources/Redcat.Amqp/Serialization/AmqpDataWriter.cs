@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Redcat.Amqp.Serializers;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Redcat.Amqp
+namespace Redcat.Amqp.Serialization
 {
     public class AmqpDataWriter
     {
@@ -188,6 +187,11 @@ namespace Redcat.Amqp
             stream.WriteByte(DataTypeCodes.List32);
             stream.Write((int)buffer.Length);
             buffer.WriteTo(stream);
+        }
+
+        public void WriteRaw(byte[] rawData)
+        {
+            stream.Write(rawData, 0, rawData.Length);
         }
     }
 }

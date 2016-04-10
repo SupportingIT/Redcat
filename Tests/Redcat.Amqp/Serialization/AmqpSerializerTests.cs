@@ -1,15 +1,16 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
-using Redcat.Amqp.Serializers;
+using Redcat.Amqp.Serialization;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Redcat.Amqp.Tests.Serializers
+namespace Redcat.Amqp.Tests.Serialization
 {
     [TestFixture]
-    public class AmqpFrameSerializerTests
+    public class AmqpSerializerTests
     {
-        private AmqpFrameSerializer serializer;
+        private AmqpSerializer serializer;
         private MemoryStream stream;
         private IPayloadSerializer payloadSerializer;
 
@@ -18,7 +19,7 @@ namespace Redcat.Amqp.Tests.Serializers
         {
             stream = new MemoryStream();
             payloadSerializer = A.Fake<IPayloadSerializer>();
-            serializer = new AmqpFrameSerializer(payloadSerializer);
+            serializer = new AmqpSerializer(payloadSerializer);
         }
 
         [Test]
@@ -75,9 +76,20 @@ namespace Redcat.Amqp.Tests.Serializers
         {
             A.CallTo(() => payloadSerializer.Serialize(A<AmqpDataWriter>._, payload)).Invokes(c =>
             {
-                var stream = c.GetArgument<Stream>(0);
-                stream.Write(payload, 0, payload.Length);
+                var writer = c.GetArgument<AmqpDataWriter>(0);
+                writer.WriteRaw(payload);
             });
+        }
+
+        [Test]
+        public void Serialize_Serializes_ProtocolHeader()
+        {
+            ProtocolHeader header = new ProtocolHeader(ProtocolType.Sasl, new Version(1, 2, 3, 4));
+            byte[] expectedBytes = { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', (byte)header.ProtocolType, 1, 2, 3 };
+
+            serializer.Serialize(stream, header);
+
+            CollectionAssert.AreEqual(expectedBytes, stream.ToArray());
         }
     }
 }

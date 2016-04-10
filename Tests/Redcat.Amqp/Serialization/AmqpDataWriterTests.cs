@@ -1,10 +1,11 @@
 ﻿using NUnit.Framework;
+using Redcat.Amqp.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Redcat.Amqp.Tests
+namespace Redcat.Amqp.Tests.Serialization
 {
     [TestFixture]
     public class AmqpDataWriterTests

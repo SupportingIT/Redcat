@@ -1,9 +1,8 @@
 ﻿using NUnit.Framework;
 using Redcat.Amqp.Performatives;
-using Redcat.Amqp.Serializers;
-using System.Collections.Generic;
+using Redcat.Amqp.Serialization;
 
-namespace Redcat.Amqp.Tests.Serializers
+namespace Redcat.Amqp.Tests.Serialization
 {
     [TestFixture]
     public class PayloadSerializerTests

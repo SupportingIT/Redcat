@@ -15,12 +15,12 @@ namespace Redcat.Core.Net
         private Socket socket;
 
         private SocketAsyncEventArgs args;
-        private bool isListening;
+        private bool isListening = false;
 
         public TcpChannel(int bufferSize, ConnectionSettings settings) : base(settings)
         {
             args = new SocketAsyncEventArgs();
-            args.SetBuffer(new byte[0], 0, 0);
+            args.SetBuffer(new byte[1], 0, 1);
             args.Completed += OnReceiveCompleted;
 
             buffer = new byte[bufferSize];
@@ -40,6 +40,7 @@ namespace Redcat.Core.Net
         {
             base.OnOpening();
             socket.Connect(Settings.Host, Settings.Port);
+            StartListening();
         }
 
         protected override void OnClosing()
@@ -83,6 +84,17 @@ namespace Redcat.Core.Net
         public void ReceiveAsync()
         {
             socket.ReceiveAsync(args);
+        }
+        
+        public void StartListening()
+        {
+            isListening = true;
+            ReceiveAsync();
+        }
+
+        public void StopListening()
+        {
+            isListening = false;
         }
 
         protected override void DisposeManagedResources()
