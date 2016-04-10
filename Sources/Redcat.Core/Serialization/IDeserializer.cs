@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Redcat.Core.Serializaton
+namespace Redcat.Core.Serialization
 {
     public interface IDeserializer<T>
     {

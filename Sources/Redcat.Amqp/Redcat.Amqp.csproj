@@ -61,7 +61,6 @@
     <Compile Include="Serialization\AmqpSerializer.cs" />
     <Compile Include="Serialization\IPayloadSerializer.cs" />
     <Compile Include="Serialization\PayloadSerializer.cs" />
-    <Compile Include="Serialization\StreamExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

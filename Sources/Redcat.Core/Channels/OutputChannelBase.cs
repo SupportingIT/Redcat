@@ -1,4 +1,4 @@
-﻿using Redcat.Core.Serializaton;
+﻿using Redcat.Core.Serialization;
 using System;
 using System.IO;
 

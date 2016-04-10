@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System;
+using System.Collections.Generic;
 
 namespace Redcat.Core.Net
 {
@@ -20,7 +21,7 @@ namespace Redcat.Core.Net
         public TcpChannel(int bufferSize, ConnectionSettings settings) : base(settings)
         {
             args = new SocketAsyncEventArgs();
-            args.SetBuffer(new byte[1], 0, 1);
+            args.BufferList = new List<ArraySegment<byte>> { new ArraySegment<byte>(new byte[0], 0, 0) };
             args.Completed += OnReceiveCompleted;
 
             buffer = new byte[bufferSize];
@@ -40,6 +41,7 @@ namespace Redcat.Core.Net
         {
             base.OnOpening();
             socket.Connect(Settings.Host, Settings.Port);
+            stream = GetStream();
             StartListening();
         }
 
@@ -51,7 +53,10 @@ namespace Redcat.Core.Net
 
         public Stream GetStream()
         {
-            if (stream == null) stream = new NetworkStream(socket);
+            if (stream == null)
+            {
+                stream = new NetworkStream(socket);
+            }
             return stream;
         }
 
@@ -83,7 +88,10 @@ namespace Redcat.Core.Net
 
         public void ReceiveAsync()
         {
-            socket.ReceiveAsync(args);
+            if (!socket.ReceiveAsync(args))
+            {
+                OnReceiveCompleted(this, args);
+            }
         }
         
         public void StartListening()

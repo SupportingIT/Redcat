@@ -1,4 +1,4 @@
-﻿using Redcat.Core.Serializaton;
+﻿using Redcat.Core.Serialization;
 using System;
 
 namespace Redcat.Core.Channels
@@ -9,7 +9,9 @@ namespace Redcat.Core.Channels
         private TDeserializer deserializer;
 
         protected ReactiveChannelBase(ConnectionSettings settings) : base(settings)
-        { }                
+        { }
+
+        protected TDeserializer Deserializer => deserializer;
 
         protected override void OnOpening()
         {

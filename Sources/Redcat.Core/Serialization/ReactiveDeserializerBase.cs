@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Redcat.Core.Serializaton
+namespace Redcat.Core.Serialization
 {
     public abstract class ReactiveDeserializerBase<T> : IReactiveDeserializer<T>
     {

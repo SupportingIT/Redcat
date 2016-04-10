@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System;
-using Redcat.Core.Serializaton;
+using Redcat.Core.Serialization;
 
 namespace Redcat.Amqp.Serialization
 {

@@ -35,12 +35,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ByteBuffer.cs" />
-    <Compile Include="Channels\BufferChannel.cs" />
     <Compile Include="Channels\CompositeChannelFactory.cs" />
     <Compile Include="Channels\IAsyncChannel.cs" />
     <Compile Include="Channels\IChannel.cs" />
     <Compile Include="Channels\OutputChannelBase.cs" />
     <Compile Include="Channels\ReactiveMessageChannel.cs" />
+    <Compile Include="Serialization\ByteArrayExtensions.cs" />
     <Compile Include="Serialization\IDeserializer.cs" />
     <Compile Include="Channels\IReactiveChannel.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
@@ -53,6 +53,7 @@
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ICommunicator.cs" />
     <Compile Include="ObserverExtensions.cs" />
+    <Compile Include="Serialization\StreamExtensions.cs" />
     <Compile Include="SingleChannelCommunicator.cs" />
     <Compile Include="ConnectionSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Redcat.Core.Serialization;
+using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;

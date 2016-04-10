@@ -2,6 +2,7 @@
 using Redcat.Core;
 using Redcat.Core.Net;
 using Redcat.Amqp.Channels;
+using System.Threading;
 
 namespace Redcat.Amqp.Tests
 {
@@ -13,8 +14,10 @@ namespace Redcat.Amqp.Tests
         public void Amqp_Connection_Test()
         {
             ConnectionSettings settings = CreateConnectionSettings();
+            ManualResetEventSlim resetEvent = new ManualResetEventSlim(false);
             var communicator = CreateCommunicator();
             communicator.Connect(settings);
+            resetEvent.Wait();
             communicator.Disconnect();
         }
 

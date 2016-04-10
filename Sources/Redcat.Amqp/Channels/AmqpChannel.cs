@@ -2,23 +2,28 @@
 using Redcat.Core;
 using Redcat.Amqp.Serialization;
 using System;
-using Redcat.Core.Serializaton;
 
 namespace Redcat.Amqp.Channels
 {
-    public class AmqpChannel : ReactiveChannelBase<AmqpFrame>, IAmqpChannel
+    public class AmqpChannel : ReactiveMessageChannel<AmqpFrame, AmqpSerializer, AmqpDeserializer>, IAmqpChannel
     {
         public AmqpChannel(IReactiveStreamChannel streamChannel, ConnectionSettings settings) : base(streamChannel, settings)
-        { }        
+        { }
 
-        protected override IReactiveDeserializer<AmqpFrame> CreateDeserializer()
+        protected override void OnOpen()
+        {
+            base.OnOpen();
+            Send(Protocols.AmqpV100);
+        }
+
+        protected override AmqpDeserializer CreateDeserializer()
         {
             var deserializer = new AmqpDeserializer();
             deserializer.ProtocolHeaderDeserialized += h => OnProtocolHeaderReceived(h);
             return deserializer;
         }
 
-        protected override ISerializer<AmqpFrame> CreateSerializer()
+        protected override AmqpSerializer CreateSerializer()
         {
             IPayloadSerializer payloadSerializer = new PayloadSerializer();
             return new AmqpSerializer(payloadSerializer);
@@ -31,7 +36,7 @@ namespace Redcat.Amqp.Channels
 
         public void Send(ProtocolHeader header)
         {
-            throw new NotImplementedException();
+            Serializer.Serialize(Stream, header);
         }
 
         public event EventHandler<ProtocolHeader> ProtocolHeaderReceived;

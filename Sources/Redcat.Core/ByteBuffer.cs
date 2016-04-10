@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Redcat.Core.Serialization;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,41 @@ namespace Redcat.Core
             Array.Copy(buffer, startIndex, buffer, 0, Count);
             endIndex -= startIndex;
             startIndex = 0;
+        }
+
+        public byte ReadByte()
+        {
+            byte value = buffer[startIndex];
+            Discard(1);
+            return value;
+        }
+
+        public short ReadInt16()
+        {
+            short value = buffer.ReadInt16(startIndex);
+            Discard(sizeof(short));
+            return value;
+        }
+
+        public ushort ReadUInt16()
+        {
+            ushort value = buffer.ReadUInt16(startIndex);
+            Discard(sizeof(ushort));
+            return value;
+        }
+
+        public int ReadInt32()
+        {
+            int value = buffer.ReadInt32(startIndex);
+            Discard(sizeof(int));
+            return value;
+        }
+
+        public uint ReadUInt32()
+        {
+            uint value = buffer.ReadUInt32(startIndex);
+            Discard(sizeof(uint));
+            return value;
         }
 
         public IEnumerator<byte> GetEnumerator()

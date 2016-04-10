@@ -1,7 +1,11 @@
 ﻿using System.IO;
 
-namespace Redcat.Amqp.Serialization
+namespace Redcat.Core.Serialization
 {
+    /// <summary>
+    /// Set of extension methods which serializes base data type into stream.
+    /// Unlike BinaryWriter uses big-endian order.
+    /// </summary>
     public static class StreamExtensions
     {
         public static void Write(this Stream stream, short value) => Write(stream, (ushort)value);

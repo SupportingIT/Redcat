@@ -64,8 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ByteBufferTests.cs" />
-    <Compile Include="Chanels\ReactivechannelAdapterTests.cs" />
-    <Compile Include="Chanels\ReactiveChannelBaseTests.cs" />
+    <Compile Include="Chanels\ReactiveChannelAdapterTests.cs" />
+	<Compile Include="Serialization\ByteArrayExtensionTests.cs" />
     <Compile Include="CommunicatorBaseTests.cs" />
     <Compile Include="ObserverExtensionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
