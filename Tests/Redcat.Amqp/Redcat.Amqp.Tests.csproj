@@ -42,6 +42,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Serialization\AmqpDataReaderTests.cs" />
     <Compile Include="Serialization\AmqpDataWriterTests.cs" />
     <Compile Include="AmqpIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -18,7 +18,7 @@ namespace Redcat.Amqp.Channels
 
         protected override AmqpDeserializer CreateDeserializer()
         {
-            var deserializer = new AmqpDeserializer();
+            var deserializer = new AmqpDeserializer(new PayloadReader());
             deserializer.ProtocolHeaderDeserialized += h => OnProtocolHeaderReceived(h);
             return deserializer;
         }

@@ -4,7 +4,7 @@
     {
         public const byte AmqpFrameType = 0x00;
 
-        public AmqpFrame(object payload) : base(AmqpFrameType)
+        public AmqpFrame(object payload, int channel = 0) : base(AmqpFrameType)
         {
             Payload = payload;
         }

@@ -59,7 +59,14 @@ namespace Redcat.Core
         public byte ReadByte()
         {
             byte value = buffer[startIndex];
-            Discard(1);
+            Discard(sizeof(byte));
+            return value;
+        }
+
+        public sbyte ReadSByte()
+        {
+            sbyte value = (sbyte)buffer[startIndex];
+            Discard(sizeof(sbyte));
             return value;
         }
 
@@ -88,6 +95,20 @@ namespace Redcat.Core
         {
             uint value = buffer.ReadUInt32(startIndex);
             Discard(sizeof(uint));
+            return value;
+        }
+
+        public long ReadInt64()
+        {
+            long value = buffer.ReadInt64();
+            Discard(sizeof(long));
+            return value;
+        }
+
+        public ulong ReadUInt64()
+        {
+            ulong value = buffer.ReadUInt64();
+            Discard(sizeof(ulong));
             return value;
         }
 

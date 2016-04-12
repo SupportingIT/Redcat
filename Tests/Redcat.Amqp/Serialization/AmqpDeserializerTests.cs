@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FakeItEasy;
+using NUnit.Framework;
 using Redcat.Amqp.Serialization;
 using System;
 
@@ -12,7 +13,7 @@ namespace Redcat.Amqp.Tests.Serialization
         {
             ProtocolHeader expectedHeader = new ProtocolHeader(ProtocolType.Sasl, new Version(4, 5, 6));
             ProtocolHeader actualHeader = null;
-            AmqpDeserializer deserializer = new AmqpDeserializer();
+            AmqpDeserializer deserializer = new AmqpDeserializer(A.Fake<IPayloadReader>());
             deserializer.ProtocolHeaderDeserialized += h => actualHeader = h;
 
             deserializer.Read(new ArraySegment<byte>(new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P',

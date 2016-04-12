@@ -32,14 +32,26 @@ namespace Redcat.Core.Serialization
             return value << 8 | array[offset + 3];
         }
 
-        public static long ReadInt64(this byte[] array)
+        public static long ReadInt64(this byte[] array, int offset = 0)
         {
-            throw new NotImplementedException();
+            long value = array[offset] << 8 | array[offset + 1];
+            value = value << 8 | array[offset + 2];
+            value = value << 8 | array[offset + 3];
+            value = value << 8 | array[offset + 4];
+            value = value << 8 | array[offset + 5];
+            value = value << 8 | array[offset + 6];
+            return value << 8 | array[offset + 7];            
         }
 
-        public static ulong ReadUInt64(this byte[] array)
+        public static ulong ReadUInt64(this byte[] array, int offset = 0)
         {
-            throw new NotImplementedException();
+            ulong value = (ulong)(array[offset] << 8 | array[offset + 1]);
+            value = value << 8 | array[offset + 2];
+            value = value << 8 | array[offset + 3];
+            value = value << 8 | array[offset + 4];
+            value = value << 8 | array[offset + 5];
+            value = value << 8 | array[offset + 6];
+            return value << 8 | array[offset + 7];
         }
 
         public static string ReadString(this byte[] array, int length)
