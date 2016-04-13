@@ -29,17 +29,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Amqp.Tests", "Tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redcat.Amqp", "Sources\Redcat.Amqp\Redcat.Amqp.csproj", "{3906ABB1-9C62-4095-BC51-E345CC2D4C7E}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Redcat.TestUtils", "Redcat.TestUtils\Redcat.TestUtils.shproj", "{2C8889D4-C24D-4702-84B8-BDFF6F07C105}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Redcat.TestUtils", "Tests\Redcat.TestUtils\Redcat.TestUtils.shproj", "{2C8889D4-C24D-4702-84B8-BDFF6F07C105}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Redcat.TestUtils\Redcat.TestUtils.projitems*{4514a85c-097b-4189-8716-ca4539347cc1}*SharedItemsImports = 4
+		Tests\Redcat.TestUtils\Redcat.TestUtils.projitems*{4514a85c-097b-4189-8716-ca4539347cc1}*SharedItemsImports = 4
 		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{4514a85c-097b-4189-8716-ca4539347cc1}*SharedItemsImports = 4
 		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{c2791a6d-17a1-460c-88c5-7a3ae9ea27d0}*SharedItemsImports = 4
 		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{18ba6fa0-2351-4bd7-80b3-db93e4a71fd6}*SharedItemsImports = 13
-		Redcat.TestUtils\Redcat.TestUtils.projitems*{db368528-bcd9-4678-b161-25567654e18d}*SharedItemsImports = 4
+		Tests\Redcat.TestUtils\Redcat.TestUtils.projitems*{db368528-bcd9-4678-b161-25567654e18d}*SharedItemsImports = 4
 		Sources\Redcat.Core.Net\Redcat.Core.Net.projitems*{95e7b813-6d63-49bc-83c2-bc47b9dda5d8}*SharedItemsImports = 4
-		Redcat.TestUtils\Redcat.TestUtils.projitems*{2c8889d4-c24d-4702-84b8-bdff6f07c105}*SharedItemsImports = 13
+		Tests\Redcat.TestUtils\Redcat.TestUtils.projitems*{2c8889d4-c24d-4702-84b8-bdff6f07c105}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
