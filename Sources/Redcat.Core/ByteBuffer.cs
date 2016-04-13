@@ -100,14 +100,14 @@ namespace Redcat.Core
 
         public long ReadInt64()
         {
-            long value = buffer.ReadInt64();
+            long value = buffer.ReadInt64(startIndex);
             Discard(sizeof(long));
             return value;
         }
 
         public ulong ReadUInt64()
         {
-            ulong value = buffer.ReadUInt64();
+            ulong value = buffer.ReadUInt64(startIndex);
             Discard(sizeof(ulong));
             return value;
         }

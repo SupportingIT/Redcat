@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Redcat.Amqp.Serialization;
 using Redcat.Core;
+using Redcat.Test;
 using System;
 using System.Collections.Generic;
 
@@ -37,23 +38,17 @@ namespace Redcat.Amqp.Tests.Serialization
         }
 
         [Test]
-        public void ReadBoolean_Returns_CorrectValue([ValueSource("GetReadBooleanData")]Tuple<byte[], bool> data)
+        public void ReadBoolean_Returns_CorrectValue([ValueSource(nameof(GetReadBooleanData))]Tuple<bool, byte[]> data)
         {
-            byte[] encodedData = data.Item1;
-            bool expectedValue = data.Item2;
-            buffer.Write(encodedData);
-
-            bool actualValue = reader.ReadBoolean();
-
-            Assert.That(actualValue, Is.EqualTo(expectedValue));
+            VerifyReadValueMethod(data.Item1, data.Item2, r => r.ReadBoolean());
         }
 
-        public IEnumerable<Tuple<byte[], bool>> GetReadBooleanData()
+        public IEnumerable<Tuple<bool, byte[]>> GetReadBooleanData()
         {
-            yield return new Tuple<byte[], bool>(new byte[] { DataTypeCodes.FalseValue }, false);
-            yield return new Tuple<byte[], bool>(new byte[] { DataTypeCodes.TrueValue }, true);
-            yield return new Tuple<byte[], bool>(new byte[] { DataTypeCodes.Boolean, 0x00 }, false);
-            yield return new Tuple<byte[], bool>(new byte[] { DataTypeCodes.Boolean, 0x01 }, true);
+            yield return GetTestData(false, DataTypeCodes.FalseValue);
+            yield return GetTestData(true, DataTypeCodes.TrueValue);
+            yield return GetTestData(false, DataTypeCodes.Boolean, 0x00);
+            yield return GetTestData(true, DataTypeCodes.Boolean, 0x01);
         }
 
         #endregion
@@ -68,15 +63,12 @@ namespace Redcat.Amqp.Tests.Serialization
             Assert.That(reader.IsUByte(), Is.True);
         }
 
+        byte[] ReadUByteTestData = { 0, byte.MaxValue };
+
         [Test]
-        public void ReadUByte_Returns_Correct_Value()
+        public void ReadUByte_Returns_Correct_Value([ValueSource(nameof(ReadUByteTestData))]byte value)
         {
-            byte value = 0xfd;
-            buffer.Write(new byte[] { DataTypeCodes.UByte, value });
-
-            byte actualValue = reader.ReadUByte();
-
-            Assert.That(actualValue, Is.EqualTo(value));
+            VerifyReadValueMethod(value, value.ToString("x2"), DataTypeCodes.UByte, r => r.ReadUByte());
         }
 
         [Test]
@@ -87,15 +79,12 @@ namespace Redcat.Amqp.Tests.Serialization
             Assert.That(reader.IsByte(), Is.True);
         }
 
+        sbyte[] ReadByteTestData = { sbyte.MinValue, 0, sbyte.MaxValue };
+
         [Test]
-        public void ReadByte_Returs_CorrectValue()
+        public void ReadByte_Returs_CorrectValue([ValueSource(nameof(ReadByteTestData))]sbyte value)
         {
-            sbyte value = -2;
-            buffer.Write(new byte[] { DataTypeCodes.Byte, (byte)value });
-
-            sbyte actualValue = reader.ReadByte();
-
-            Assert.That(actualValue, Is.EqualTo(value));
+            VerifyReadValueMethod(value, value.ToString("x2"), DataTypeCodes.Byte, r => r.ReadByte());
         }
 
         #endregion
@@ -110,18 +99,13 @@ namespace Redcat.Amqp.Tests.Serialization
             Assert.That(reader.IsShort(), Is.True);
         }
 
-        [Test]
-        public void ReadShort_Returns_Correct_Value()
-        {
-            buffer.Write(new byte[] { DataTypeCodes.Short, 0xfe, 0x1a });
-            unchecked
-            {
-                short expectedValue = (short)0xfe1a;
-                short actualValue = reader.ReadShort();
+        short[] ReadShortTestData = { short.MinValue, 0, short.MaxValue };
 
-                Assert.That(actualValue, Is.EqualTo(expectedValue));
-            }
-        }
+        [Test]
+        public void ReadShort_Returns_Correct_Value([ValueSource(nameof(ReadShortTestData))]short value)
+        {            
+            VerifyReadValueMethod(value, value.ToString("x4"), DataTypeCodes.Short, r => r.ReadShort());
+        }        
 
         [Test]
         public void IsUShort_Returns_True_For_Unsigned_Short_Type_Codes()
@@ -131,15 +115,12 @@ namespace Redcat.Amqp.Tests.Serialization
             Assert.That(reader.IsUShort(), Is.True);
         }
 
+        ushort[] ReadUShortTestData = { 0, ushort.MaxValue };
+
         [Test]
-        public void ReadUShort_Returns_Correct_Value()
-        {
-            buffer.Write(new byte[] { DataTypeCodes.UShort, 0xad, 0x14 });
-            ushort expectedValue = 0xad14;
-
-            ushort actualValue = reader.ReadUShort();
-
-            Assert.That(actualValue, Is.EqualTo(expectedValue));
+        public void ReadUShort_Returns_Correct_Value([ValueSource(nameof(ReadUShortTestData))]ushort value)
+        {            
+            VerifyReadValueMethod(value, value.ToString("x4"), DataTypeCodes.UShort, r => r.ReadUShort());
         }
 
         #endregion
@@ -156,22 +137,16 @@ namespace Redcat.Amqp.Tests.Serialization
             Assert.That(reader.IsInt(), Is.True);
         }
 
-        public IEnumerable<Tuple<byte[], int>> GetReadIntData()
+        public IEnumerable<Tuple<int, byte[]>> GetReadIntData()
         {
-            yield return new Tuple<byte[],int>(new byte[] { DataTypeCodes.Int, 0xff, 0xff, 0xff, 0xff }, -1);
-            yield return new Tuple<byte[],int>(new byte[] { DataTypeCodes.SmallInt, 8 }, 8);
+            yield return GetTestData(-1, (-1).ToString("x8"), DataTypeCodes.Int);
+            yield return GetTestData(8, 8.ToString("x2"), DataTypeCodes.SmallInt);
         }    
 
         [Test]
-        public void ReadInt_Returns_Correct_Value([ValueSource(nameof(GetReadIntData))]Tuple<byte[], int> data)
+        public void ReadInt_Returns_Correct_Value([ValueSource(nameof(GetReadIntData))]Tuple<int, byte[]> data)
         {
-            byte[] binaryData = data.Item1;
-            int expectedValue = data.Item2;
-            buffer.Write(binaryData);
-
-            int actualValue = reader.ReadInt();
-
-            Assert.That(actualValue, Is.EqualTo(expectedValue));
+            VerifyReadValueMethod(data.Item1, data.Item2, r => r.ReadInt());
         }
 
         public byte[] UIntTypeCodes = { DataTypeCodes.UInt0, DataTypeCodes.SmallUInt, DataTypeCodes.UInt };
@@ -184,23 +159,17 @@ namespace Redcat.Amqp.Tests.Serialization
             Assert.That(reader.IsUInt(), Is.True);
         }
 
-        public IEnumerable<Tuple<byte[], uint>> GetReadUIntTestData()
+        public IEnumerable<Tuple<uint, byte[]>> GetReadUIntTestData()
         {
-            yield return new Tuple<byte[], uint>(new byte[] { DataTypeCodes.UInt, 0x0a, 0x0b, 0x0c, 0x0d }, 0x0a0b0c0d);
-            yield return new Tuple<byte[], uint>(new byte[] { DataTypeCodes.SmallUInt, 0xdf, 0, 0 }, 0xdf);
-            yield return new Tuple<byte[], uint>(new byte[] { DataTypeCodes.UInt0 }, 0);
+            yield return GetTestData(uint.MaxValue, uint.MaxValue.ToString("x8"), DataTypeCodes.UInt);
+            yield return GetTestData((uint)0xfa, ((uint)0xfa).ToString("x2"), DataTypeCodes.SmallUInt);
+            yield return GetTestData((uint)0, DataTypeCodes.UInt0);
         }
 
         [Test]
-        public void ReadUInt_Returns_Correct_Value([ValueSource(nameof(GetReadUIntTestData))]Tuple<byte[], uint> data)
+        public void ReadUInt_Returns_Correct_Value([ValueSource(nameof(GetReadUIntTestData))]Tuple<uint, byte[]> data)
         {
-            byte[] binaryData = data.Item1;
-            uint expectedValue = data.Item2;
-            buffer.Write(binaryData);
-
-            uint actualValue = reader.ReadUInt();
-
-            Assert.That(actualValue, Is.EqualTo(expectedValue));
+            VerifyReadValueMethod(data.Item1, data.Item2, r => r.ReadUInt());
         }
 
         #endregion
@@ -217,21 +186,16 @@ namespace Redcat.Amqp.Tests.Serialization
             Assert.That(reader.IsLong(), Is.True);
         }
 
-        public IEnumerable<Tuple<byte[], long>> GetReadLongTestData()
+        public IEnumerable<Tuple<long, byte[]>> GetReadLongTestData()
         {
-            yield return new Tuple<byte[], long>(new byte[] { DataTypeCodes.Long, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80 }, 0x1020304050607080);
-            yield return new Tuple<byte[], long>(new byte[] { DataTypeCodes.SmallLong, 0xff }, -1);
+            yield return GetTestData(long.MaxValue, long.MaxValue.ToString("x16"), DataTypeCodes.Long);
+            yield return GetTestData(-1L, "ff", DataTypeCodes.SmallLong);            
         }
 
         [Test]
-        public void ReadLong_Returns_Correct_Value([ValueSource(nameof(GetReadLongTestData))]Tuple<byte[], long> data)
-        {            
-            long expectedValue = data.Item2;
-            buffer.Write(data.Item1);
-
-            long actualValue = reader.ReadLong();
-
-            Assert.That(actualValue, Is.EqualTo(expectedValue));
+        public void ReadLong_Returns_Correct_Value([ValueSource(nameof(GetReadLongTestData))]Tuple<long, byte[]> data)
+        {
+            VerifyReadValueMethod(data.Item1, data.Item2, r => r.ReadLong());
         }
 
         public byte[] ULongTypeCodes = { DataTypeCodes.ULong, DataTypeCodes.SmallULong, DataTypeCodes.ULong0 };
@@ -244,24 +208,49 @@ namespace Redcat.Amqp.Tests.Serialization
             Assert.That(reader.IsULong(), Is.True);
         }
 
-        public IEnumerable<Tuple<byte[], ulong>> GetReadULongTestData()
+        public IEnumerable<Tuple<ulong, byte[]>> GetReadULongTestData()
         {
-            yield return new Tuple<byte[], ulong>(new byte[] { DataTypeCodes.ULong, 0, 0, 0, 0, 0, 0, 0x01, 0 }, 0x100);
-            yield return new Tuple<byte[], ulong>(new byte[] { DataTypeCodes.SmallULong, 10 }, 10);
-            yield return new Tuple<byte[], ulong>(new byte[] { DataTypeCodes.ULong0 }, 0);
+            yield return GetTestData(ulong.MaxValue, ulong.MaxValue.ToString("x16"), DataTypeCodes.ULong);
+            yield return GetTestData(0x0fUL, 0x0fUL.ToString("x2"), DataTypeCodes.SmallULong);
+            yield return GetTestData(0UL, DataTypeCodes.ULong0);
         }
 
         [Test]
-        public void ReadULong_Returns_Correct_Value([ValueSource(nameof(GetReadULongTestData))]Tuple<byte[], ulong> data)
-        {            
-            ulong expectedValue = data.Item2;
-            buffer.Write(data.Item1);
-
-            ulong actualValue = reader.ReadULong();
-
-            Assert.That(actualValue, Is.EqualTo(expectedValue));
+        public void ReadULong_Returns_Correct_Value([ValueSource(nameof(GetReadULongTestData))]Tuple<ulong, byte[]> data)
+        {
+            VerifyReadValueMethod(data.Item1, data.Item2, r => r.ReadULong());
         }
 
         #endregion
+        
+        private Tuple<T, byte[]> GetTestData<T>(T expected, params byte[] serialized)
+        {
+            return new Tuple<T, byte[]>(expected, serialized);
+        }
+
+        private Tuple<T, byte[]> GetTestData<T>(T expected, string hexString, byte code)
+        {
+            List<byte> serialized = new List<byte>();
+            serialized.Add(code);
+            serialized.AddRange(BinaryUtils.ToByteArray(hexString));
+            return new Tuple<T, byte[]>(expected, serialized.ToArray());
+        }
+
+        private void VerifyReadValueMethod<T>(T expectedValue, string hexString, byte code, Func<AmqpDataReader, T> readValue)
+        {
+            List<byte> bytes = new List<byte>();
+            bytes.Add(code);
+            bytes.AddRange(BinaryUtils.ToByteArray(hexString));
+            VerifyReadValueMethod(expectedValue, bytes.ToArray(), readValue);
+        }
+
+        private void VerifyReadValueMethod<T>(T expectedValue, byte[] serializedData, Func<AmqpDataReader, T> readValue)
+        {
+            buffer.Write(serializedData);
+
+            T actualValue = readValue(reader);
+
+            Assert.That(actualValue, Is.EqualTo(expectedValue));
+        }
     }
 }

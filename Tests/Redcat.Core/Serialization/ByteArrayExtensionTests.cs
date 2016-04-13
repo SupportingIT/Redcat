@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Redcat.Core.Serialization;
+using Redcat.Test;
 using System;
 
 namespace Redcat.Core.Tests.Serialization
@@ -7,68 +8,61 @@ namespace Redcat.Core.Tests.Serialization
     [TestFixture]
     public class ByteArrayExtensionTests
     {
-        [Test]
-        public void ReadInt16_Deserializes_Int16()
-        {            
-            byte[] bytes = { 0x0f, 0xaa, 0xff, 0xff };
-            short expectedValue = -1;
+        short[] ReadInt16TestData = { short.MinValue, 0, short.MaxValue };
 
-            short actualValue = bytes.ReadInt16(2);
+        [Test]
+        public void ReadInt16_Deserializes_Int16([ValueSource(nameof(ReadInt16TestData))]short expectedValue)
+        {           
+            ValidateReadValueMethod(expectedValue, expectedValue.ToString("x4"), b => b.ReadInt16());
+        }
+
+        ushort[] ReadUInt16TestData = { 0, ushort.MaxValue / 2, ushort.MaxValue };
+
+        [Test]
+        public void ReadUInt16_Deserializes_UInt16([ValueSource(nameof(ReadUInt16TestData))]ushort expectedValue)
+        {
+            ValidateReadValueMethod(expectedValue, expectedValue.ToString("x4"), b => b.ReadUInt16());
+        }
+
+        int[] ReadInt32TestData = { int.MinValue, 0, int.MaxValue };
+
+        [Test]
+        public void ReadInt32_Deserializes_Int32([ValueSource(nameof(ReadInt32TestData))]int expectedValue)
+        {
+            ValidateReadValueMethod(expectedValue, expectedValue.ToString("x8"), b => b.ReadInt32());
+        }
+
+        uint[] ReadUInt32TestData = { 0, uint.MaxValue / 2, uint.MaxValue };
+
+        [Test]
+        public void ReadUInt32_Deserializes_UInt32([ValueSource(nameof(ReadUInt32TestData))]uint expectedValue)
+        {
+            ValidateReadValueMethod(expectedValue, expectedValue.ToString("x8"), b => b.ReadUInt32());
+        }
+
+        long[] ReadInt64TestData = { long.MinValue, 0, long.MaxValue };
+
+        [Test]
+        public void ReadInt64_Deserializes_Int64([ValueSource(nameof(ReadInt64TestData))]long expectedValue)
+        {
+            ValidateReadValueMethod(expectedValue, expectedValue.ToString("x16"), b => b.ReadInt64());
+        }
+
+        ulong[] ReadUInt64TestData = { 0, ulong.MaxValue / 2, ulong.MaxValue };
+
+        [Test]
+        public void ReadUInt64_Deserializes_UInt64([ValueSource(nameof(ReadUInt64TestData))]ulong expectedValue)
+        {
+            ValidateReadValueMethod(expectedValue, expectedValue.ToString("x16"), b => b.ReadUInt64());
+        }
+
+        private void ValidateReadValueMethod<T>(T expectedValue, string hexString, Func<byte[], T> readValue)
+        {
+            byte[] bytes = BinaryUtils.ToByteArray(hexString);
+
+            T actualValue = readValue(bytes);
 
             Assert.That(actualValue, Is.EqualTo(expectedValue));
-        }
-
-        [Test]
-        public void ReadUInt16_Deserializes_UInt16()
-        {
-            byte[] bytes = { 0x0a, 0x0b, 0xdd };
-            ushort expectedValue = 0x0bdd;
-
-            ushort actualValue = bytes.ReadUInt16(1);
-
-            Assert.That(actualValue, Is.EqualTo(expectedValue));
-        }
-
-        [Test]
-        public void ReadInt32_Deserializes_Int32()
-        {
-            byte[] bytes = { 0xff, 0xff, 0x01, 0x02 };
-            unchecked
-            {
-                int expectedValue = (int)0xffff0102;
-                int actualValue = bytes.ReadInt32();
-                Assert.That(actualValue, Is.EqualTo(expectedValue));
-            }
-        }
-
-        [Test]
-        public void ReadUInt32_Deserializes_UInt32()
-        {
-            byte[] bytes = { 0x98, 0x76, 0x54, 0x32 };
-            uint expectedValue = 0x98765432;
-
-            uint actualValue = bytes.ReadUInt32();
-
-            Assert.That(actualValue, Is.EqualTo(expectedValue));
-        }
-
-        [Test]
-        public void ReadInt64_Deserializes_Int64()
-        {
-            byte[] bytes = { 0xfe, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee };
-            unchecked
-            {
-                long expectedValue = (long)0xfeeeeeeeeeeeeeee;
-                long actualValue = bytes.ReadInt64();
-
-                Assert.That(actualValue, Is.EqualTo(expectedValue));
-            }            
-        }
-
-        [Test]
-        public void ReadUInt64_Deserializes_UInt64()
-        {
-            Assert.Fail();
-        }
+        }        
     }
 }
