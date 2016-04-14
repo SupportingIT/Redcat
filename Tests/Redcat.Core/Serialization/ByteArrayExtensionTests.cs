@@ -2,6 +2,7 @@
 using Redcat.Core.Serialization;
 using Redcat.Test;
 using System;
+using System.Text;
 
 namespace Redcat.Core.Tests.Serialization
 {
@@ -54,6 +55,16 @@ namespace Redcat.Core.Tests.Serialization
         public void ReadUInt64_Deserializes_UInt64([ValueSource(nameof(ReadUInt64TestData))]ulong expectedValue)
         {
             ValidateReadValueMethod(expectedValue, expectedValue.ToString("x16"), b => b.ReadUInt64());
+        }
+
+        [Test]
+        public void ReadString_Deserializes_String()
+        {
+            byte[] serialized = Encoding.UTF8.GetBytes("Hello world");
+
+            string actualString = serialized.ReadString(5);
+
+            Assert.That(actualString, Is.EqualTo("Hello"));
         }
 
         private void ValidateReadValueMethod<T>(T expectedValue, string hexString, Func<byte[], T> readValue)

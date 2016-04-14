@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Redcat.Test;
 using System;
 using System.Linq;
 using System.Text;
@@ -140,6 +141,89 @@ namespace Redcat.Core.Tests
         }
 
         #endregion
+
+        [Test]
+        public void ReadByte_Deserializes_Byte_From_Buffer()
+        {           
+            byte value = 0xad;
+            VerifyReadValueMethod(value, value.ToString("x2"), b => b.ReadByte());
+        }
+
+        [Test]
+        public void ReadSByte_Deserializes_SByte_Value()
+        {
+            sbyte value = -10;
+            VerifyReadValueMethod(value, value.ToString("x2"), b => b.ReadSByte());
+        }
+
+        [Test]
+        public void ReadInt16_Deserializes_Int16_Value()
+        {
+            short value = 8765;
+            VerifyReadValueMethod(value, value.ToString("x4"), b => b.ReadInt16());
+        }
+
+        [Test]
+        public void ReadUInt16_Deserializes_UInt16_Value()
+        {
+            ushort value = 100;
+            VerifyReadValueMethod(value, value.ToString("x4"), b => b.ReadUInt16());
+        }
+
+        [Test]
+        public void ReadInt32_Deserializes_Int32_Value()
+        {
+            int value = 89078;
+            VerifyReadValueMethod(value, value.ToString("x8"), b => b.ReadInt32());
+        }
+
+        [Test]
+        public void ReadUInt32_Deserializes_UInt32_Value()
+        {
+            uint value = 2143123;
+            VerifyReadValueMethod(value, value.ToString("x8"), b => b.ReadUInt32());
+        }
+
+        [Test]
+        public void ReadInt64_Deserializes_Int64_Value()
+        {
+            long value = 5123452353;
+            VerifyReadValueMethod(value, value.ToString("x16"), b => b.ReadInt64());
+        }
+
+        [Test]
+        public void ReadUInt64_Deserializes_UInt64_Value()
+        {
+            ulong value = 4562542344;
+            VerifyReadValueMethod(value, value.ToString("x16"), b => b.ReadUInt64());
+        }
+
+        [Test]
+        public void ReadString_Deserializes_String_Value()
+        {
+            string value = "Hello everybody";
+            byte[] serialized = Encoding.UTF8.GetBytes(value);
+            ByteBuffer buffer = new ByteBuffer(30);
+            buffer.Write(serialized);
+            Assert.That(buffer.Count, Is.EqualTo(value.Length));
+
+            string actualValue = buffer.ReadString(value.Length);
+
+            Assert.That(actualValue, Is.EqualTo(value));
+        }
+
+        private void VerifyReadValueMethod<T>(T value, string hexValue, Func<ByteBuffer, T> readValue)
+        {
+            ByteBuffer buffer = new ByteBuffer(10);
+            byte[] bytes = BinaryUtils.ToByteArray(hexValue);
+            buffer.Write(bytes);
+            Assert.That(buffer.Count, Is.EqualTo(bytes.Length));
+
+            T actualValue = readValue(buffer);
+
+            Assert.That(actualValue, Is.EqualTo(value));
+            Assert.That(buffer.Count, Is.EqualTo(0));
+        }
 
         [Test]
         public void ToString_Returns_String_Constructed_From_Buffer_Bytes()

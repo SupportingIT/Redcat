@@ -5,9 +5,14 @@ namespace Redcat.Amqp.Serialization
 {
     public class PayloadReader : IPayloadReader
     {
+
         public object Deserialize(AmqpDataReader reader)
-        {            
-            throw new NotImplementedException();
+        {   
+            if (reader.IsULongDescriptor())
+            {
+                ulong descriptor = reader.ReadULongDescriptor();
+            }
+            return null;
         }
     }
 }

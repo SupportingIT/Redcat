@@ -12,11 +12,6 @@ namespace Redcat.Amqp.Serialization
             this.buffer = buffer;
         }
 
-        public string ReadDescriptor()
-        {
-            throw new NotImplementedException();
-        }
-
         public bool IsBoolean()
         {
             byte code = buffer[0];
@@ -121,9 +116,11 @@ namespace Redcat.Amqp.Serialization
             return 0;
         }
 
-        public bool IsULong()
+        public bool IsULong(int offset = 0)
         {
-            return buffer[0] == DataTypeCodes.ULong || buffer[0] == DataTypeCodes.SmallULong || buffer[0] == DataTypeCodes.ULong0;
+            return buffer[offset] == DataTypeCodes.ULong || 
+                   buffer[offset] == DataTypeCodes.SmallULong || 
+                   buffer[offset] == DataTypeCodes.ULong0;
         }
 
         public ulong ReadULong()
@@ -132,6 +129,46 @@ namespace Redcat.Amqp.Serialization
             if (code == DataTypeCodes.ULong) return buffer.ReadUInt64();
             if (code == DataTypeCodes.SmallULong) return buffer.ReadByte();
             return 0;
+        }
+
+        public bool IsString()
+        {
+            return buffer[0] == DataTypeCodes.Str8 ||
+                   buffer[0] == DataTypeCodes.Str32 ||
+                   buffer[0] == DataTypeCodes.Sym8 ||
+                   buffer[0] == DataTypeCodes.Sym32;
+        }
+
+        public string ReadString()
+        {
+            byte code = buffer.ReadByte();
+            if (code == DataTypeCodes.Str8 || code == DataTypeCodes.Sym8)
+            {
+                byte length = buffer.ReadByte();
+                return buffer.ReadString(length);
+            }
+            if (code == DataTypeCodes.Str32 || code == DataTypeCodes.Sym32)
+            {
+                int length = buffer.ReadInt32();
+                return buffer.ReadString(length);
+            }
+            return null;
+        }
+
+        public bool IsDescriptor()
+        {
+            return buffer[0] == DataTypeCodes.Descriptor;
+        }
+
+        public bool IsULongDescriptor()
+        {
+            return IsDescriptor() && IsULong(1);
+        }
+
+        public ulong ReadULongDescriptor()
+        {
+            byte code = buffer.ReadByte();
+            return ReadULong();
         }
     }
 }

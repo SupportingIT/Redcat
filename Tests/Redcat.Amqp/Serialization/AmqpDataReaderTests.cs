@@ -4,6 +4,7 @@ using Redcat.Core;
 using Redcat.Test;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Redcat.Amqp.Tests.Serialization
 {
@@ -19,6 +20,38 @@ namespace Redcat.Amqp.Tests.Serialization
             buffer = new ByteBuffer(100);
             reader = new AmqpDataReader(buffer);
         }
+
+        #region Descriptor
+
+        [Test]
+        public void IsDescriptor_Returns_True_For_Descriptor_Value_Code()
+        {
+            buffer.Write(new byte[] { DataTypeCodes.Descriptor, 10, 20, 30 });
+
+            Assert.That(reader.IsDescriptor(), Is.True);
+        }
+
+        [Test]
+        public void IsULongDescriptor_Returns_True_For_ULong_Descriptors()
+        {
+            buffer.Write(new byte[] { DataTypeCodes.Descriptor, DataTypeCodes.ULong, 0, 0, 1 });
+
+            Assert.That(reader.IsULongDescriptor(), Is.True);
+        }
+
+        public IEnumerable<Tuple<ulong, byte[]>> GetReadULongDescriptorTestData()
+        {
+            yield return GetTestData(10UL, DataTypeCodes.Descriptor, DataTypeCodes.ULong, 0, 0, 0, 0, 0, 0, 0, 10);
+            yield return GetTestData(0x10UL, DataTypeCodes.Descriptor, DataTypeCodes.SmallULong, 0x10);
+        }
+
+        [Test]
+        public void ReadULongDescriptor_Returns_Correct_Value([ValueSource(nameof(GetReadULongDescriptorTestData))]Tuple<ulong, byte[]> data)
+        {
+            VerifyReadValueMethod(data.Item1, data.Item2, r => r.ReadULongDescriptor());
+        }
+
+        #endregion
 
         #region Boolean
 
@@ -222,7 +255,50 @@ namespace Redcat.Amqp.Tests.Serialization
         }
 
         #endregion
-        
+
+        #region String
+
+        byte[] StringTypeCodes = { DataTypeCodes.Str8, DataTypeCodes.Str32, DataTypeCodes.Sym8, DataTypeCodes.Sym32 };
+
+        [Test]
+        public void IsString_Returns_True_For_String_Type_Codes([ValueSource(nameof(StringTypeCodes))]byte code)
+        {
+            buffer.Write(new byte[] { code, 0, 1, 2 });
+
+            Assert.That(reader.IsString(), Is.True);
+        }
+
+        IEnumerable<Tuple<string, byte[]>> GetReadStringTestData()
+        {
+            yield return GetStringTestData("Hello", DataTypeCodes.Str8);
+            yield return GetStringTestData("What's up", DataTypeCodes.Sym8);
+            yield return GetStringTestData("Another hello", DataTypeCodes.Str32);
+            yield return GetStringTestData("Hello Night", DataTypeCodes.Sym32);
+        }
+
+        [Test]
+        public void ReadString_Returns_Correct_String_Value([ValueSource(nameof(GetReadStringTestData))]Tuple <string, byte[]> data)
+        {
+            VerifyReadValueMethod(data.Item1, data.Item2, r => r.ReadString());
+        }
+
+        #endregion
+
+        private Tuple<string, byte[]> GetStringTestData(string str, byte code)
+        {
+            List<byte> serialized = new List<byte>();
+            serialized.Add(code);
+
+            if (code == DataTypeCodes.Str8 || code == DataTypeCodes.Sym8) serialized.Add((byte)str.Length);
+            if (code == DataTypeCodes.Str32 || code == DataTypeCodes.Sym32)
+            {
+                serialized.AddRange(BinaryUtils.ToByteArray(str.Length.ToString("x8")));
+            }
+
+            serialized.AddRange(Encoding.UTF8.GetBytes(str));
+            return new Tuple<string, byte[]>(str, serialized.ToArray());
+        }
+
         private Tuple<T, byte[]> GetTestData<T>(T expected, params byte[] serialized)
         {
             return new Tuple<T, byte[]>(expected, serialized);

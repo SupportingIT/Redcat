@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Redcat.Core.Serialization
 {
@@ -54,9 +55,10 @@ namespace Redcat.Core.Serialization
             return value << 8 | array[offset + 7];
         }
 
-        public static string ReadString(this byte[] array, int length)
+        public static string ReadString(this byte[] array, int length, int offset = 0)
         {
-            throw new NotImplementedException();
+            var encoding = Encoding.UTF8;
+            return encoding.GetString(array, offset, length);
         }
     }
 }

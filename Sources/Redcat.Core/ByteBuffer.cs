@@ -38,7 +38,7 @@ namespace Redcat.Core
             startIndex += count;
         }
 
-        public void Write(byte[] data) => Write(data, 0, data.Length);
+        public void Write(params byte[] data) => Write(data, 0, data.Length);
 
         public void Write(byte[] data, int offset, int count)
         {
@@ -56,59 +56,28 @@ namespace Redcat.Core
             startIndex = 0;
         }
 
-        public byte ReadByte()
-        {
-            byte value = buffer[startIndex];
-            Discard(sizeof(byte));
-            return value;
-        }
+        public byte ReadByte() => ReadValue((b, i) => b[i], sizeof(byte));
 
-        public sbyte ReadSByte()
-        {
-            sbyte value = (sbyte)buffer[startIndex];
-            Discard(sizeof(sbyte));
-            return value;
-        }
+        public sbyte ReadSByte() => ReadValue((b, i) => (sbyte)b[i], sizeof(sbyte));
 
-        public short ReadInt16()
-        {
-            short value = buffer.ReadInt16(startIndex);
-            Discard(sizeof(short));
-            return value;
-        }
+        public short ReadInt16() => ReadValue((b, i) => b.ReadInt16(i), sizeof(short));
 
-        public ushort ReadUInt16()
-        {
-            ushort value = buffer.ReadUInt16(startIndex);
-            Discard(sizeof(ushort));
-            return value;
-        }
+        public ushort ReadUInt16() => ReadValue((b, i) => b.ReadUInt16(i), sizeof(ushort));
 
-        public int ReadInt32()
-        {
-            int value = buffer.ReadInt32(startIndex);
-            Discard(sizeof(int));
-            return value;
-        }
+        public int ReadInt32() => ReadValue((b, i) => b.ReadInt32(i), sizeof(int));
 
-        public uint ReadUInt32()
-        {
-            uint value = buffer.ReadUInt32(startIndex);
-            Discard(sizeof(uint));
-            return value;
-        }
+        public uint ReadUInt32() => ReadValue((b, i) => b.ReadUInt32(i), sizeof(uint));
 
-        public long ReadInt64()
-        {
-            long value = buffer.ReadInt64(startIndex);
-            Discard(sizeof(long));
-            return value;
-        }
+        public long ReadInt64() => ReadValue((b, i) => b.ReadInt64(i), sizeof(long));
 
-        public ulong ReadUInt64()
+        public ulong ReadUInt64() => ReadValue((b, i) => b.ReadUInt64(i), sizeof(ulong));
+
+        public string ReadString(int length) => ReadValue((b, i) => b.ReadString(length, i), length);        
+
+        private T ReadValue<T>(Func<byte[], int, T> valueReader, int valueSize)
         {
-            ulong value = buffer.ReadUInt64(startIndex);
-            Discard(sizeof(ulong));
+            T value = valueReader(buffer, startIndex);
+            Discard(valueSize);
             return value;
         }
 
