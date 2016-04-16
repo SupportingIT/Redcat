@@ -19,6 +19,8 @@ namespace Redcat.Core.Serialization
             OnBufferUpdated();
         }
 
+        public void Read(byte[] binaryData) => Read(new ArraySegment<byte>(binaryData));
+
         protected abstract void OnBufferUpdated();
 
         protected virtual void OnDeserialized(T message)

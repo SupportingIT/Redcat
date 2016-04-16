@@ -170,5 +170,26 @@ namespace Redcat.Amqp.Serialization
             byte code = buffer.ReadByte();
             return ReadULong();
         }
+
+        public bool IsList()
+        {
+            return buffer[0] == DataTypeCodes.List0 || buffer[0] == DataTypeCodes.List8 || buffer[0] == DataTypeCodes.List32;
+        }
+
+        public void ReadListSizeAndCount(out uint size, out uint count)
+        {
+            byte code = buffer.ReadByte();
+            size = count = 0;
+            if (code == DataTypeCodes.List32)
+            {
+                size = buffer.ReadUInt32();
+                count = buffer.ReadUInt32();
+            }
+            if (code == DataTypeCodes.List8)
+            {
+                size = buffer.ReadByte();
+                count = buffer.ReadByte();
+            }
+        }
     }
 }

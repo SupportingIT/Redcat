@@ -7,7 +7,8 @@ namespace Redcat.Amqp.Serialization
     public class AmqpDeserializer : ReactiveDeserializerBase<AmqpFrame>
     {
         const int DefaultBufferSize = 1024;
-        const int MinMessageSize = 8;
+        const int MinFrameSize = 8;
+        const int MinDoffValue = 2;
 
         private IPayloadReader payloadDeserializer;
         private AmqpDataReader reader;
@@ -20,7 +21,7 @@ namespace Redcat.Amqp.Serialization
 
         protected override void OnBufferUpdated()
         {
-            while (Buffer.Count >= MinMessageSize)
+            while (Buffer.Count >= MinFrameSize)
             {
                 if (IsProtocolHeader(Buffer)) DeserializeProtocolHeader(Buffer);
                 else DeserializeFrame(Buffer);
@@ -48,19 +49,19 @@ namespace Redcat.Amqp.Serialization
 
         private void DeserializeFrame(ByteBuffer buffer)
         {
-            uint size = buffer.ReadUInt32();
-            byte doff = buffer.ReadByte();
+            uint size = buffer.ReadUInt32();            
+            byte doff = buffer.ReadByte();            
             byte type = buffer.ReadByte();
 
-            if (size < 8 || doff < 2) ;//TODO: throw some kind of exception
+            if (size < 8 || doff < 2) throw new FormatException();
             if (type == 0) DeserializeAmqpFrame(buffer, size - (uint)(doff * 4));
             if (type == 1) DeserializeSaslFrame(buffer);
         }
 
-        private void DeserializeAmqpFrame(ByteBuffer buffer, uint length)
+        private void DeserializeAmqpFrame(ByteBuffer buffer, uint payloadLength)
         {
             ushort channel = buffer.ReadUInt16();
-            object payload = payloadDeserializer.Deserialize(reader);
+            object payload = payloadDeserializer.Read(reader);
             AmqpFrame frame = new AmqpFrame(payload, channel);
             OnDeserialized(frame);
         }

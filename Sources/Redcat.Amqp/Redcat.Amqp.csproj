@@ -54,7 +54,6 @@
     <Compile Include="Channels\IAmqpChannelFactory.cs" />
     <Compile Include="ConnectionModule.cs" />
     <Compile Include="Serialization\DataTypeCodes.cs" />
-    <Compile Include="Frame.cs" />
     <Compile Include="Performatives\Close.cs" />
     <Compile Include="Performatives\Descriptors.cs" />
     <Compile Include="Performatives\Open.cs" />
@@ -62,8 +61,10 @@
     <Compile Include="Serialization\AmqpSerializer.cs" />
     <Compile Include="Serialization\IPayloadReader.cs" />
     <Compile Include="Serialization\IPayloadSerializer.cs" />
+    <Compile Include="Serialization\OpenPerformativeReader.cs" />
     <Compile Include="Serialization\PayloadReader.cs" />
     <Compile Include="Serialization\PayloadSerializer.cs" />
+    <Compile Include="Serialization\PerformativeReaderBase.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

@@ -4,6 +4,6 @@ namespace Redcat.Amqp.Serialization
 {
     public interface IPayloadReader
     {
-        object Deserialize(AmqpDataReader reader);
+        object Read(AmqpDataReader reader);
     }
 }
