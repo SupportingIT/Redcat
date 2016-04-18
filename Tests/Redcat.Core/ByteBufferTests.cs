@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Redcat.Test;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -142,6 +143,8 @@ namespace Redcat.Core.Tests
 
         #endregion
 
+        #region Read method tests
+
         [Test]
         public void ReadByte_Deserializes_Byte_From_Buffer()
         {           
@@ -224,6 +227,73 @@ namespace Redcat.Core.Tests
             Assert.That(actualValue, Is.EqualTo(value));
             Assert.That(buffer.Count, Is.EqualTo(0));
         }
+
+        #endregion
+
+        #region Peek method tests
+
+        [Test]
+        public void PeekByte_Returns_Byte()
+        {
+            byte expectedValue = 0xca;
+            VerifyPeekMethod(expectedValue, expectedValue.ToString("x2"), b => b.PeekByte());
+        }
+
+        [Test]
+        public void PeekInt16_Returns_Int16()
+        {            
+            short expectedValue = 789;
+            VerifyPeekMethod(expectedValue, expectedValue.ToString("x4"), b => b.PeekInt16());
+        }
+
+        [Test]
+        public void PeekUInt16_Returns_UInt16()
+        {
+            ushort expectedValue = 9000;
+            VerifyPeekMethod(expectedValue, expectedValue.ToString("x4"), b => b.PeekUInt16());
+        }
+
+        [Test]
+        public void PeekInt32_Returns_Int32()
+        {
+            int expectedValue = 3123123;
+            VerifyPeekMethod(expectedValue, expectedValue.ToString("x8"), b => b.PeekInt32());
+        }
+
+        [Test]
+        public void PeekUInt32_Returns_UInt32()
+        {
+            uint expectedValue = 4234902394;
+            VerifyPeekMethod(expectedValue, expectedValue.ToString("x8"), b => b.PeekUInt32());
+        }
+
+        [Test]
+        public void PeekInt64_Returns_Int64()
+        {
+            long expectedValue = -545234523452345;
+            VerifyPeekMethod(expectedValue, expectedValue.ToString("x16"), b => b.PeekInt64());
+        }
+
+        [Test]
+        public void PeekUInt64_Returns_UInt64()
+        {
+            ulong expectedValue = 3602568275689;
+            VerifyPeekMethod(expectedValue, expectedValue.ToString("x16"), b => b.PeekUInt64());
+        }
+
+        private void VerifyPeekMethod<T>(T expectedValue, string hexValue, Func<ByteBuffer, T> peekValue)
+        {
+            ByteBuffer buffer = new ByteBuffer(20);
+            byte[] serializedValue = BinaryUtils.ToByteArray(hexValue);
+            buffer.Write(serializedValue);
+
+            T actualValue = peekValue(buffer);
+
+            Assert.That(actualValue, Is.EqualTo(expectedValue));
+            Assert.That(buffer.Count, Is.EqualTo(serializedValue.Length));
+        }
+
+        #endregion
 
         [Test]
         public void ToString_Returns_String_Constructed_From_Buffer_Bytes()

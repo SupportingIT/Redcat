@@ -72,7 +72,7 @@ namespace Redcat.Core
 
         public ulong ReadUInt64() => ReadValue((b, i) => b.ReadUInt64(i), sizeof(ulong));
 
-        public string ReadString(int length) => ReadValue((b, i) => b.ReadString(length, i), length);        
+        public string ReadString(int length) => ReadValue((b, i) => b.ReadString(length, i), length);
 
         private T ReadValue<T>(Func<byte[], int, T> valueReader, int valueSize)
         {
@@ -80,6 +80,20 @@ namespace Redcat.Core
             Discard(valueSize);
             return value;
         }
+
+        public byte PeekByte() => buffer[startIndex];        
+
+        public short PeekInt16() => buffer.ReadInt16();
+
+        public ushort PeekUInt16() => buffer.ReadUInt16();
+
+        public int PeekInt32() => buffer.ReadInt32();
+
+        public uint PeekUInt32() => buffer.ReadUInt32();
+
+        public long PeekInt64() => buffer.ReadInt64();
+
+        public ulong PeekUInt64() => buffer.ReadUInt64();        
 
         public IEnumerator<byte> GetEnumerator()
         {
