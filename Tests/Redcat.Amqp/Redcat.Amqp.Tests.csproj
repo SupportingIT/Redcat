@@ -42,7 +42,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Serialization\AmqpDataReader2Tests.cs" />
     <Compile Include="Serialization\AmqpDataReaderTests.cs" />
     <Compile Include="Serialization\AmqpDataWriterTests.cs" />
     <Compile Include="AmqpIntegrationTests.cs" />
@@ -50,7 +49,6 @@
     <Compile Include="Serialization\AmqpDeserializerTests.cs" />
     <Compile Include="Serialization\AmqpListReaderTests.cs" />
     <Compile Include="Serialization\AmqpSerializerTests.cs" />
-    <Compile Include="Serialization\PayloadReaderTests.cs" />
     <Compile Include="Serialization\PayloadSerializerTests.cs" />
   </ItemGroup>
   <ItemGroup>

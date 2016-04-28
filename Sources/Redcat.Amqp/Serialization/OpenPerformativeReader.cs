@@ -1,11 +1,13 @@
 ﻿using System;
 using Redcat.Amqp.Performatives;
+using System.Collections.Generic;
+using Redcat.Core;
 
 namespace Redcat.Amqp.Serialization
 {
-    public class OpenPerformativeReader : PerformativeReaderBase<Open>
+    public class OpenPerformativeReader : PerformativeReader<Open>
     {
-        protected override Open CreateDefault()
+        protected override Open CreateDefaultPerformative()
         {
             return new Open
             {
@@ -14,15 +16,19 @@ namespace Redcat.Amqp.Serialization
             };
         }
 
-        protected override Action<Open, AmqpDataReader>[] GetFieldInitializers()
+        protected override IEnumerable<FieldInitializer> GetFieldInitializers()
         {
-            return new Action<Open, AmqpDataReader>[]
-            {
-                (p, r) => p.ContainerId = r.ReadString(),
-                (p, r) => p.Hostname = r.ReadString(),
-                (p, r) => p.MaxFrameSize = r.ReadUInt(),
-                (p, r) => p.MaxChannel = r.ReadUShort()
-            };
+            yield return (p, b) => p.ContainerId = Read<string>(b);
+            yield return (p, b) => p.Hostname = Read<string>(b);
+            yield return (p, b) => p.MaxFrameSize = Read<uint>(b);
+            yield return (p, b) => p.MaxChannel = Read<ushort>(b);
+            
+        }
+
+        public override object Read(ByteBuffer buffer)
+        {
+            var descriptor = base.Read<Descriptor>(buffer);
+            return base.Read(buffer);
         }
     }
 }

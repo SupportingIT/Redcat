@@ -3,33 +3,58 @@ using System;
 
 namespace Redcat.Amqp.Serialization
 {
-    public class AmqpListReader : AmqpDataReader2, IDisposable
+    public class AmqpListReader : AmqpDataReader
     {
         private uint size;
         private uint count;
-        private bool isInitialized;
+        private bool readingList;
+        
+        public uint ByteSize => size;
 
-        public AmqpListReader(ByteBuffer buffer) : base(buffer)
-        { }
+        public uint ElementCount => count;
 
-        public override bool CanRead()
+        public bool IsReadingList => readingList;
+
+        public override object Read(ByteBuffer buffer)
         {
-            throw new NotImplementedException();
+            if (IsList(buffer[0]))
+            {
+                byte code = buffer.ReadByte();
+                if (code == DataTypeCodes.List0) return null;                
+                InitializeListReading(code, buffer);
+            }
+            return base.Read(buffer);
         }
 
-        public override object Read()
+        public override T Read<T>(ByteBuffer buffer)
         {
-            return base.Read();
+            if (IsList(buffer[0]))
+            {
+                byte code = buffer.ReadByte();
+                if (code == DataTypeCodes.List0) return default(T);
+                InitializeListReading(code, buffer);
+            }
+            return base.Read<T>(buffer);
         }
 
-        public override T Read<T>()
+        private bool IsList(byte code)
+        {
+            return code == DataTypeCodes.List0 || code == DataTypeCodes.List8 || code == DataTypeCodes.List32;
+        }
+
+        private void InitializeListReading(byte code, ByteBuffer buffer)
         {            
-            return base.Read<T>();
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
+            if (code == DataTypeCodes.List8)
+            {
+                size = buffer.ReadByte();
+                count = buffer.ReadByte();
+            }
+            if (code == DataTypeCodes.List32)
+            {
+                size = buffer.ReadUInt32();
+                count = buffer.ReadUInt32();
+            }
+            readingList = true;
         }
     }
 }

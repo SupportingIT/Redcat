@@ -1,194 +1,96 @@
 ﻿using Redcat.Core;
 using System;
+using System.Collections.Generic;
 
 namespace Redcat.Amqp.Serialization
 {
-    public class AmqpDataReader
+    public class AmqpDataReader : IByteBufferReader
     {
-        private ByteBuffer buffer;
+        private static Dictionary<byte, Func<ByteBuffer, object>> valueReaders;
+        private static Dictionary<byte, object> typedValueReaders;
 
-        public AmqpDataReader(ByteBuffer buffer)
+        static AmqpDataReader()
         {
-            this.buffer = buffer;
+            valueReaders = new Dictionary<byte, Func<ByteBuffer, object>>();
+            typedValueReaders = new Dictionary<byte, object>();
+
+            AddValueReader(DataTypeCodes.Descriptor, b => ReadDescriptor(b));
+            AddValueReader(DataTypeCodes.UByte, b => b.ReadByte());
+            AddValueReader(DataTypeCodes.Byte, b => b.ReadSByte());
+            AddValueReader(DataTypeCodes.UShort, b => b.ReadUInt16());
+            AddValueReader(DataTypeCodes.Short, b => b.ReadInt16());
+            AddValueReader(DataTypeCodes.UInt, b => b.ReadUInt32());
+            AddValueReader(DataTypeCodes.SmallUInt, b => (uint)b.ReadByte());
+            AddValueReader(DataTypeCodes.UInt0, b => 0U);
+            AddValueReader(DataTypeCodes.Int, b => b.ReadInt32());
+            AddValueReader(DataTypeCodes.SmallInt, b => (int)b.ReadSByte());
+            AddValueReader(DataTypeCodes.ULong, b => b.ReadUInt64());
+            AddValueReader(DataTypeCodes.SmallULong, b => (ulong)b.ReadByte());
+            AddValueReader(DataTypeCodes.ULong0, b => 0UL);
+            AddValueReader(DataTypeCodes.Long, b => b.ReadInt64());
+            AddValueReader(DataTypeCodes.SmallLong, b => (long)b.ReadSByte());
+            AddValueReader(DataTypeCodes.Sym8, ReadString8);
+            AddValueReader(DataTypeCodes.Str8, ReadString8);
+            AddValueReader(DataTypeCodes.Sym32, ReadString32);
+            AddValueReader(DataTypeCodes.Str32, ReadString32);
         }
 
-        public bool IsBoolean()
+        public virtual bool CanRead()
         {
-            byte code = buffer[0];
-            return code == DataTypeCodes.Boolean || code == DataTypeCodes.TrueValue || code == DataTypeCodes.FalseValue;
+            throw new NotImplementedException();
         }
 
-        public bool ReadBoolean()
+        private static Descriptor ReadDescriptor(ByteBuffer buffer)
         {
             byte code = buffer.ReadByte();
-            if (code == DataTypeCodes.FalseValue) return false;
-            if (code == DataTypeCodes.TrueValue) return true;
-            if (code == DataTypeCodes.Boolean)
-            {
-                byte value = buffer.ReadByte();
-                if (value == 0x00) return false;
-                if (value == 0x01) return true;
-            }
-            return true;
-        }
-
-        public bool IsUByte()
-        {
-            return buffer[0] == DataTypeCodes.UByte;
-        }
-
-        public byte ReadUByte()
-        {
-            byte code = buffer.ReadByte();
-            return buffer.ReadByte();
-        }
-
-        public bool IsByte()
-        {
-            return buffer[0] == DataTypeCodes.Byte;
-        }
-
-        public sbyte ReadByte()
-        {
-            byte code = buffer.ReadByte();
-            return buffer.ReadSByte();
-        }
-
-        public bool IsShort()
-        {
-            return buffer[0] == DataTypeCodes.Short;
-        }
-
-        public short ReadShort()
-        {
-            byte code = buffer.ReadByte();
-            return buffer.ReadInt16();
-        }
-
-        public bool IsUShort()
-        {
-            return buffer[0] == DataTypeCodes.UShort;
-        }
-
-        public ushort ReadUShort()
-        {
-            byte code = buffer.ReadByte();
-            return buffer.ReadUInt16();
-        }
-
-        public bool IsInt()
-        {
-            return buffer[0] == DataTypeCodes.Int || buffer[0] == DataTypeCodes.SmallInt;
-        }
-
-        public int ReadInt()
-        {
-            byte code = buffer.ReadByte();
-            if (code == DataTypeCodes.Int) return buffer.ReadInt32();
-            if (code == DataTypeCodes.SmallInt) return buffer.ReadByte();
-            return 0;
-        }
-
-        public bool IsUInt()
-        {
-            return buffer[0] == DataTypeCodes.UInt0 || buffer[0] == DataTypeCodes.SmallUInt || buffer[0] == DataTypeCodes.UInt;
-        }
-
-        public uint ReadUInt()
-        {
-            byte code = buffer.ReadByte();
-            if (code == DataTypeCodes.UInt) return buffer.ReadUInt32();
-            if (code == DataTypeCodes.SmallUInt) return buffer.ReadByte();
-            if (code == DataTypeCodes.UInt0) return 0;
-            return 0;
-        }
-
-        public bool IsLong()
-        {
-            return buffer[0] == DataTypeCodes.Long || buffer[0] == DataTypeCodes.SmallLong;
-        }
-
-        public long ReadLong()
-        {
-            byte code = buffer.ReadByte();
-            if (code == DataTypeCodes.Long) return buffer.ReadInt64();
-            if (code == DataTypeCodes.SmallLong) return buffer.ReadSByte();
-            return 0;
-        }
-
-        public bool IsULong(int offset = 0)
-        {
-            return buffer[offset] == DataTypeCodes.ULong || 
-                   buffer[offset] == DataTypeCodes.SmallULong || 
-                   buffer[offset] == DataTypeCodes.ULong0;
-        }
-
-        public ulong ReadULong()
-        {
-            byte code = buffer.ReadByte();
-            if (code == DataTypeCodes.ULong) return buffer.ReadUInt64();
+            if (code == DataTypeCodes.ULong0) return 0;
             if (code == DataTypeCodes.SmallULong) return buffer.ReadByte();
-            return 0;
+            if (code == DataTypeCodes.ULong) return buffer.ReadUInt64();
+            if (code == DataTypeCodes.Sym8 || code == DataTypeCodes.Str8) return ReadString8(buffer);
+            if (code == DataTypeCodes.Sym32 || code == DataTypeCodes.Str32) return ReadString32(buffer);
+            throw new NotSupportedException("Unknown descriptor type");
         }
 
-        public bool IsString()
+        private static string ReadString8(ByteBuffer buffer)
         {
-            return buffer[0] == DataTypeCodes.Str8 ||
-                   buffer[0] == DataTypeCodes.Str32 ||
-                   buffer[0] == DataTypeCodes.Sym8 ||
-                   buffer[0] == DataTypeCodes.Sym32;
+            byte length = buffer.ReadByte();
+            return buffer.ReadString(length);
         }
 
-        public string ReadString()
+        private static string ReadString32(ByteBuffer buffer)
         {
+            int length = (int)buffer.ReadUInt32();
+            return buffer.ReadString(length);
+        }
+
+        private static void AddValueReader<T>(byte code, Func<ByteBuffer, T> valueReader)
+        {
+            valueReaders[code] = b => valueReader.Invoke(b);
+            typedValueReaders[code] = valueReader;
+        }
+
+        public virtual object Read(ByteBuffer buffer)
+        {
+            EnsureTypeCodeSupported(buffer[0]);
             byte code = buffer.ReadByte();
-            if (code == DataTypeCodes.Str8 || code == DataTypeCodes.Sym8)
-            {
-                byte length = buffer.ReadByte();
-                return buffer.ReadString(length);
-            }
-            if (code == DataTypeCodes.Str32 || code == DataTypeCodes.Sym32)
-            {
-                int length = buffer.ReadInt32();
-                return buffer.ReadString(length);
-            }
-            return null;
+            var reader = valueReaders[code];
+            return reader.Invoke(buffer);
         }
 
-        public bool IsDescriptor()
+        public virtual T Read<T>(ByteBuffer buffer)
         {
-            return buffer[0] == DataTypeCodes.Descriptor;
-        }
-
-        public bool IsULongDescriptor()
-        {
-            return IsDescriptor() && IsULong(1);
-        }
-
-        public ulong ReadULongDescriptor()
-        {
+            EnsureTypeCodeSupported(buffer[0]);            
+            var reader = typedValueReaders[buffer[0]] as Func<ByteBuffer, T>;
+            if (reader == null) throw new InvalidOperationException($"Can't read type with code 0x{buffer[0].ToString("X2")} as {typeof(T)}");
             byte code = buffer.ReadByte();
-            return ReadULong();
+            return reader.Invoke(buffer);
         }
 
-        public bool IsList()
+        private void EnsureTypeCodeSupported(byte code)
         {
-            return buffer[0] == DataTypeCodes.List0 || buffer[0] == DataTypeCodes.List8 || buffer[0] == DataTypeCodes.List32;
-        }
-
-        public void ReadListSizeAndCount(out uint size, out uint count)
-        {
-            byte code = buffer.ReadByte();
-            size = count = 0;
-            if (code == DataTypeCodes.List32)
+            if (!valueReaders.ContainsKey(code))
             {
-                size = buffer.ReadUInt32();
-                count = buffer.ReadUInt32();
-            }
-            if (code == DataTypeCodes.List8)
-            {
-                size = buffer.ReadByte();
-                count = buffer.ReadByte();
+                throw new NotSupportedException($"Unknown type code 0x{code.ToString("X2")}");
             }
         }
     }

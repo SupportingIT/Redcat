@@ -18,9 +18,8 @@ namespace Redcat.Amqp.Channels
 
         protected override AmqpDeserializer CreateDeserializer()
         {
-            var payloadReader = new PayloadReader();
-            payloadReader.AddChildReader(0x10, "amqp:open:list", new OpenPerformativeReader());
-            var deserializer = new AmqpDeserializer(payloadReader);
+            OpenPerformativeReader reader = new OpenPerformativeReader();
+            var deserializer = new AmqpDeserializer(reader);
             deserializer.ProtocolHeaderDeserialized += h => OnProtocolHeaderReceived(h);
             return deserializer;
         }

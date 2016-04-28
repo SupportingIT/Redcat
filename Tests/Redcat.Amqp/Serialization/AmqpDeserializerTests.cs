@@ -10,14 +10,14 @@ namespace Redcat.Amqp.Tests.Serialization
     [TestFixture]
     public class AmqpDeserializerTests
     {
-        private IPayloadReader payloadReader;
+        private IByteBufferReader bufferReader;
         private AmqpDeserializer deserializer;
 
         [SetUp]
         public void SetUp()
         {
-            payloadReader = A.Fake<IPayloadReader>();
-            deserializer = new AmqpDeserializer(payloadReader);
+            bufferReader = A.Fake<IByteBufferReader>();
+            deserializer = new AmqpDeserializer(bufferReader);
         }
 
         [Test]

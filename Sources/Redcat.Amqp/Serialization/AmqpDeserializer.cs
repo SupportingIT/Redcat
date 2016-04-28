@@ -9,14 +9,12 @@ namespace Redcat.Amqp.Serialization
         const int DefaultBufferSize = 1024;
         const int MinFrameSize = 8;
         const int MinDoffValue = 2;
+                
+        private IByteBufferReader reader;
 
-        private IPayloadReader payloadDeserializer;
-        private AmqpDataReader reader;
-
-        public AmqpDeserializer(IPayloadReader payloadDeserializer) : base(DefaultBufferSize)
+        public AmqpDeserializer(IByteBufferReader reader) : base(DefaultBufferSize)
         {
-            this.payloadDeserializer = payloadDeserializer;
-            reader = new AmqpDataReader(Buffer);
+            this.reader = reader;
         }
 
         protected override void OnBufferUpdated()
@@ -61,8 +59,9 @@ namespace Redcat.Amqp.Serialization
         private void DeserializeAmqpFrame(ByteBuffer buffer, uint payloadLength)
         {
             ushort channel = buffer.ReadUInt16();
-            object payload = payloadDeserializer.Read(reader);
-            AmqpFrame frame = new AmqpFrame(payload, channel);
+            object payload = reader.Read(buffer);
+            
+            AmqpFrame frame = new AmqpFrame(payload, channel);            
             OnDeserialized(frame);
         }
 
