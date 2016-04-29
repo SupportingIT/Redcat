@@ -13,17 +13,22 @@ namespace Redcat.Amqp.Serialization
 
         public uint ElementCount => count;
 
-        public bool IsReadingList => readingList;
+        public bool EndOfList => !readingList;
+
+        public bool IsEmptyList(ByteBuffer buffer) => buffer[0] == DataTypeCodes.List0;
 
         public override object Read(ByteBuffer buffer)
         {
-            if (IsList(buffer[0]))
+            if (IsList(buffer[0]) && !readingList)
             {
                 byte code = buffer.ReadByte();
-                if (code == DataTypeCodes.List0) return null;                
+                if (code == DataTypeCodes.List0) return null;
                 InitializeListReading(code, buffer);
             }
-            return base.Read(buffer);
+            int size = buffer.Count;
+            object value = base.Read(buffer);
+            UpdateReadingStatus(buffer, size);
+            return value;
         }
 
         public override T Read<T>(ByteBuffer buffer)
@@ -55,6 +60,22 @@ namespace Redcat.Amqp.Serialization
                 count = buffer.ReadUInt32();
             }
             readingList = true;
+        }
+
+        private void UpdateReadingStatus(ByteBuffer buffer, int previousSize)
+        {
+            previousSize -= buffer.Count;
+            size -= (uint)previousSize;
+            count--;
+            if (count == 0) readingList = false;
+        }
+
+        public void EndRead(ByteBuffer buffer)
+        {
+            if (!readingList) throw new InvalidOperationException();
+            buffer.Discard((int)size);
+            size = count = 0;
+            readingList = false;
         }
     }
 }
